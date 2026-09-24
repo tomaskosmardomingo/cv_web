@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CV de Tomás Kos Mardomingo - Administrador de Sistemas y Ciberseguridad">
+    <title>Tomás Kos | SysAdmin & Infraestructura</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%BB%3C/text%3E%3C/svg%3E">
+
+    <!-- Microdatos JSON-LD para IAs de RRHH y SEO (Invisible para el usuario) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Tomás Kos Mardomingo",
+      "jobTitle": "Junior Systems Administrator & Network Engineer",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Guadarrama",
+        "addressRegion": "Madrid",
+        "addressCountry": "ES"
+      },
+      "email": "tomaskoskos@gmail.com",
+      "telephone": "+34692876776",
+      "url": "https://github.com/tomaskosmardomingo",
+      "knowsAbout": ["Linux", "Kali Linux", "Amazon AWS", "Cisco", "Windows Server", "Active Directory", "Docker", "SQL", "HTML/CSS/JS"]
+    }
+    </script>
+
+    <!-- Fuentes Google y FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES GLOBALES --- */
+        :root {
+            --bg-base: #E8F0F8;
+            --bg-card: rgba(255, 255, 255, 0.88);
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --primary: #0284C7; 
+            --primary-light: #E0F2FE;
+            --primary-dark: #0369A1;
+            --accent: #0EA5E9; 
+            --success: #10B981;
+            --border: rgba(226, 232, 240, 0.8);
+            --shadow-hover: 0 15px 30px -5px rgba(2, 132, 199, 0.15);
+            --shadow-sm: 0 4px 12px rgba(2, 132, 199, 0.1);
+            /* Red de nodos */
+            --node-color: rgba(2, 132, 199, 0.4);
+            --line-color: rgba(2, 132, 199, 0.25);
+            --pulse-color: rgba(14, 165, 233, 0.9);
+        }
+
+        body.dark-theme {
+            --bg-base: #070B14;
+            --bg-card: rgba(30, 41, 59, 0.75);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --primary: #38BDF8; 
+            --primary-light: rgba(56, 189, 248, 0.15);
+            --primary-dark: #7DD3FC;
+            --accent: #0EA5E9; 
+            --border: rgba(51, 65, 85, 0.6);
+            --shadow-hover: 0 15px 30px -5px rgba(56, 189, 248, 0.2);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+            /* Red de nodos oscura */
+            --node-color: rgba(56, 189, 248, 0.6);
+            --line-color: rgba(56, 189, 248, 0.3);
+            --pulse-color: rgba(125, 211, 252, 0.95);
+        }
+
+        /* --- MULTI-IDIOMA --- */
+        body.lang-es .en { display: none !important; }
+        body.lang-en .es { display: none !important; }
+        .ai-cite { display: none !important; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); line-height: 1.7; overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ease; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        }
+
+        /* --- MARCOS LATERALES --- */
+        body::before, body::after { content: ''; position: fixed; top: 0; width: 4px; height: 100vh; background: linear-gradient(to bottom, transparent, var(--primary), transparent); z-index: 9999; pointer-events: none; }
+        body::before { left: 0; } body::after { right: 0; }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--accent)); border-radius: 10px; border: 2px solid var(--bg-base); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+
+        /* --- BOOT SEQUENCE --- */
+        #boot-overlay { position: fixed; inset: 0; background: #070B14; color: #38BDF8; font-family: 'Fira Code', monospace; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 2rem; transition: opacity 0.6s ease, visibility 0.6s ease; }
+        #boot-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #boot-lines { white-space: pre-wrap; font-size: 0.95rem; max-width: 600px; line-height: 1.9; }
+        #boot-lines .boot-caret { display: inline-block; width: 8px; height: 1rem; background: #38BDF8; animation: blink 0.9s step-end infinite; vertical-align: middle; }
+
+        /* --- RED INTERACTIVA FONDO --- */
+        .bg-effects-wrapper { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; }
+        #network-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; animation: float 20s infinite alternate ease-in-out; }
+        .blob-1 { width: 500px; height: 500px; background: rgba(2, 132, 199, 0.15); top: -100px; left: -100px; }
+        .blob-2 { width: 600px; height: 600px; background: rgba(56, 189, 248, 0.1); bottom: -150px; right: -100px; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(60px, 80px) scale(1.1); } }
+
+        /* --- NAVEGACIÓN --- */
+        nav { position: fixed; top: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); z-index: 1000; padding: 1rem 0; transition: padding 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
+        nav.nav-scrolled { padding: 0.55rem 0; backdrop-filter: blur(34px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .nav-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .nav-brand i { color: var(--primary); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); text-shadow: 0 0 10px var(--primary); } 100% { transform: scale(1); } }
+
+        .nav-controls { display: flex; gap: 1rem; align-items: center; }
+        .search-box { position: relative; width: 250px; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-box input { width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 30px; border: 1px solid var(--border); background: transparent; color: var(--text-main); font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s; }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); background: var(--bg-card); }
+        .theme-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); font-weight: bold; font-family: 'Plus Jakarta Sans', sans-serif; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .theme-btn:hover { color: var(--primary); transform: scale(1.05); border-color: var(--primary); }
+        .theme-btn i { transition: transform 0.3s ease; }
+        .theme-btn i.icon-flip { animation: icon-flip 0.5s ease; }
+        @keyframes icon-flip { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(170deg) scale(0.4); } 100% { transform: rotate(360deg) scale(1); } }
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+        /* --- PRINCIPAL --- */
+        #cv-content { max-width: 1200px; margin: 120px auto 0; padding: 0 2rem; position: relative; z-index: 10; }
+
+        /* --- HERO & BADGE --- */
+        .hero { padding: 4.5rem 4rem; border-radius: 20px; margin-bottom: 2.5rem; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 132, 199, 0.95)); color: #FFFFFF; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%); border-radius: 50%; animation: pulse-slow 10s infinite alternate; pointer-events: none; z-index: 0; }
+        @keyframes pulse-slow { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 1; } }
+        .blueprint-grid { position: absolute; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px); background-size: 42px 42px; -webkit-mask-image: radial-gradient(ellipse at 30% 30%, black 20%, transparent 75%); mask-image: radial-gradient(ellipse at 30% 30%, black 20%, transparent 75%); }
+        .hero-content { position: relative; z-index: 1; }
+
+        .hero h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 4.3rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 0.5rem; background: linear-gradient(100deg, #FFFFFF 40%, #BFE7FF 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 30px rgba(0,0,0,0.2); }
+        
+        .status-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem; backdrop-filter: blur(5px); }
+        .status-dot { width: 8px; height: 8px; background-color: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); animation: blink-dot 1.5s infinite alternate; }
+        @keyframes blink-dot { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .hero .role { font-size: 1.3rem; color: #7DD3FC; font-weight: 600; margin-bottom: 1.5rem; font-family: 'Fira Code', monospace; display: flex; align-items: center; gap: 8px; }
+        .cursor { display: inline-block; width: 10px; height: 1.3rem; background-color: #7DD3FC; animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .summary { font-size: 1.1rem; color: #E2E8F0; max-width: 850px; margin-bottom: 2rem; text-align: justify; line-height: 1.8; }
+
+        .cta-btn { display: inline-flex; align-items: center; gap: 0.6rem; background: var(--accent); color: #04121F; font-weight: 700; padding: 0.9rem 1.9rem; border-radius: 12px; border: none; cursor: pointer; font-size: 1rem; margin-bottom: 1.8rem; box-shadow: 0 10px 25px rgba(14, 165, 233, 0.35); transition: transform 0.25s ease, box-shadow 0.25s ease; font-family: 'Inter', sans-serif; }
+        .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(14, 165, 233, 0.45); }
+        .cta-btn:active { transform: translateY(-1px); }
+
+        .contact-grid { display: flex; flex-wrap: wrap; gap: 1rem; }
+        .contact-tag { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1.4rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; color: #FFFFFF; text-decoration: none; backdrop-filter: blur(5px); font-size: 0.95rem; font-weight: 600; transition: all 0.3s ease; }
+        .contact-tag:hover { background: #FFFFFF; color: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+
+        /* --- FILTROS --- */
+        .filters { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; justify-content: center; }
+        .filter-btn { padding: 0.7rem 1.6rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 0 var(--border); backdrop-filter: blur(10px); }
+        .filter-btn:hover { background: var(--bg-base); color: var(--primary); }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0px 0 var(--primary); transform: translateY(2px); }
+
+        /* --- LAYOUT --- */
+        .cv-grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 2.5rem; align-items: start; }
+        aside { position: sticky; top: 110px; display: flex; flex-direction: column; gap: 2.5rem; }
+        section { background: var(--bg-card); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 2.5rem; }
+        .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .section-title i { color: var(--primary); background: var(--primary-light); padding: 0.6rem; border-radius: 10px; }
+
+        /* --- TIMELINE (con línea de progreso animada por scroll) --- */
+        .timeline-container { position: relative; padding-left: 2rem; --progress: 0; }
+        .timeline-track { position: absolute; left: 16px; top: 0; bottom: 0; width: 2px; background: var(--border); border-radius: 2px; z-index: 0; pointer-events: none; }
+        .timeline-progress { position: absolute; left: 16px; top: 0; width: 2px; height: calc(var(--progress) * 100%); background: linear-gradient(to bottom, var(--primary), var(--accent)); border-radius: 2px; box-shadow: 0 0 8px var(--primary); transition: height 0.1s linear; z-index: 0; pointer-events: none; }
+        .timeline-item { position: relative; z-index: 1; margin-bottom: 3rem; transition: transform 0.3s; }
+        .timeline-item:hover { transform: translateX(5px); }
+        .timeline-item::before { content: ''; position: absolute; left: -25px; top: 0.4rem; width: 14px; height: 14px; background: var(--bg-card); border: 3px solid var(--primary); border-radius: 50%; z-index: 2; transition: all 0.3s; }
+        .timeline-item:hover::before { background: var(--primary); box-shadow: 0 0 10px var(--primary); transform: scale(1.2); }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .item-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.2rem; }
+        .item-org { color: var(--primary); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .item-date { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); background: var(--bg-base); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid var(--border); }
+        .item-desc { color: var(--text-muted); font-size: 0.95rem; margin-top: 1rem; }
+        .item-desc ul { list-style-type: none; }
+        .item-desc li { position: relative; padding-left: 1.2rem; margin-bottom: 0.5rem; }
+        .item-desc li::before { content: '▹'; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+
+        /* --- TARJETAS PROYECTOS (estilo terminal + spotlight de cursor) --- */
+        .project-card { background: var(--bg-base); border: 1px solid var(--border); border-radius: 16px; padding: 2.4rem 2rem 2rem; margin-bottom: 1.8rem; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+        .project-card:hover { border-color: var(--primary); box-shadow: var(--shadow-hover); transform: translateY(-5px); }
+        .project-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(2, 132, 199, 0.12), transparent 70%); }
+        body.dark-theme .project-card::after { background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(56, 189, 248, 0.16), transparent 70%); }
+        .project-card:hover::after { opacity: 1; }
+        .term-dots { position: absolute; top: 16px; left: 18px; display: flex; gap: 6px; z-index: 1; }
+        .term-dots span { width: 9px; height: 9px; border-radius: 50%; display: block; }
+        .term-dots span:nth-child(1) { background: #FF5F56; }
+        .term-dots span:nth-child(2) { background: #FFBD2E; }
+        .term-dots span:nth-child(3) { background: #27C93F; }
+        .project-header { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1rem; position: relative; z-index: 1; }
+        .project-icon { font-size: 2rem; color: var(--primary); background: var(--bg-card); padding: 1rem; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .item-desc-3d { color: var(--text-muted); font-size: 0.95rem; position: relative; z-index: 1; }
+        .tags-grid-3d { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.6rem; position: relative; z-index: 1; }
+        
+        /* --- CERTIFICACIONES --- */
+        .cert-card { display: flex; gap: 1rem; align-items: center; background: var(--bg-base); border: 1px solid var(--border); padding: 1.2rem; border-radius: 12px; margin-bottom: 1.2rem; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .cert-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: var(--shadow-hover); }
+        .cert-card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: var(--primary); }
+        .cert-ring-wrap { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+        .cert-ring { width: 44px; height: 44px; transform: rotate(-90deg); }
+        .ring-track { fill: none; stroke: var(--border); stroke-width: 2.5; }
+        .ring-progress { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.2s ease; }
+        .cert-ring-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--primary); font-size: 0.8rem; }
+        .cert-info h3 { font-size: 0.95rem; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); }
+        .cert-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .cert-info span { font-size: 0.75rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 0.3rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 6px; }
+
+        /* --- SKILLS & TAGS (con stagger de entrada) --- */
+        .skills-category { margin-bottom: 2rem; }
+        .skills-category h3 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; color: var(--text-main); font-weight: 700; }
+        .tags-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .tag { background: var(--bg-base); border: 1px solid var(--border); font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px; color: var(--text-muted); font-weight: 600; cursor: default; opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease; }
+        .tag.tag-in { opacity: 1; transform: translateY(0); }
+        .tag:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(2, 132, 199, 0.2); }
+        .lang-item { margin-bottom: 1.5rem; }
+        .lang-header { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .lang-bar { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        .lang-progress { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 10px; width: 0; transition: width 1s ease; }
+        .lang-percent-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; text-align: right; font-family: 'Fira Code', monospace; }
+
+        /* --- DEVOPS FOOTER --- */
+        .devops-footer { margin-top: 2rem; margin-bottom: 2rem; padding: 1.5rem; text-align: center; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .footer-content { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
+        .ping i { color: var(--success); animation: pulse 2s infinite; }
+
+        /* --- MENÚ FLOTANTE DINÁMICO (FAB, en arco, funciona con hover y con toque) --- */
+        .fab-container { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 1000; }
+        .fab-main { position: absolute; inset: 0; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; font-size: 1.5rem; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; justify-content: center; align-items: center; }
+        .fab-container:hover .fab-main, .fab-container.open .fab-main { transform: rotate(45deg) scale(1.05); }
+        
+        .fab-child {
+            position: absolute; right: 6px; bottom: 6px; width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); color: var(--text-main); font-size: 1.2rem;
+            border: 1px solid var(--border); cursor: pointer; box-shadow: var(--shadow-sm); opacity: 0; transform: translate(0, 0) scale(0.4);
+            pointer-events: none; transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; justify-content: center; align-items: center; text-decoration: none;
+        }
+        .fab-container:hover .fab-child, .fab-container.open .fab-child { opacity: 1; pointer-events: auto; transform: translate(0,0) scale(1); }
+        .fab-container:hover .fab-child:nth-child(1), .fab-container.open .fab-child:nth-child(1) { transition-delay: 0.15s; transform: translate(-8px, -74px) scale(1); }
+        .fab-container:hover .fab-child:nth-child(2), .fab-container.open .fab-child:nth-child(2) { transition-delay: 0.08s; transform: translate(-58px, -52px) scale(1); }
+        .fab-container:hover .fab-child:nth-child(3), .fab-container.open .fab-child:nth-child(3) { transition-delay: 0s; transform: translate(-78px, -6px) scale(1); }
+        .fab-child:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Tooltips para los botones flotantes (arriba del botón, para no chocar con el arco) */
+        .fab-child::before {
+            content: attr(data-tooltip-es); position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%);
+            background: var(--bg-card); color: var(--text-main); padding: 0.4rem 0.8rem; border-radius: 8px;
+            border: 1px solid var(--border); font-size: 0.8rem; font-family: 'Inter', sans-serif; white-space: nowrap;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s; font-weight: 600; box-shadow: var(--shadow-sm);
+        }
+        body.lang-en .fab-child::before { content: attr(data-tooltip-en); }
+        .fab-child:hover::before { opacity: 1; }
+
+        /* --- ANIMACIONES SCROLL --- */
+        .filterable-item { transition: opacity 0.4s ease, transform 0.4s ease; transform-origin: top; }
+        .filterable-item.fade-out { opacity: 0; transform: scale(0.95) translateY(10px); pointer-events: none; }
+        .filterable-item.hide-item { display: none !important; }
+        .reveal-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-up.active, .reveal-left.active, .reveal-right.active { opacity: 1; transform: translate(0); }
+        .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; } .delay-3 { transition-delay: 0.3s; } .delay-4 { transition-delay: 0.4s; }
+
+        @media (max-width: 900px) {
+            .cv-grid { grid-template-columns: 1fr; } aside { position: relative; top: 0; }
+            .hero { padding: 3rem 2rem; } .hero h1 { font-size: 2.8rem; letter-spacing: -1px; }
+            .nav-container { flex-direction: column; gap: 1rem; padding: 1rem; } .search-box { width: 100%; }
+            .fab-container { bottom: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body class="lang-es">
+
+    <!-- SECUENCIA DE ARRANQUE -->
+    <div id="boot-overlay">
+        <div id="boot-lines"><span class="boot-caret"></span></div>
+    </div>
+
+    <!-- FONDOS INTERACTIVOS -->
+    <div class="bg-effects-wrapper">
+        <canvas id="network-canvas"></canvas>
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav id="main-nav">
+        <div class="nav-container">
+            <a href="#" class="nav-brand"><i class="fa-solid fa-server"></i> Tomás Kos <span>| SysAdmin</span></a>
+            <div class="nav-controls">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Filtrar CV (ej: Linux, Redes)...">
+                </div>
+                <button class="theme-btn" id="lang-toggle" aria-label="Cambiar Idioma">EN</button>
+                <button class="theme-btn" id="theme-toggle" aria-label="Cambiar Tema"><i class="fa-solid fa-moon"></i></button>
+            </div>
+        </div>
+    </nav>
+
+   <!-- MENÚ FLOTANTE DINÁMICO (FAB) -->
+    <div class="fab-container" id="fab-container">
+        <a href="#" class="fab-child" id="download-vcard" data-tooltip-es="Guardar Contacto" data-tooltip-en="Save Contact"><i class="fa-solid fa-address-card"></i></a>
+        <a href="#" class="fab-child" id="download-ats" data-tooltip-es="Descargar CV (Texto ATS)" data-tooltip-en="Download ATS Plain-Text"><i class="fa-solid fa-file-code"></i></a>
+        
+        <a href="./CV_Tomas_Kos.pdf" download="CV_Tomas_Kos.pdf" class="fab-child" id="download-pdf" data-tooltip-es="Descargar CV (PDF)" data-tooltip-en="Download PDF"><i class="fa-solid fa-file-pdf"></i></a>
+        
+        <button class="fab-main" id="fab-main-btn" aria-label="Opciones"><i class="fa-solid fa-plus"></i></button>
+    </div>
+
+    <main id="cv-content">
+        <!-- HERO -->
+        <header class="hero reveal-up" id="hero-header">
+            <div class="blueprint-grid"></div>
+            <div class="hero-content">
+                <!-- Status Badge (Disponibilidad) -->
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span class="es">Disponible para rol Junior SysAdmin</span>
+                    <span class="en">Available for Junior SysAdmin roles</span>
+                </div>
+
+                <h1>Tomás Kos Mardomingo</h1>
+                <div class="role">
+                    <i class="fa-solid fa-terminal"></i> 
+                    <span id="typewriter"></span><span class="cursor"></span>
+                </div>
+                <p class="summary">
+                    <span class="es">Estudiante de Administración de Sistemas Informáticos en Red (ASIR). Apasionado por el diseño de arquitecturas IT, virtualización, redes corporativas y seguridad. Acostumbrado a rendir en entornos de alta exigencia, aportando responsabilidad, capacidad de resolución de problemas técnicos y firme compromiso con el trabajo en equipo.</span>
+                    <span class="en">Student of Computer Systems Networking and Telecommunications (ASIR). Passionate about IT architecture design, virtualization, corporate networks, and security. Accustomed to performing in highly demanding environments, bringing responsibility, technical troubleshooting capabilities, and a firm commitment to teamwork.</span>
+                </p>
+
+                <button class="cta-btn" id="hero-cta"><i class="fa-solid fa-file-arrow-down"></i> <span class="es">Descargar CV</span><span class="en">Download CV</span></button>
+
+                <div class="contact-grid">
+                    <span class="contact-tag"><i class="fa-solid fa-phone"></i> 692 876 776</span>
+                    <span class="contact-tag"><i class="fa-solid fa-location-dot"></i> <span class="es">Guadarrama, Madrid</span><span class="en">Guadarrama, Madrid (Spain)</span></span>
+                    <a href="mailto:tomaskoskos@gmail.com" class="contact-tag"><i class="fa-solid fa-envelope"></i> tomaskoskos@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/tomás-kos" target="_blank" class="contact-tag"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                    <a href="https://github.com/tomaskosmardomingo" target="_blank" class="contact-tag"><i class="fa-brands fa-github"></i> GitHub</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- FILTROS -->
+        <div class="filters reveal-up delay-1" id="filters-bar">
+            <button class="filter-btn active" data-filter="all"><span class="es">Visión General</span><span class="en">Overview</span></button>
+            <button class="filter-btn" data-filter="sistemas"><span class="es">Sistemas e Infraestructura</span><span class="en">Systems & Infrastructure</span></button>
+            <button class="filter-btn" data-filter="redes"><span class="es">Networking Corporativo</span><span class="en">Corporate Networking</span></button>
+            <button class="filter-btn" data-filter="experiencia"><span class="es">Experiencia Laboral</span><span class="en">Work Experience</span></button>
+        </div>
+
+        <div class="cv-grid">
+            <div class="main-column">
+                
+                <!-- 1. EXPERIENCIA -->
+                <section class="reveal-left">
+                    <h2 class="section-title"><i class="fa-solid fa-briefcase"></i> <span class="es">Experiencia Laboral</span><span class="en">Work Experience</span></h2>
+                    <div class="timeline-container">
+                        <div class="timeline-track"></div>
+                        <div class="timeline-progress"></div>
+                        
+                        <div class="timeline-item filterable-item reveal-left delay-1" data-category="experiencia" data-keywords="cajero reponedor supercor tpv stock atencion cliente cashier retail assistant">
+                            <div class="item-header"><h3 class="item-title"><span class="es">Cajero / Reponedor</span><span class="en">Retail Assistant / Cashier</span></h3></div>
+                            <div class="item-org"><span>El Corte Inglés (Supercor) | Guadarrama</span> <span class="item-date"><span class="es">Jul. 2026 – Sept. 2026</span><span class="en">Jul 2026 – Sep 2026</span></span></div>
+                            <div class="item-desc">
+                                <ul>
+                                    <li><span class="es">Atención al cliente y cobro en TPV durante picos de alta demanda comercial.</span><span class="en">Customer service and POS management during high-demand commercial peaks.</span></li>
+                                    <li><span class="es">Control de stock, rotación de inventario y supervisión logística de lineales.</span><span class="en">Stock control, inventory rotation, and logistical supervision of retail shelves.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item filterable-item reveal-left delay-2" data-category="experiencia sistemas redes" data-keywords="administrador sistemas practicas soporte tecnico linux broadcast raspberry sysadmin intern troubleshooting">
+                            <div class="item-header"><h3 class="item-title"><span class="es">Administrador de sistemas (Prácticas)</span><span class="en">IT Systems Administrator (Internship)</span></h3></div>
+                            <div class="item-org"><span>U-tad | <span class="es">Las Rozas de Madrid</span><span class="en">Madrid</span></span> <span class="item-date"><span class="es">May. 2026</span><span class="en">May 2026</span></span></div>
+                            <div class="item-desc">
+                                <ul>
+                                    <li><span class="es">Despliegue e infraestructura técnica de un servidor de broadcast bajo entorno Linux (Raspberry Pi).</span><span class="en">Deployment and technical infrastructure of a broadcast server under a Linux environment (Raspberry Pi).</span></li>
+                                    <li><span class="es">Monitorización de red, pruebas de conectividad y Troubleshooting técnico en directo.</span><span class="en">Network monitoring, connectivity testing, and live technical troubleshooting.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item filterable-item reveal-left delay-3" data-category="experiencia" data-keywords="camarero eventos hosteleria protocolos presion equipo catering bodas waiter event staff">
+                            <div class="item-header"><h3 class="item-title"><span class="es">Camarero</span><span class="en">Event Server / Waitstaff</span></h3></div>
+                            <div class="item-org"><span>Grupo Switch / <span class="es">Catering de bodas</span><span class="en">Wedding Catering</span></span> <span class="item-date"><span class="es">Jul. 2025 – Actualidad</span><span class="en">Jul 2025 – Present</span></span></div>
+                            <div class="item-desc">
+                                <ul>
+                                    <li><span class="es">Atención a invitados durante banquetes bajo dinámicas de alta presión.</span><span class="en">Guest service during banquets operating under high-pressure dynamics.</span></li>
+                                    <li><span class="es">Desempeño metódico, organización logística y estricto cumplimiento de estándares en equipo.</span><span class="en">Methodical execution, logistical organization, and strict standard compliance in team environments.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item filterable-item reveal-left delay-4" data-category="experiencia" data-keywords="ayudante cocina catering alimentos limpieza menus prep cook kitchen assistant">
+                            <div class="item-header"><h3 class="item-title"><span class="es">Ayudante de cocina</span><span class="en">Prep Cook / Kitchen Assistant</span></h3></div>
+                            <div class="item-org"><span><span class="es">Catering de bodas</span><span class="en">Wedding Catering</span></span> <span class="item-date"><span class="es">Sept. 2025 – Dic. 2025</span><span class="en">Sep 2025 – Dec 2025</span></span></div>
+                            <div class="item-desc">
+                                <ul>
+                                    <li><span class="es">Soporte logístico en la preparación de menús para eventos de alto volumen.</span><span class="en">Logistical support in menu preparation for high-volume catering events.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. FORMACIÓN -->
+                <section class="reveal-up">
+                    <h2 class="section-title"><i class="fa-solid fa-graduation-cap"></i> <span class="es">Formación Académica</span><span class="en">Education</span></h2>
+                    <div class="timeline-container">
+                        <div class="timeline-track"></div>
+                        <div class="timeline-progress"></div>
+                        <div class="timeline-item filterable-item reveal-up delay-1" data-category="sistemas redes">
+                            <div class="item-header"><h3 class="item-title"><span class="es">Grado Superior ASIR</span><span class="en">Higher National Diploma in ASIR</span></h3></div>
+                            <div class="item-org"><span>U-tad</span> <span class="item-date"><span class="es">Sept. 2025 – Jun. 2027</span><span class="en">Sep 2025 – Jun 2027</span></span></div>
+                            <div class="item-desc"><span class="es">Administración de Sistemas Informáticos en Red.</span><span class="en">Computer Systems Networking and Telecommunications.</span></div>
+                        </div>
+                        <div class="timeline-item filterable-item reveal-up delay-2" data-category="">
+                            <div class="item-header"><h3 class="item-title"><span class="es">Bachillerato (Ciencias Sociales)</span><span class="en">High School Diploma (Social Sciences)</span></h3></div>
+                            <div class="item-org"><span>Gredos San Diego</span> <span class="item-date"><span class="es">Sept. 2023 – May. 2025</span><span class="en">Sep 2023 – May 2025</span></span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. PROYECTOS / IMPLEMENTACIONES -->
+                <section class="reveal-up">
+                    <h2 class="section-title"><i class="fa-solid fa-network-wired"></i> <span class="es">Implementaciones Técnicas</span><span class="en">Technical Implementations</span></h2>
+                    
+                    <article class="project-card filterable-item reveal-up delay-1" data-category="sistemas redes" data-keywords="linux raspberry pi os lite streaming obs redes broadcast ubuntu">
+                        <div class="term-dots"><span></span><span></span><span></span></div>
+                        <div class="project-header">
+                            <i class="fa-solid fa-broadcast-tower project-icon"></i>
+                            <div>
+                                <h3 class="item-title"><span class="es">Servidor Streaming (Prácticas académicas)</span><span class="en">Streaming Server (Academic Internship)</span></h3>
+                                <div class="item-org"><span class="es">Proyecto U-tad | 2026</span><span class="en">U-tad Project | 2026</span></div>
+                            </div>
+                        </div>
+                        <div class="item-desc-3d">
+                            <p>
+                                <span class="es">Configuración de servidor en entorno <strong>Linux (Raspberry Pi OS Lite)</strong>. Securización de flujo con Icecast e integración de OBS Studio. <strong>Soportando picos de +50 conexiones concurrentes y 99.9% de uptime durante pruebas.</strong></span>
+                                <span class="en">Server configuration in a <strong>Linux (Raspberry Pi OS Lite)</strong> environment. Stream securing via Icecast and OBS Studio integration. <strong>Handling peaks of +50 concurrent connections with 99.9% uptime during tests.</strong></span>
+                            </p>
+                        </div>
+                        <div class="tags-grid-3d"><span class="tag">Raspberry Pi OS Lite</span> <span class="tag">Linux</span> <span class="tag">High Availability</span></div>
+                    </article>
+
+                    <article class="project-card filterable-item reveal-up delay-2" data-category="sistemas" data-keywords="cloud linux storage almacenamiento self-hosted servidores ubuntu">
+                        <div class="term-dots"><span></span><span></span><span></span></div>
+                        <div class="project-header">
+                            <i class="fa-solid fa-cloud project-icon"></i>
+                            <div>
+                                <h3 class="item-title"><span class="es">Cloud Privada (Self-Hosted)</span><span class="en">Private Cloud (Self-Hosted)</span></h3>
+                                <div class="item-org"><span class="es">Administración de Servidores | 2025</span><span class="en">Server Administration | 2025</span></div>
+                            </div>
+                        </div>
+                        <div class="item-desc-3d">
+                            <p>
+                                <span class="es">Implementación de almacenamiento autoalojado. Configuración de servidor Linux, gestión de volúmenes cifrados, permisos de usuario (ACL) y sincronización remota segura y accesible.</span>
+                                <span class="en">Self-hosted storage implementation. Linux server configuration, encrypted volume management, user permissions (ACL), and secure, accessible remote synchronization.</span>
+                            </p>
+                        </div>
+                        <div class="tags-grid-3d"><span class="tag">Linux (Ubuntu)</span> <span class="tag">Storage Volumes</span> <span class="tag">Data Security</span></div>
+                    </article>
+
+                    <article class="project-card filterable-item reveal-up delay-3" data-category="redes" data-keywords="cisco packet tracer redes routing switching ospf vlan dhcp dns ipv4 ipv6">
+                        <div class="term-dots"><span></span><span></span><span></span></div>
+                        <div class="project-header">
+                            <i class="fa-solid fa-diagram-project project-icon"></i>
+                            <div>
+                                <h3 class="item-title"><span class="es">Arquitectura LAN/WAN Corporativa</span><span class="en">Corporate LAN/WAN Architecture</span></h3>
+                                <div class="item-org"><span class="es">Simulación Cisco | 2025</span><span class="en">Cisco Simulation | 2025</span></div>
+                            </div>
+                        </div>
+                        <div class="item-desc-3d">
+                            <p>
+                                <span class="es">Diseño de topologías de red en Cisco. Enrutamiento dinámico OSPF, segmentación L2 con <strong>VLANs</strong>, direccionamiento <strong>IPv4/IPv6</strong> y despliegue de políticas DHCP/DNS. Entorno escalable para corporaciones.</span>
+                                <span class="en">Network topology design in Cisco. Dynamic OSPF routing, L2 segmentation with <strong>VLANs</strong>, <strong>IPv4/IPv6</strong> addressing, and DHCP/DNS policy deployment. Scalable environment for corporations.</span>
+                            </p>
+                        </div>
+                        <div class="tags-grid-3d"><span class="tag">Cisco Packet Tracer</span> <span class="tag">VLAN / Switching</span> <span class="tag">OSPF Routing</span></div>
+                    </article>
+                </section>
+            </div>
+
+            <!-- SIDEBAR -->
+            <aside>
+                <section class="reveal-right">
+                    <h2 class="section-title"><i class="fa-solid fa-microchip"></i> <span class="es">Stack Técnico</span><span class="en">Tech Stack</span></h2>
+                    
+                    <div class="skills-category filterable-item" data-category="sistemas" data-keywords="linux ubuntu kali windows server virtualizacion aws amazon docker contenedores nube">
+                        <h3><span class="es">SO & Cloud</span><span class="en">OS & Cloud</span></h3>
+                        <div class="tags-grid">
+                            <span class="tag">Linux (Ubuntu/Debian)</span> <span class="tag">Kali Linux</span>
+                            <span class="tag">Windows Server</span> <span class="tag">Amazon AWS</span>
+                            <span class="tag">Docker</span> <span class="tag"><span class="es">Virtualización</span><span class="en">Virtualization</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="skills-category filterable-item" data-category="redes" data-keywords="redes cisco vlan ospf rip ipv4 ipv6 wireshark firewall pfsense seguridad">
+                        <h3><span class="es">Networking & Seguridad</span><span class="en">Networking & Security</span></h3>
+                        <div class="tags-grid">
+                            <span class="tag">Cisco (Packet Tracer)</span> <span class="tag">VLANs / OSPF</span>
+                            <span class="tag">IPv4 & IPv6</span> <span class="tag">Wireshark</span>
+                            <span class="tag">Firewalls</span>
+                        </div>
+                    </div>
+
+                    <div class="skills-category filterable-item" data-category="sistemas" data-keywords="html css javascript active directory gpo ldap dns dhcp bash powershell apache nginx sql mariadb bases de datos">
+                        <h3><span class="es">Servicios, Web & Bases de Datos</span><span class="en">Services, Web & Databases</span></h3>
+                        <div class="tags-grid">
+                            <span class="tag">HTML / CSS / JavaScript</span> <span class="tag">SQL / MariaDB</span>
+                            <span class="tag">Active Directory & GPO</span> <span class="tag">DNS / DHCP</span>
+                            <span class="tag">Bash & PowerShell</span> <span class="tag">Nginx / Apache</span>
+                        </div>
+                    </div>
+
+                    <div class="skills-category filterable-item" data-category="experiencia" data-keywords="organizacion trabajo en equipo habilidades sociales responsabilidad puntualidad aprendizaje autodidacta escucha activa comunicacion atencion al cliente sla troubleshooting">
+                        <h3>Soft Skills</h3>
+                        <div class="tags-grid" style="border: 1px dashed var(--primary); padding: 1rem; border-radius: 12px; background: transparent;">
+                            <span class="tag" style="background:transparent; box-shadow:none;">✓ Troubleshooting (ITIL)</span>
+                            <span class="tag" style="background:transparent; box-shadow:none;">✓ <span class="es">Trabajo en equipo</span><span class="en">Team Collaboration</span></span>
+                            <span class="tag" style="background:transparent; box-shadow:none;">✓ <span class="es">Responsabilidad y SLA</span><span class="en">Responsibility & SLA</span></span>
+                            <span class="tag" style="background:transparent; box-shadow:none;">✓ <span class="es">Atención a cliente IT</span><span class="en">IT Customer Service</span></span>
+                            <span class="tag" style="background:transparent; box-shadow:none;">✓ <span class="es">Gestión bajo presión</span><span class="en">High-pressure Management</span></span>
+                            <span class="tag" style="background:transparent; box-shadow:none;">✓ <span class="es">Aprendizaje autodidacta</span><span class="en">Self-taught Learning</span></span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="reveal-right delay-1">
+                    <h2 class="section-title"><i class="fa-solid fa-award"></i> <span class="es">Certificaciones</span><span class="en">Certifications</span></h2>
+                    <div class="cert-card filterable-item" data-category="redes">
+                        <div class="cert-ring-wrap">
+                            <svg class="cert-ring" viewBox="0 0 36 36" aria-hidden="true">
+                                <circle class="ring-track" cx="18" cy="18" r="15.9"></circle>
+                                <circle class="ring-progress" cx="18" cy="18" r="15.9"></circle>
+                            </svg>
+                            <i class="fa-solid fa-check cert-ring-icon"></i>
+                        </div>
+                        <div class="cert-info">
+                            <h3>Cisco Certified Support Technician IT Support (CCST)</h3>
+                            <p><span class="es">Soporte técnico y gestión de redes</span><span class="en">Technical support & network management</span></p>
+                            <span><span class="es">Expedición: May. 2026</span><span class="en">Issued: May 2026</span></span>
+                        </div>
+                    </div>
+                    <div class="cert-card filterable-item" data-category="sistemas">
+                        <div class="cert-ring-wrap">
+                            <svg class="cert-ring" viewBox="0 0 36 36" aria-hidden="true">
+                                <circle class="ring-track" cx="18" cy="18" r="15.9"></circle>
+                                <circle class="ring-progress" cx="18" cy="18" r="15.9"></circle>
+                            </svg>
+                            <i class="fa-solid fa-check cert-ring-icon"></i>
+                        </div>
+                        <div class="cert-info">
+                            <h3><span class="es">Inteligencia Artificial Generativa Aplicada al Desarrollo</span><span class="en">Generative AI Applied to IT Development</span></h3>
+                            <p>U-tad</p>
+                            <span><span class="es">Expedición: Jun. 2026</span><span class="en">Issued: Jun 2026</span></span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="reveal-right delay-2">
+                    <h2 class="section-title"><i class="fa-solid fa-language"></i> <span class="es">Idiomas</span><span class="en">Languages</span></h2>
+                    <div class="lang-item filterable-item" data-category="experiencia">
+                        <div class="lang-header"><span><span class="es">Español</span><span class="en">Spanish</span></span><span style="color: var(--primary);"><span class="es">Nativo</span><span class="en">Native</span></span></div>
+                        <div class="lang-bar"><div class="lang-progress fill-bar" data-width="100%" data-percent="100"></div></div>
+                        <div class="lang-percent-label"><span class="lang-counter" data-target="100">0</span>%</div>
+                    </div>
+                    <div class="lang-item filterable-item" data-category="experiencia">
+                        <div class="lang-header"><span><span class="es">Inglés</span><span class="en">English</span></span><span style="color: var(--primary);"><span class="es">Nivel Alto</span><span class="en">Advanced Level</span></span></div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem;">
+                            <span class="es">Fluidez técnica y soltura en entornos colaborativos y situaciones IT.</span>
+                            <span class="en">Technical fluency and ease in collaborative IT environments.</span>
+                        </div>
+                        <div class="lang-bar"><div class="lang-progress fill-bar" data-width="85%" data-percent="85"></div></div>
+                        <div class="lang-percent-label"><span class="lang-counter" data-target="85">0</span>%</div>
+                    </div>
+                </section>
+
+            </aside>
+        </div>
+
+        <!-- FOOTER DEVOPS -->
+        <footer class="devops-footer reveal-up delay-1">
+            <div class="footer-content">
+                <span class="ping"><i class="fa-solid fa-bolt"></i> <span class="es">Estado del sistema: ONLINE</span><span class="en">System Status: ONLINE</span></span>
+                <span>|</span>
+                <span><i class="fa-solid fa-clock"></i> <span id="live-clock">--:--:--</span> <span class="es">(Madrid)</span><span class="en">(Madrid)</span></span>
+                <span>|</span>
+                <span><i class="fa-solid fa-hourglass-half"></i> <span class="es">Sesión</span><span class="en">Uptime</span>: <span id="uptime-counter">0s</span></span>
+                <span>|</span>
+                <span><i class="fa-brands fa-js"></i> 100% Vanilla JS & CSS</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 0. La página abre siempre en modo claro (sin seguir el tema del sistema)
+
+            // 1. SISTEMA DE RED INTERACTIVA (Canvas Optimizada, con pulsos de "tráfico")
+            const canvas = document.getElementById('network-canvas');
+            const ctx = canvas.getContext('2d', { alpha: false });
+            let particlesArray = [];
+            let activeConnections = [];
+            let pulses = [];
+            let w = canvas.width = window.innerWidth;
+            let h = canvas.height = window.innerHeight;
+            let mouse = { x: null, y: null, radius: 150 };
+
+            window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+            
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; initNetwork(); }, 200);
+            });
+
+            class Particle {
+                constructor() {
+                    this.size = (Math.random() * 2) + 1;
+                    this.x = Math.random() * w; this.y = Math.random() * h;
+                    this.directionX = (Math.random() * 1) - 0.5; this.directionY = (Math.random() * 1) - 0.5;
+                }
+                update() {
+                    if (this.x > w || this.x < 0) this.directionX = -this.directionX;
+                    if (this.y > h || this.y < 0) this.directionY = -this.directionY;
+                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < mouse.radius + this.size) {
+                        if (mouse.x < this.x && this.x < w - this.size * 10) this.x += 2;
+                        if (mouse.x > this.x && this.x > this.size * 10) this.x -= 2;
+                        if (mouse.y < this.y && this.y < h - this.size * 10) this.y += 2;
+                        if (mouse.y > this.y && this.y > this.size * 10) this.y -= 2;
+                    }
+                    this.x += this.directionX; this.y += this.directionY;
+                }
+                draw() {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--node-color').trim(); ctx.fill();
+                }
+            }
+
+            function initNetwork() {
+                particlesArray = [];
+                let numberOfParticles = Math.floor((w * h) / 9000);
+                for (let i = 0; i < numberOfParticles; i++) particlesArray.push(new Particle());
+            }
+
+            function animateNetwork() {
+                requestAnimationFrame(animateNetwork);
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-base').trim();
+                ctx.fillRect(0, 0, w, h);
+                for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); }
+                connectNodes();
+                maybeSpawnPulse();
+                drawPulses();
+            }
+
+            function connectNodes() {
+                let maxDist = 18000;
+                let rawColor = getComputedStyle(document.body).getPropertyValue('--line-color').trim();
+                let rgbMatches = rawColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                let colorBase = rgbMatches ? `${rgbMatches[1]}, ${rgbMatches[2]}, ${rgbMatches[3]}` : '2, 132, 199';
+                activeConnections = [];
+
+                for (let a = 0; a < particlesArray.length; a++) {
+                    for (let b = a + 1; b < particlesArray.length; b++) {
+                        let dx = particlesArray[a].x - particlesArray[b].x;
+                        let dy = particlesArray[a].y - particlesArray[b].y;
+                        let distance = (dx * dx) + (dy * dy);
+                        if (distance < maxDist) {
+                            let opacityValue = 1 - (distance / maxDist);
+                            ctx.strokeStyle = `rgba(${colorBase}, ${opacityValue})`;
+                            ctx.lineWidth = 1; ctx.beginPath();
+                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
+                            activeConnections.push({ ax: particlesArray[a].x, ay: particlesArray[a].y, bx: particlesArray[b].x, by: particlesArray[b].y });
+                        }
+                    }
+                }
+            }
+
+            // "Paquetes" viajando por la red, como tráfico simulado
+            function maybeSpawnPulse() {
+                if (activeConnections.length === 0) return;
+                if (pulses.length < 4 && Math.random() < 0.02) {
+                    const c = activeConnections[Math.floor(Math.random() * activeConnections.length)];
+                    pulses.push({ ...c, t: 0 });
+                }
+            }
+            function drawPulses() {
+                const pulseColor = getComputedStyle(document.body).getPropertyValue('--pulse-color').trim();
+                pulses.forEach(p => { p.t += 0.02; });
+                pulses = pulses.filter(p => p.t < 1);
+                pulses.forEach(p => {
+                    const x = p.ax + (p.bx - p.ax) * p.t;
+                    const y = p.ay + (p.by - p.ay) * p.t;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+                    ctx.fillStyle = pulseColor;
+                    ctx.shadowColor = pulseColor;
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+            }
+
+            initNetwork(); animateNetwork();
+
+            // 2. Efecto Máquina de Escribir Segura + Multi-idioma
+            let typeInterval;
+            const roleElement = document.getElementById('typewriter');
+            function typeWriter(text, i) {
+                if(i === 0) roleElement.innerHTML = '';
+                if (i < text.length) { roleElement.innerHTML += text.charAt(i); i++; typeInterval = setTimeout(() => typeWriter(text, i), 40); }
+            }
+            function startTyping() {
+                clearTimeout(typeInterval);
+                const isEs = document.body.classList.contains('lang-es');
+                const text = isEs ? "Administrador de Sistemas & Redes IT" : "Junior IT Systems & Network Administrator";
+                setTimeout(() => typeWriter(text, 0), 300);
+            }
+
+            // 3. SECUENCIA DE ARRANQUE (boot sequence)
+            const bootOverlay = document.getElementById('boot-overlay');
+            const bootLinesEl = document.getElementById('boot-lines');
+            const bootScript = [
+                "> iniciando sesión segura...",
+                "> cargando perfil: Tomás Kos Mardomingo",
+                "> verificando stack: Linux · Cisco · AWS · SQL",
+                "> listo. bienvenido."
+            ];
+            function typeBoot(lineIndex, charIndex, doneCallback) {
+                if (lineIndex >= bootScript.length) { doneCallback(); return; }
+                const line = bootScript[lineIndex];
+                const caret = bootLinesEl.querySelector('.boot-caret');
+                if (charIndex === 0 && lineIndex > 0) bootLinesEl.insertBefore(document.createElement('br'), caret);
+                if (charIndex < line.length) {
+                    bootLinesEl.insertBefore(document.createTextNode(line.charAt(charIndex)), caret);
+                    setTimeout(() => typeBoot(lineIndex, charIndex + 1, doneCallback), 14);
+                } else {
+                    setTimeout(() => typeBoot(lineIndex + 1, 0, doneCallback), 220);
+                }
+            }
+            function finishBoot() {
+                setTimeout(() => {
+                    bootOverlay.classList.add('hidden');
+                    document.getElementById('hero-header').classList.add('active');
+                    document.getElementById('filters-bar').classList.add('active');
+                    startTyping();
+                }, 350);
+            }
+            // Si el usuario prefiere menos movimiento, saltamos la animación de tecleo
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                finishBoot();
+            } else {
+                typeBoot(0, 0, finishBoot);
+            }
+
+            // 4. Toggles (Dark Mode & Language)
+            const themeBtn = document.getElementById('theme-toggle');
+            themeBtn.innerHTML = document.body.classList.contains('dark-theme') ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            themeBtn.addEventListener('click', () => {
+                const icon = themeBtn.querySelector('i');
+                icon.classList.add('icon-flip');
+                setTimeout(() => {
+                    document.body.classList.toggle('dark-theme');
+                    icon.className = document.body.classList.contains('dark-theme') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+                }, 250);
+                setTimeout(() => icon.classList.remove('icon-flip'), 500);
+            });
+
+            const langBtn = document.getElementById('lang-toggle');
+            const searchInput = document.getElementById('searchInput');
+            langBtn.addEventListener('click', () => {
+                const body = document.body;
+                if(body.classList.contains('lang-es')) {
+                    body.classList.replace('lang-es', 'lang-en');
+                    document.documentElement.lang = 'en';
+                    langBtn.innerText = 'ES'; searchInput.placeholder = "Filter CV (e.g. Linux, Network)...";
+                } else {
+                    body.classList.replace('lang-en', 'lang-es');
+                    document.documentElement.lang = 'es';
+                    langBtn.innerText = 'EN'; searchInput.placeholder = "Filtrar CV (ej: Linux, Redes)...";
+                }
+                startTyping(); // Reiniciar escritura en nuevo idioma
+            });
+
+            // 5. LÓGICA DE FILTRADO Y BUSCADOR
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const filterableItems = document.querySelectorAll('.filterable-item');
+            function applyFilters() {
+                const term = searchInput.value.toLowerCase().trim();
+                const activeBtn = document.querySelector('.filter-btn.active');
+                if(!activeBtn) return;
+                const activeCategory = activeBtn.dataset.filter;
+
+                filterableItems.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    const keywords = (item.dataset.keywords || '').toLowerCase();
+                    const categories = (item.dataset.category || '').toLowerCase();
+                    const matchesSearch = term === '' || text.includes(term) || keywords.includes(term);
+                    const matchesCategory = activeCategory === 'all' || categories.includes(activeCategory);
+
+                    if (matchesSearch && matchesCategory) {
+                        item.classList.remove('hide-item'); void item.offsetWidth; item.classList.remove('fade-out');
+                    } else {
+                        item.classList.add('fade-out'); setTimeout(() => { if (item.classList.contains('fade-out')) item.classList.add('hide-item'); }, 400); 
+                    }
+                });
+            }
+            searchInput.addEventListener('input', applyFilters);
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const targetBtn = e.target.closest('button');
+                    filterBtns.forEach(b => b.classList.remove('active')); targetBtn.classList.add('active'); applyFilters();
+                });
+            });
+
+            // 6. Scroll Reveal 3D Staggered Elegante (+ stagger de tags + anillos de certificación + contador de idiomas)
+            function animateCounter(el, target) {
+                const duration = 1000;
+                const startTime = performance.now();
+                function step(now) {
+                    const p = Math.min((now - startTime) / duration, 1);
+                    el.textContent = Math.round(p * target);
+                    if (p < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            }
+
+            const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+            const scrollObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active'); 
+
+                        const bars = entry.target.querySelectorAll('.fill-bar');
+                        bars.forEach(bar => {
+                            bar.style.width = bar.getAttribute('data-width');
+                            const counterEl = bar.closest('.lang-item')?.querySelector('.lang-counter');
+                            if (counterEl) animateCounter(counterEl, parseInt(bar.dataset.percent || bar.dataset.width, 10));
+                        });
+
+                        const rings = entry.target.querySelectorAll('.ring-progress');
+                        rings.forEach(r => { r.style.strokeDashoffset = 0; });
+
+                        const tags = entry.target.querySelectorAll('.tag');
+                        tags.forEach((tag, i) => {
+                            tag.style.transitionDelay = `${i * 0.035}s`;
+                            requestAnimationFrame(() => tag.classList.add('tag-in'));
+                        });
+
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
+            revealElements.forEach(el => scrollObserver.observe(el));
+
+            // 7. Línea de progreso del timeline ligada al scroll
+            const timelineContainers = document.querySelectorAll('.timeline-container');
+            function updateTimelineProgress() {
+                timelineContainers.forEach(container => {
+                    const rect = container.getBoundingClientRect();
+                    const vh = window.innerHeight;
+                    let progress = (vh * 0.85 - rect.top) / (rect.height + vh * 0.4);
+                    progress = Math.max(0, Math.min(1, progress));
+                    container.style.setProperty('--progress', progress);
+                });
+            }
+            window.addEventListener('scroll', () => requestAnimationFrame(updateTimelineProgress));
+            updateTimelineProgress();
+
+            // 8. Spotlight de cursor en las tarjetas de proyecto
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+                    card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+                });
+            });
+
+            // 9. Nav compacta al hacer scroll
+            const nav = document.getElementById('main-nav');
+            window.addEventListener('scroll', () => {
+                nav.classList.toggle('nav-scrolled', window.scrollY > 60);
+            });
+
+            // 10. FAB: toggle por click/touch (además del hover)
+            const fabContainer = document.getElementById('fab-container');
+            const fabMainBtn = document.getElementById('fab-main-btn');
+            fabMainBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                fabContainer.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (!fabContainer.contains(e.target)) fabContainer.classList.remove('open');
+            });
+
+            // 11. CTA principal del hero -> dispara la descarga de PDF
+            document.getElementById('hero-cta').addEventListener('click', () => {
+                document.getElementById('download-pdf').click();
+            });
+
+            // 12. Reloj en vivo (hora de Madrid) + contador de sesión
+            const clockEl = document.getElementById('live-clock');
+            const uptimeEl = document.getElementById('uptime-counter');
+            const sessionStart = performance.now();
+            function updateClock() {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleTimeString('es-ES', { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const elapsed = Math.floor((performance.now() - sessionStart) / 1000);
+                const mm = Math.floor(elapsed / 60);
+                const ss = elapsed % 60;
+                uptimeEl.textContent = mm > 0 ? `${mm}m ${ss}s` : `${ss}s`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // 13. Funciones de RRHH y ATS (vCard & TXT Download ACTUALIZADO)
+            
+            // vCard Generator
+            document.getElementById('download-vcard').addEventListener('click', (e) => {
+                e.preventDefault();
+                const vcardData = `BEGIN:VCARD\nVERSION:3.0\nN:Kos Mardomingo;Tomás;;;\nFN:Tomás Kos Mardomingo\nTITLE:Junior SysAdmin & Infraestructura\nTEL;TYPE=CELL:+34692876776\nEMAIL:tomaskoskos@gmail.com\nADR;TYPE=HOME:;;Guadarrama;Madrid;;;Spain\nURL:https://github.com/tomaskosmardomingo\nEND:VCARD`;
+                const blob = new Blob([vcardData], { type: 'text/vcard' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'Tomas_Kos.vcf'; a.click();
+                URL.revokeObjectURL(url);
+            });
+
+            // ATS Plain-Text Generator (ACTUALIZADO CON EL NUEVO CV)
+            document.getElementById('download-ats').addEventListener('click', (e) => {
+                e.preventDefault();
+                const txtData = `TOMÁS KOS MARDOMINGO\nJunior SysAdmin & Networking\nLocalización: Madrid\nTeléfono: 692 876 776\nEmail: tomaskoskos@gmail.com\nLinkedIn: linkedin.com/in/tomás-kos\nGitHub: github.com/tomaskosmardomingo\n\nPERFIL PROFESIONAL\nEstudiante de Administración de Sistemas Informáticos en Red (ASIR), con experiencia práctica en administración de sistemas Linux, virtualización y redes corporativas Cisco. Combino formación técnica con experiencia demostrada en atención al cliente y trabajo bajo presión, aportando responsabilidad, capacidad de resolución de problemas y firme compromiso con el trabajo en equipo. Busco una posición junior en administración de sistemas, redes o soporte IT.\n\nEXPERIENCIA LABORAL\n- Cajero / Reponedor | El Corte Inglés (Supercor) Guadarrama (Jul. 2026 - Sept. 2026)\n- Administrador de Sistemas (Prácticas) | U-tad Las Rozas de Madrid (Mayo 2026)\n- Camarero | Grupo Switch Catering de bodas (Jul. 2025 - Actualidad)\n- Ayudante de Cocina | Catering de bodas (Sept. 2025 - Dic. 2025)\n\nFORMACIÓN ACADÉMICA\n- Grado Superior en ASIR | U-tad (Sept. 2025 - Jun. 2027)\n- Bachillerato (Ciencias Sociales) | Gredos San Diego (Sept. 2023 - May. 2025)\n\nCOMPETENCIAS TÉCNICAS\n- Sistemas & Cloud: Linux (Ubuntu/Debian), Kali Linux, Windows Server, Amazon AWS, Docker, Virtualización (VirtualBox/Vagrant)\n- Redes & Seguridad: Cisco (Packet Tracer), VLANs/OSPF/Switching, IPv4 & IPv6, subnetting, Wireshark, Firewalls/VPN\n- Servicios & BBDD: Active Directory & GPO, DNS/DHCP, SQL, Bash & PowerShell, Nginx/Apache\n\nPROYECTOS TÉCNICOS\n- Servidor de streaming en Linux (Raspberry Pi OS Lite) con Icecast y OBS Studio.\n- Cloud privada self-hosted: gestión de volúmenes cifrados, permisos de usuario y sincronización remota segura.\n- Arquitectura de red corporativa LAN/WAN en Cisco Packet Tracer.\n\nCERTIFICACIONES\n- CCST-Cisco Certified Support Technician (Mayo 2026)\n- IA Generativa Aplicada al Desarrollo U-tad (Jun. 2026)\n\nIDIOMAS\n- Español (Nativo)\n- Inglés (Nivel Medio-alto, Bl)`;
+                const blob = new Blob([txtData], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'Tomas_Kos_ATS_CV.txt'; a.click();
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+</body>
+</html>
