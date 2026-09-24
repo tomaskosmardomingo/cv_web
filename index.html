@@ -98,7 +98,7 @@
         #boot-lines .boot-caret { display: inline-block; width: 8px; height: 1rem; background: #38BDF8; animation: blink 0.9s step-end infinite; vertical-align: middle; }
 
         /* --- RED INTERACTIVA FONDO --- */
-        .bg-effects-wrapper { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; }
+        .bg-effects-wrapper { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100vh; z-index: 0; pointer-events: none; overflow: hidden; }
         #network-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
         .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.5; animation: float 20s infinite alternate ease-in-out; }
         .blob-1 { width: 500px; height: 500px; background: rgba(2, 132, 199, 0.15); top: -100px; left: -100px; }
@@ -168,7 +168,7 @@
         .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
         .section-title i { color: var(--primary); background: var(--primary-light); padding: 0.6rem; border-radius: 10px; }
 
-        /* --- TIMELINE (con línea de progreso animada por scroll) --- */
+        /* --- TIMELINE --- */
         .timeline-container { position: relative; padding-left: 2rem; --progress: 0; }
         .timeline-track { position: absolute; left: 16px; top: 0; bottom: 0; width: 2px; background: var(--border); border-radius: 2px; z-index: 0; pointer-events: none; }
         .timeline-progress { position: absolute; left: 16px; top: 0; width: 2px; height: calc(var(--progress) * 100%); background: linear-gradient(to bottom, var(--primary), var(--accent)); border-radius: 2px; box-shadow: 0 0 8px var(--primary); transition: height 0.1s linear; z-index: 0; pointer-events: none; }
@@ -179,13 +179,13 @@
         .timeline-item:last-child { margin-bottom: 0; }
         .item-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.2rem; }
         .item-org { color: var(--primary); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .item-date { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); background: var(--bg-base); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid var(--border); }
+        .item-date { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); background: var(--bg-base); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap; }
         .item-desc { color: var(--text-muted); font-size: 0.95rem; margin-top: 1rem; }
         .item-desc ul { list-style-type: none; }
         .item-desc li { position: relative; padding-left: 1.2rem; margin-bottom: 0.5rem; }
         .item-desc li::before { content: '▹'; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
 
-        /* --- TARJETAS PROYECTOS (estilo terminal + spotlight de cursor) --- */
+        /* --- TARJETAS PROYECTOS --- */
         .project-card { background: var(--bg-base); border: 1px solid var(--border); border-radius: 16px; padding: 2.4rem 2rem 2rem; margin-bottom: 1.8rem; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.4s ease, box-shadow 0.4s ease; }
         .project-card:hover { border-color: var(--primary); box-shadow: var(--shadow-hover); transform: translateY(-5px); }
         .project-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(2, 132, 199, 0.12), transparent 70%); }
@@ -214,7 +214,7 @@
         .cert-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
         .cert-info span { font-size: 0.75rem; color: var(--primary); font-weight: bold; display: inline-block; margin-top: 0.3rem; background: var(--primary-light); padding: 0.2rem 0.6rem; border-radius: 6px; }
 
-        /* --- SKILLS & TAGS (con stagger de entrada) --- */
+        /* --- SKILLS & TAGS --- */
         .skills-category { margin-bottom: 2rem; }
         .skills-category h3 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; color: var(--text-main); font-weight: 700; }
         .tags-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
@@ -232,7 +232,7 @@
         .footer-content { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
         .ping i { color: var(--success); animation: pulse 2s infinite; }
 
-        /* --- MENÚ FLOTANTE DINÁMICO (FAB, en arco, funciona con hover y con toque) --- */
+        /* --- MENÚ FLOTANTE DINÁMICO (FAB) --- */
         .fab-container { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 1000; }
         .fab-main { position: absolute; inset: 0; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; font-size: 1.5rem; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; justify-content: center; align-items: center; }
         .fab-container:hover .fab-main, .fab-container.open .fab-main { transform: rotate(45deg) scale(1.05); }
@@ -249,9 +249,9 @@
         .fab-container:hover .fab-child:nth-child(3), .fab-container.open .fab-child:nth-child(3) { transition-delay: 0s; transform: translate(-78px, -6px) scale(1); }
         .fab-child:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Tooltips para los botones flotantes (arriba del botón, para no chocar con el arco) */
+        /* Tooltips optimizados (se despliegan a la izquierda para no salirse de pantalla) */
         .fab-child::before {
-            content: attr(data-tooltip-es); position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%);
+            content: attr(data-tooltip-es); position: absolute; right: 100%; top: 50%; transform: translateY(-50%); margin-right: 15px;
             background: var(--bg-card); color: var(--text-main); padding: 0.4rem 0.8rem; border-radius: 8px;
             border: 1px solid var(--border); font-size: 0.8rem; font-family: 'Inter', sans-serif; white-space: nowrap;
             opacity: 0; pointer-events: none; transition: opacity 0.2s; font-weight: 600; box-shadow: var(--shadow-sm);
@@ -269,11 +269,63 @@
         .reveal-up.active, .reveal-left.active, .reveal-right.active { opacity: 1; transform: translate(0); }
         .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; } .delay-3 { transition-delay: 0.3s; } .delay-4 { transition-delay: 0.4s; }
 
+        /* =========================================================
+           DISEÑO RESPONSIVO Y OPTIMIZACIÓN MÓVIL AL 100%
+           ========================================================= */
+        
         @media (max-width: 900px) {
-            .cv-grid { grid-template-columns: 1fr; } aside { position: relative; top: 0; }
-            .hero { padding: 3rem 2rem; } .hero h1 { font-size: 2.8rem; letter-spacing: -1px; }
-            .nav-container { flex-direction: column; gap: 1rem; padding: 1rem; } .search-box { width: 100%; }
-            .fab-container { bottom: 20px; right: 20px; }
+            .cv-grid { grid-template-columns: 1fr; } 
+            aside { position: relative; top: 0; }
+            .nav-container { flex-direction: column; gap: 0.8rem; padding: 1rem; } 
+            .nav-controls { width: 100%; justify-content: center; flex-wrap: wrap; }
+            .search-box { width: 100%; max-width: none; flex-grow: 1; }
+            /* Se baja el contenido para que el navbar expandido no lo pise */
+            #cv-content { margin-top: 170px; } 
+        }
+
+        @media (max-width: 600px) {
+            /* Márgenes generales */
+            #cv-content { padding: 0 1rem; margin-top: 180px; }
+            .hero { padding: 2rem 1.2rem; border-radius: 16px; margin-bottom: 1.5rem; }
+            section { padding: 1.5rem 1.2rem; border-radius: 16px; margin-bottom: 1.5rem; }
+            
+            /* Tipografía y Textos */
+            .hero h1 { font-size: 2.2rem; line-height: 1.1; letter-spacing: -1px; margin-bottom: 1rem; }
+            .hero .role { font-size: 1.1rem; flex-wrap: wrap; }
+            .summary { font-size: 0.95rem; text-align: left; }
+            .section-title { font-size: 1.25rem; }
+            
+            /* Botones de contacto apilados y anchos */
+            .contact-grid { flex-direction: column; gap: 0.6rem; }
+            .contact-tag { width: 100%; justify-content: center; font-size: 0.9rem; padding: 0.8rem; }
+            .cta-btn { width: 100%; justify-content: center; }
+            
+            /* Filtros a dos columnas exactas */
+            .filters { gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+            .filter-btn { flex: 1 1 calc(50% - 0.5rem); padding: 0.6rem 0.5rem; font-size: 0.8rem; }
+            
+            /* Línea de tiempo (Timeline) ajustada */
+            .timeline-container { padding-left: 1.2rem; }
+            .timeline-track { left: 6px; }
+            .timeline-progress { left: 6px; }
+            .timeline-item::before { left: -14px; width: 12px; height: 12px; top: 0.3rem; }
+            .item-org { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .item-date { display: inline-block; }
+
+            /* Tarjetas de Proyectos */
+            .project-card { padding: 1.5rem 1.2rem; }
+            .project-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .project-icon { font-size: 1.6rem; padding: 0.8rem; }
+            
+            /* Footer */
+            .footer-content { flex-direction: column; gap: 0.5rem; }
+            .footer-content .sep { display: none; } /* Ocultar los palitos separadores '|' */
+            
+            /* Botón flotante FAB: Más compacto y sin salir de la pantalla */
+            .fab-container { bottom: 15px; right: 15px; }
+            .fab-container:hover .fab-child:nth-child(1), .fab-container.open .fab-child:nth-child(1) { transform: translate(0, -66px) scale(1); }
+            .fab-container:hover .fab-child:nth-child(2), .fab-container.open .fab-child:nth-child(2) { transform: translate(-48px, -48px) scale(1); }
+            .fab-container:hover .fab-child:nth-child(3), .fab-container.open .fab-child:nth-child(3) { transform: translate(-66px, 0) scale(1); }
         }
     </style>
 </head>
@@ -310,9 +362,7 @@
     <div class="fab-container" id="fab-container">
         <a href="#" class="fab-child" id="download-vcard" data-tooltip-es="Guardar Contacto" data-tooltip-en="Save Contact"><i class="fa-solid fa-address-card"></i></a>
         <a href="#" class="fab-child" id="download-ats" data-tooltip-es="Descargar CV (Texto ATS)" data-tooltip-en="Download ATS Plain-Text"><i class="fa-solid fa-file-code"></i></a>
-        
         <a href="./CV_Tomas_Kos.pdf" download="CV_Tomas_Kos.pdf" class="fab-child" id="download-pdf" data-tooltip-es="Descargar CV (PDF)" data-tooltip-en="Download PDF"><i class="fa-solid fa-file-pdf"></i></a>
-        
         <button class="fab-main" id="fab-main-btn" aria-label="Opciones"><i class="fa-solid fa-plus"></i></button>
     </div>
 
@@ -593,11 +643,11 @@
         <footer class="devops-footer reveal-up delay-1">
             <div class="footer-content">
                 <span class="ping"><i class="fa-solid fa-bolt"></i> <span class="es">Estado del sistema: ONLINE</span><span class="en">System Status: ONLINE</span></span>
-                <span>|</span>
+                <span class="sep">|</span>
                 <span><i class="fa-solid fa-clock"></i> <span id="live-clock">--:--:--</span> <span class="es">(Madrid)</span><span class="en">(Madrid)</span></span>
-                <span>|</span>
+                <span class="sep">|</span>
                 <span><i class="fa-solid fa-hourglass-half"></i> <span class="es">Sesión</span><span class="en">Uptime</span>: <span id="uptime-counter">0s</span></span>
-                <span>|</span>
+                <span class="sep">|</span>
                 <span><i class="fa-brands fa-js"></i> 100% Vanilla JS & CSS</span>
             </div>
         </footer>
