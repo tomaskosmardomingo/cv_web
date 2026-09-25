@@ -114,6 +114,7 @@
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); text-shadow: 0 0 10px var(--primary); } 100% { transform: scale(1); } }
 
         .nav-controls { display: flex; gap: 1rem; align-items: center; }
+        .nav-search-toggle { display: none; }
         .search-box { position: relative; width: 250px; }
         .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
         .search-box input { width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border-radius: 30px; border: 1px solid var(--border); background: transparent; color: var(--text-main); font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s; }
@@ -276,9 +277,19 @@
         @media (max-width: 900px) {
             .cv-grid { grid-template-columns: 1fr; } 
             aside { position: relative; top: 0; }
-            .nav-container { flex-direction: column; gap: 0.8rem; padding: 1rem; } 
-            .nav-controls { width: 100%; justify-content: center; flex-wrap: wrap; }
-            .search-box { width: 100%; max-width: none; flex-grow: 1; }
+            .nav-container { flex-wrap: nowrap; padding: 0.75rem 1rem; position: relative; }
+            .nav-brand span { display: none; }
+            .nav-controls { gap: 0.5rem; flex-wrap: nowrap; }
+            .nav-search-toggle { display: flex; }
+            .search-box {
+                position: absolute; top: calc(100% + 8px); left: 1rem; right: 1rem; width: auto; max-width: none;
+                background: var(--bg-card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+                border: 1px solid var(--border); border-radius: 14px; padding: 0.3rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+                opacity: 0; transform: translateY(-8px); pointer-events: none;
+                transition: opacity 0.25s ease, transform 0.25s ease;
+            }
+            .search-box.mobile-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
         }
 
         @media (max-width: 600px) {
@@ -345,7 +356,8 @@
         <div class="nav-container">
             <a href="#" class="nav-brand"><i class="fa-solid fa-server"></i> Tomás Kos <span>| SysAdmin</span></a>
             <div class="nav-controls">
-                <div class="search-box">
+                <button class="theme-btn nav-search-toggle" id="search-toggle" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <div class="search-box" id="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="searchInput" placeholder="Filtrar CV (ej: Linux, Redes)...">
                 </div>
@@ -943,6 +955,20 @@
             const nav = document.getElementById('main-nav');
             window.addEventListener('scroll', () => {
                 nav.classList.toggle('nav-scrolled', window.scrollY > 60);
+            });
+
+            // 9b. Buscador desplegable en móvil/tablet
+            const searchToggleBtn = document.getElementById('search-toggle');
+            const searchBoxEl = document.getElementById('search-box');
+            searchToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = searchBoxEl.classList.toggle('mobile-open');
+                if (isOpen) searchInput.focus();
+            });
+            document.addEventListener('click', (e) => {
+                if (!searchBoxEl.contains(e.target) && e.target !== searchToggleBtn && !searchToggleBtn.contains(e.target)) {
+                    searchBoxEl.classList.remove('mobile-open');
+                }
             });
 
             // 10. FAB: toggle por click/touch (además del hover)
