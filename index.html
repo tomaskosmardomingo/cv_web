@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="CV de Tomás Kos Mardomingo - Administrador de Sistemas y Ciberseguridad">
     <title>Tomás Kos | SysAdmin & Infraestructura</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%BB%3C/text%3E%3C/svg%3E">
@@ -106,7 +106,7 @@
         @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(60px, 80px) scale(1.1); } }
 
         /* --- NAVEGACIÓN --- */
-        nav { position: fixed; top: 0; width: 100%; background: var(--bg-card); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); z-index: 1000; padding: 1rem 0; transition: padding 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
+        nav { position: sticky; top: 0; background: var(--bg-card); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); z-index: 1000; padding: 1rem 0; transition: padding 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
         nav.nav-scrolled { padding: 0.55rem 0; backdrop-filter: blur(34px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
         .nav-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; text-decoration: none; }
@@ -126,7 +126,7 @@
         :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 
         /* --- PRINCIPAL --- */
-        #cv-content { max-width: 1200px; margin: 120px auto 0; padding: 0 2rem; position: relative; z-index: 10; }
+        #cv-content { max-width: 1200px; margin: 2.5rem auto 0; padding: 0 2rem; position: relative; z-index: 10; }
 
         /* --- HERO & BADGE --- */
         .hero { padding: 4.5rem 4rem; border-radius: 20px; margin-bottom: 2.5rem; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 132, 199, 0.95)); color: #FFFFFF; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
@@ -152,19 +152,19 @@
         .cta-btn:active { transform: translateY(-1px); }
 
         .contact-grid { display: flex; flex-wrap: wrap; gap: 1rem; }
-        .contact-tag { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1.4rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; color: #FFFFFF; text-decoration: none; backdrop-filter: blur(5px); font-size: 0.95rem; font-weight: 600; transition: all 0.3s ease; }
+        .contact-tag { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1.4rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; color: #FFFFFF; text-decoration: none; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); font-size: 0.95rem; font-weight: 600; transition: all 0.3s ease; }
         .contact-tag:hover { background: #FFFFFF; color: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
 
         /* --- FILTROS --- */
         .filters { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; justify-content: center; }
-        .filter-btn { padding: 0.7rem 1.6rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 0 var(--border); backdrop-filter: blur(10px); }
+        .filter-btn { padding: 0.7rem 1.6rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 0 var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .filter-btn:hover { background: var(--bg-base); color: var(--primary); }
         .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0px 0 var(--primary); transform: translateY(2px); }
 
         /* --- LAYOUT --- */
         .cv-grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 2.5rem; align-items: start; }
         aside { position: sticky; top: 110px; display: flex; flex-direction: column; gap: 2.5rem; }
-        section { background: var(--bg-card); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 2.5rem; }
+        section { background: var(--bg-card); padding: 2.5rem; border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 2.5rem; }
         .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
         .section-title i { color: var(--primary); background: var(--primary-light); padding: 0.6rem; border-radius: 10px; }
 
@@ -228,12 +228,12 @@
         .lang-percent-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; text-align: right; font-family: 'Fira Code', monospace; }
 
         /* --- DEVOPS FOOTER --- */
-        .devops-footer { margin-top: 2rem; margin-bottom: 2rem; padding: 1.5rem; text-align: center; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .devops-footer { margin-top: 2rem; margin-bottom: 2rem; padding: 1.5rem; text-align: center; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .footer-content { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
         .ping i { color: var(--success); animation: pulse 2s infinite; }
 
         /* --- MENÚ FLOTANTE DINÁMICO (FAB) --- */
-        .fab-container { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; z-index: 1000; }
+        .fab-container { position: fixed; bottom: calc(30px + env(safe-area-inset-bottom, 0px)); right: 30px; width: 60px; height: 60px; z-index: 1000; }
         .fab-main { position: absolute; inset: 0; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; font-size: 1.5rem; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); display: flex; justify-content: center; align-items: center; }
         .fab-container:hover .fab-main, .fab-container.open .fab-main { transform: rotate(45deg) scale(1.05); }
         
@@ -279,13 +279,11 @@
             .nav-container { flex-direction: column; gap: 0.8rem; padding: 1rem; } 
             .nav-controls { width: 100%; justify-content: center; flex-wrap: wrap; }
             .search-box { width: 100%; max-width: none; flex-grow: 1; }
-            /* Se baja el contenido para que el navbar expandido no lo pise */
-            #cv-content { margin-top: 170px; } 
         }
 
         @media (max-width: 600px) {
             /* Márgenes generales */
-            #cv-content { padding: 0 1rem; margin-top: 180px; }
+            #cv-content { padding: 0 1rem; margin-top: 1.5rem; }
             .hero { padding: 2rem 1.2rem; border-radius: 16px; margin-bottom: 1.5rem; }
             section { padding: 1.5rem 1.2rem; border-radius: 16px; margin-bottom: 1.5rem; }
             
@@ -304,11 +302,10 @@
             .filters { gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
             .filter-btn { flex: 1 1 calc(50% - 0.5rem); padding: 0.6rem 0.5rem; font-size: 0.8rem; }
             
-            /* Línea de tiempo (Timeline) ajustada */
-            .timeline-container { padding-left: 1.2rem; }
-            .timeline-track { left: 6px; }
-            .timeline-progress { left: 6px; }
-            .timeline-item::before { left: -14px; width: 12px; height: 12px; top: 0.3rem; }
+            /* Línea de tiempo (Timeline): centrada con precisión respecto al círculo */
+            .timeline-container { padding-left: 1.75rem; }
+            .timeline-track, .timeline-progress { left: 14px; }
+            .timeline-item::before { left: -22px; width: 12px; height: 12px; top: 0.3rem; }
             .item-org { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
             .item-date { display: inline-block; }
 
@@ -322,7 +319,7 @@
             .footer-content .sep { display: none; } /* Ocultar los palitos separadores '|' */
             
             /* Botón flotante FAB: Más compacto y sin salir de la pantalla */
-            .fab-container { bottom: 15px; right: 15px; }
+            .fab-container { bottom: calc(15px + env(safe-area-inset-bottom, 0px)); right: 15px; }
             .fab-container:hover .fab-child:nth-child(1), .fab-container.open .fab-child:nth-child(1) { transform: translate(0, -66px) scale(1); }
             .fab-container:hover .fab-child:nth-child(2), .fab-container.open .fab-child:nth-child(2) { transform: translate(-48px, -48px) scale(1); }
             .fab-container:hover .fab-child:nth-child(3), .fab-container.open .fab-child:nth-child(3) { transform: translate(-66px, 0) scale(1); }
