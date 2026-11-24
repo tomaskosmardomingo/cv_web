@@ -1565,6 +1565,9 @@
         .fx-share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
         .fx-toast { position: fixed; left: 50%; bottom: 28px; z-index: 3100; transform: translate(-50%, 30px); opacity: 0; padding: .7rem 1.2rem; border-radius: 12px; background: #0F172A; color: #fff; font: 600 .9rem 'Inter', sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,.35); transition: opacity .3s, transform .3s; pointer-events: none; }
         .fx-toast.on { opacity: 1; transform: translate(-50%, 0); }
+        .fx-verify { display: inline-flex; align-items: center; gap: .35rem; margin-top: .45rem; font: 600 .8rem 'Inter', sans-serif; color: var(--primary); text-decoration: none; border: 1px solid var(--primary); border-radius: 999px; padding: .15rem .6rem; }
+        .fx-verify:hover { background: var(--primary); color: #fff; }
+        .fx-status-link { color: inherit; text-decoration: none; border-bottom: 1px dashed currentColor; }
 
         /* Diagrama de red de GlucoNet */
         .fx-arch-btn { position: relative; z-index: 2; margin-top: 1.2rem; display: inline-flex; align-items: center; gap: .5rem; padding: .6rem 1.1rem; border-radius: 10px; border: 1px dashed var(--primary); background: transparent; color: var(--primary); font: 600 .88rem 'Inter', sans-serif; cursor: pointer; transition: background .2s; }
@@ -1639,6 +1642,10 @@
         const WEB = 'https://www.koscloud.es';
         // El QR lleva directamente al CV en PDF publicado junto a la web
         const PDF = WEB + '/CV_Tomas_Kos.pdf';
+        // Enlaces opcionales: mientras estén vacíos no se muestra nada
+        const CREDLY = '';    // insignia verificable de Cisco CCST (https://www.credly.com/badges/...)
+        const ESTADO = '';    // página de estado de mis servicios (p. ej. Uptime Kuma)
+        const CALENDLY = '';  // enlace para reservar entrevista; si está vacío, el botón abre un email
         // Dirección que se comparte: la de la propia página si está publicada; si se abre desde el disco, la web pública
         const urlCV = () => /^https?:$/.test(location.protocol) ? location.href.split('#')[0] : WEB;
         const guardar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* modo privado */ } };
@@ -1725,12 +1732,13 @@
                 <p class="fx-contact-intro">${bi('Busco prácticas (Formación en Empresa) o un primer puesto como Junior SysAdmin, técnico de redes o soporte IT. Escríbeme por donde te venga mejor:', 'I am looking for an internship or a first role as a Junior SysAdmin, network technician or IT support. Reach me however suits you best:')}</p>
                 <div class="fx-contact-grid">
                     <a class="fx-cbtn main" href="mailto:${EMAIL}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}"><i class="fa-solid fa-envelope"></i> ${bi('Enviar email', 'Send an email')}</a>
+                    <a class="fx-cbtn main" id="fx-entrevista" ${CALENDLY ? `href="${CALENDLY}" target="_blank" rel="noopener"` : `href="mailto:${EMAIL}?subject=${encodeURIComponent('Entrevista – Tomás Kos')}&body=${encodeURIComponent('Hola Tomás,\n\nMe gustaría hacerte una entrevista. ¿Te viene bien el día ... a las ...?\n\n')}"`}><i class="fa-solid fa-calendar-check"></i> ${bi('Agendar entrevista', 'Book an interview')}</a>
                     <a class="fx-cbtn wa" href="https://wa.me/${TEL}?text=${encodeURIComponent(waTxt)}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
                     <a class="fx-cbtn" href="tel:+${TEL}"><i class="fa-solid fa-phone"></i> 692 876 776</a>
                     <button class="fx-cbtn" type="button" id="fx-copy-mail"><i class="fa-regular fa-copy"></i> ${bi('Copiar email', 'Copy email')}</button>
                     <a class="fx-cbtn" href="https://www.linkedin.com/in/tomás-kos" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
                     <button class="fx-cbtn" type="button" id="fx-vcard"><i class="fa-solid fa-address-card"></i> ${bi('Guardar contacto', 'Save contact')}</button>
-                    <a class="fx-cbtn" href="./CV_Tomas_Kos.pdf" download="CV_Tomas_Kos.pdf"><i class="fa-solid fa-file-pdf"></i> ${bi('CV en PDF', 'CV (PDF)')}</a>
+                    <a class="fx-cbtn" id="fx-pdf-link" href="./CV_Tomas_Kos.pdf" download="CV_Tomas_Kos.pdf"><i class="fa-solid fa-file-pdf"></i> ${bi('CV en PDF', 'CV (PDF, English)')}</a>
                     <a class="fx-cbtn" href="./CV_Tomas_Kos_ATS.pdf" download="CV_Tomas_Kos_ATS.pdf"><i class="fa-solid fa-file-lines"></i> ${bi('CV para portales (ATS)', 'ATS-friendly CV')}</a>
                     <button class="fx-cbtn" type="button" id="fx-print"><i class="fa-solid fa-print"></i> ${bi('Imprimir CV', 'Print CV')}</button>
                     <button class="fx-cbtn" type="button" id="fx-share2"><i class="fa-solid fa-share-nodes"></i> ${bi('Compartir', 'Share')}</button>
@@ -1833,7 +1841,31 @@
             lb.addEventListener('click', () => setTimeout(() => guardar('cv-lang', L()), 0));
         });
 
-        /* ---------- 6. Al imprimir, todo visible y las barras de idioma con su valor ---------- */
+        /* ---------- 6. El CV en PDF se descarga en el idioma de la página ---------- */
+        const ajustarPdf = () => {
+            const f = L() === 'en' ? 'CV_Tomas_Kos_EN.pdf' : 'CV_Tomas_Kos.pdf';
+            ['download-pdf', 'fx-pdf-link'].forEach((id) => { const a = document.getElementById(id); if (a) { a.href = './' + f; a.download = f; } });
+        };
+        new MutationObserver(ajustarPdf).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        ajustarPdf();
+
+        /* ---------- 7. Enlaces opcionales: credencial de Cisco y estado de mis servicios ---------- */
+        if (CREDLY) {
+            const ccst = [...document.querySelectorAll('.cert-card .cert-info')].find((c) => /CCST/.test(c.textContent));
+            if (ccst) ccst.insertAdjacentHTML('beforeend', `<a class="fx-verify" href="${CREDLY}" target="_blank" rel="noopener"><i class="fa-solid fa-circle-check"></i> ${bi('Verificar credencial', 'Verify credential')}</a>`);
+        }
+        if (ESTADO) {
+            const pie = document.querySelector('.devops-footer .footer-content');
+            if (pie) pie.insertAdjacentHTML('beforeend', `<span class="sep">|</span><a class="fx-status-link" href="${ESTADO}" target="_blank" rel="noopener"><i class="fa-solid fa-server"></i> ${bi('Estado de mis servicios', 'My services status')}</a>`);
+        }
+
+        /* ---------- 8. Estadísticas de visitas de Vercel (sin cookies), solo en la web publicada ---------- */
+        if (/(^|\.)koscloud\.es$/.test(location.hostname)) {
+            const va = document.createElement('script'); va.defer = true; va.src = '/_vercel/insights/script.js';
+            document.head.appendChild(va);
+        }
+
+        /* ---------- 9. Al imprimir, todo visible y las barras de idioma con su valor ---------- */
         window.addEventListener('beforeprint', () => {
             document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right').forEach((el) => el.classList.add('active'));
             document.querySelectorAll('.lang-progress[data-width]').forEach((b) => { b.style.width = b.dataset.width; });
