@@ -2617,13 +2617,14 @@
                 { ic: 'fa-brands fa-docker', t: T('Ver proyectos como docker ps', 'View projects as docker ps'), g: '', f: () => { const b = document.querySelector('.fx-ps-btn'); if (b) { if (b.getAttribute('aria-expanded') !== 'true') b.click(); b.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); } } },
                 { ic: 'fa-solid fa-print', t: T('Imprimir el CV', 'Print the CV'), g: '', f: () => window.print() },
                 { ic: 'fa-solid fa-code', t: T('Modo Matrix (easter egg)', 'Matrix mode (easter egg)'), g: '', f: () => { if (window.fxMatrix) window.fxMatrix(); } },
+                ...(window.fxAccionesExtra ? window.fxAccionesExtra() : []),
                 ...secciones,
             ];
         };
         const pal = document.createElement('div');
         pal.className = 'fx-pal'; pal.setAttribute('role', 'dialog'); pal.setAttribute('aria-modal', 'true'); pal.setAttribute('aria-label', 'Comandos');
         pal.innerHTML = `<div class="fx-pal-box"><div class="fx-pal-in"><span>&gt;</span><input type="text" autocomplete="off" spellcheck="false" aria-label="Buscar comando"><kbd>Esc</kbd></div><div class="fx-pal-list" role="listbox"></div>
-            <div class="fx-pal-pie"><span><kbd>↑</kbd><kbd>↓</kbd> ${bi('moverse', 'move')}</span><span><kbd>Enter</kbd> ${bi('ejecutar', 'run')}</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd> ${bi('abrir', 'open')}</span><span><kbd>t</kbd> ${bi('tema', 'theme')} · <kbd>l</kbd> ${bi('idioma', 'language')} · <kbd>d</kbd> ${bi('descargar', 'download')} · <kbd>/</kbd> ${bi('buscar', 'search')} · <kbd>?</kbd> ${bi('atajos', 'shortcuts')}</span></div></div>`;
+            <div class="fx-pal-pie"><span><kbd>↑</kbd><kbd>↓</kbd> ${bi('moverse', 'move')}</span><span><kbd>Enter</kbd> ${bi('ejecutar', 'run')}</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd> ${bi('abrir', 'open')}</span><span><kbd>t</kbd> ${bi('tema', 'theme')} · <kbd>l</kbd> ${bi('idioma', 'language')} · <kbd>d</kbd> ${bi('descargar', 'download')} · <kbd>/</kbd> ${bi('buscar', 'search')} · <kbd>s</kbd> ${bi('salvapantallas', 'screensaver')} · <kbd>?</kbd> ${bi('atajos', 'shortcuts')}</span></div></div>`;
         document.body.appendChild(pal);
         const pIn = pal.querySelector('input'), pList = pal.querySelector('.fx-pal-list');
         let lista = [], sel = 0, foco = null;
@@ -2668,6 +2669,398 @@
             else if (k === '?') { abrirPal(); }
             else if (k === '/') { const s = document.getElementById('searchInput'); if (s) { e.preventDefault(); const t = document.getElementById('search-toggle'); if (t && getComputedStyle(t).display !== 'none') t.click(); s.focus(); } }
         });
+    })();
+    </script>
+    <!-- Tercera tanda (24/11/2026): tarjetas de proyecto que giran, cubo 3D de habilidades, paquetes por la topología,
+         cortafuegos en vivo, CCST que se inclina con el móvil, trayectoria en perspectiva, salvapantallas (tecla s),
+         tarjeta de visita 3D y contador de uptime. Sin librerías: CSS 3D, SVG y canvas 2D, parado cuando no se ve. -->
+    <style id="fx-visual3-css">
+        /* 1. Tarjetas de proyecto que giran */
+        .fx-flip-btn { position: absolute; top: .85rem; right: 1rem; z-index: 4; display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .55rem; border-radius: 7px; border: 1px solid var(--border); background: var(--bg-card); color: var(--primary); font: 600 .7rem 'Fira Code', monospace; cursor: pointer; }
+        .fx-flip-btn:hover, .fx-flip-btn:focus-visible { border-color: var(--primary); outline: none; }
+        .fx-back { position: absolute; inset: 0; z-index: 3; display: none; padding: 1.4rem 1.5rem; overflow-y: auto; border-radius: inherit; background: linear-gradient(145deg, rgba(14,165,233,.07), transparent 60%), var(--bg-base); text-align: left; }
+        .project-card.fx-flipped .fx-back { display: block; }
+        .fx-back h4 { margin: 0 0 .8rem; padding-right: 6.5rem; font: 700 .95rem 'Fira Code', monospace; color: var(--primary); }
+        .fx-back dl { display: grid; grid-template-columns: max-content 1fr; gap: .45rem .9rem; margin: 0; font-size: .86rem; }
+        .fx-back dt { font: 600 .74rem 'Fira Code', monospace; color: var(--text-muted); padding-top: .1rem; }
+        .fx-back dd { margin: 0; color: var(--text-main); }
+        .fx-back dd .tag { display: inline-block; margin: 0 .3rem .3rem 0; font-size: .72rem; }
+        @media (max-width: 600px) { .fx-back { padding: 1.1rem 1rem; } .fx-back dl { grid-template-columns: 1fr; gap: .15rem; } .fx-back dd { margin-bottom: .4rem; } }
+
+        /* 2. Cubo 3D de habilidades */
+        .fx-cube-scene { height: 190px; display: flex; align-items: center; justify-content: center; perspective: 700px; margin: .2rem 0 .4rem; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+        .fx-cube-scene.drag { cursor: grabbing; }
+        .fx-cube { position: relative; width: 116px; height: 116px; transform-style: preserve-3d; transform: rotateX(var(--cx, -18deg)) rotateY(var(--cy, 30deg)); }
+        .fx-cube > div { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .45rem; border: 1px solid var(--primary); border-radius: 12px; background: linear-gradient(145deg, rgba(14,165,233,.16), rgba(16,185,129,.10)), var(--bg-card); color: var(--text-main); font: 700 .78rem 'Fira Code', monospace; text-align: center; backface-visibility: hidden; box-shadow: inset 0 0 22px rgba(56,189,248,.18); }
+        .fx-cube > div i { font-size: 2rem; color: var(--primary); }
+        .fx-cube .f1 { transform: translateZ(58px); } .fx-cube .f2 { transform: rotateY(90deg) translateZ(58px); } .fx-cube .f3 { transform: rotateY(180deg) translateZ(58px); }
+        .fx-cube .f4 { transform: rotateY(-90deg) translateZ(58px); } .fx-cube .f5 { transform: rotateX(90deg) translateZ(58px); } .fx-cube .f6 { transform: rotateX(-90deg) translateZ(58px); }
+        .fx-cube-hint { text-align: center; font-size: .72rem; color: var(--text-muted); margin: 0 0 1rem; }
+
+        /* 3. Paquetes por la topología */
+        .fx-topo .fx-pk { fill: var(--primary); filter: drop-shadow(0 0 3px var(--accent, #38BDF8)); }
+        .fx-topo .fx-pk.v { fill: #10B981; }
+
+        /* 4. Cortafuegos en vivo */
+        .fx-fw canvas { display: block; width: 100%; height: 170px; border-radius: 12px; background: var(--bg-base); border: 1px solid var(--border); }
+        .fx-fw p { margin: .55rem 0 0; font-size: .76rem; color: var(--text-muted); line-height: 1.45; }
+        .fx-fw code { font: 600 .74rem 'Fira Code', monospace; color: var(--primary); }
+
+        /* 6. Trayectoria en perspectiva */
+        .fx-pasillo .timeline-item { transform-origin: 0 0; will-change: rotate; }
+
+        /* 7. Salvapantallas */
+        .fx-ss { position: fixed; inset: 0; z-index: 4500; background: #020617; cursor: none; opacity: 0; transition: opacity .4s ease; }
+        .fx-ss.on { opacity: 1; }
+        .fx-ss-logo { position: absolute; left: 0; top: 0; padding: .9rem 1.2rem; border: 2px solid currentColor; border-radius: 12px; font: 700 1.05rem 'Fira Code', monospace; white-space: nowrap; will-change: transform; }
+        .fx-ss-logo small { display: block; margin-top: .25rem; font-size: .72rem; font-weight: 500; opacity: .75; }
+        .fx-ss-pie { position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; color: #475569; font: 500 .75rem 'Fira Code', monospace; }
+
+        /* 8. Tarjeta de visita 3D */
+        .fx-bcard { width: 250px; height: 228px; perspective: 900px; cursor: pointer; justify-self: center; }
+        .fx-bcard-in { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateX(var(--tx, 0deg)) rotateY(calc(var(--flip, 0deg) + var(--ty, 0deg))); transition: transform .7s cubic-bezier(.3,.7,.2,1); }
+        .fx-bcard.tilt .fx-bcard-in { transition: transform .12s linear; }
+        .fx-bcard.flip { --flip: 180deg; }
+        .fx-bcard-cara { position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .fx-bcard-front { display: flex; flex-direction: column; justify-content: space-between; padding: 1.1rem 1.15rem; color: #E2E8F0; text-align: left; border: 1px solid #1E3A5F; box-shadow: 0 18px 40px rgba(2,6,23,.45);
+            background: radial-gradient(circle at 85% 10%, rgba(56,189,248,.28), transparent 45%), radial-gradient(circle at 0% 100%, rgba(16,185,129,.2), transparent 50%), linear-gradient(145deg, #0F172A, #0B1220); }
+        .fx-bcard-front .logo { display: flex; align-items: center; justify-content: space-between; font: 700 .8rem 'Fira Code', monospace; color: #38BDF8; }
+        .fx-bcard-front .chip { width: 30px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, #FDE68A, #D97706); opacity: .85; }
+        .fx-bcard-front h4 { margin: 0; font: 800 1.02rem 'Plus Jakarta Sans', 'Inter', sans-serif; color: #fff; line-height: 1.2; }
+        .fx-bcard-front .rol { font: 600 .72rem 'Fira Code', monospace; color: #38BDF8; margin-top: .2rem; }
+        .fx-bcard-front ul { list-style: none; margin: 0; padding: 0; font: 500 .74rem 'Fira Code', monospace; color: #CBD5E1; }
+        .fx-bcard-front li { display: flex; gap: .45rem; align-items: center; margin-top: .22rem; } .fx-bcard-front li i { width: .9rem; color: #10B981; }
+        .fx-bcard-front .gira { font-size: .64rem; color: #64748B; text-align: right; }
+        .fx-bcard-back { transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; }
+        .fx-bcard .fx-qr-card { display: block; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        @media (max-width: 800px) { .fx-bcard { margin-top: .5rem; } }
+
+        /* 9. Uptime */
+        .fx-uptime { margin-top: .8rem; font: 500 .76rem 'Fira Code', monospace; color: var(--text-muted); text-align: center; }
+        .fx-uptime b { color: #10B981; font-weight: 700; }
+
+        @media (prefers-reduced-motion: reduce) { .fx-bcard-in { transition: none; } }
+        @media print { .fx-flip-btn, .fx-back, .fx-cube-scene, .fx-cube-hint, .fx-fw-sec, .fx-ss, .fx-bcard, .fx-uptime { display: none !important; } .fx-pasillo .timeline-item { rotate: none !important; } }
+    </style>
+    <script id="fx-visual3-js">
+    (function () {
+        'use strict';
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fino = window.matchMedia('(pointer: fine)').matches;
+        const L = () => document.body.classList.contains('lang-en') ? 'en' : 'es';
+        const T = (es, en) => L() === 'en' ? en : es;
+        const bi = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
+        const log = (n, t) => { if (window.fxLog) window.fxLog(n, t); };
+        const alVerse = (el, cb, op) => new IntersectionObserver((ents) => ents.forEach((e) => cb(e.isIntersecting, e)), op || {}).observe(el);
+        const seccion = (re) => [...document.querySelectorAll('.section-title')].find((h) => re.test(h.textContent));
+
+        /* ---------- 1. Tarjetas de proyecto que giran (ficha técnica por detrás) ---------- */
+        const fichas = (c) => {
+            const t = c.querySelector('.item-title').textContent;
+            const org = c.querySelector('.item-org'); const orgHtml = org ? org.innerHTML : '';
+            const tags = [...c.querySelectorAll('.tags-grid-3d .tag')].map((x) => `<span class="tag">${x.innerHTML}</span>`).join('');
+            const filas = [];
+            if (/gluco/i.test(t)) {
+                filas.push(['STATUS', bi('En desarrollo · TFC', 'In progress · capstone')]);
+                filas.push(['PORTS', '443/tcp · 8883/tcp · 51820/udp']);
+                filas.push(['SECURITY', bi('Cortafuegos + Fail2ban; administración solo por WireGuard y SSH con clave', 'Firewall + Fail2ban; admin only via WireGuard and key-based SSH')]);
+            } else if (/stream/i.test(t)) {
+                filas.push(['STATUS', bi('Terminado · prácticas U-tad', 'Finished · U-tad internship')]);
+                filas.push(['LOAD', bi('Picos de más de 50 conexiones simultáneas', 'Peaks of 50+ concurrent connections')]);
+            } else if (/cloud/i.test(t)) {
+                filas.push(['STATUS', bi('En marcha · desde 2025', 'Running · since 2025')]);
+            }
+            if (orgHtml) filas.push(['CONTEXT', orgHtml]);
+            if (tags) filas.push(['STACK', tags]);
+            return `<h4>$ docker inspect ${nombreP(c)}</h4><dl>${filas.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
+        };
+        function nombreP(c) { const t = c.querySelector('.item-title').textContent; return /gluco/i.test(t) ? 'gluconet' : /stream/i.test(t) ? 'streaming' : /cloud/i.test(t) ? 'cloud' : 'proyecto'; }
+        function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        document.querySelectorAll('.project-card').forEach((c) => {
+            const back = document.createElement('div'); back.className = 'fx-back'; back.innerHTML = fichas(c);
+            const b = document.createElement('button'); b.type = 'button'; b.className = 'fx-flip-btn'; b.setAttribute('aria-pressed', 'false');
+            const etiqueta = () => { b.innerHTML = c.classList.contains('fx-flipped') ? `<i class="fa-solid fa-rotate-left"></i> ${bi('volver', 'back')}` : `<i class="fa-solid fa-rotate"></i> ${bi('ficha técnica', 'tech sheet')}`; };
+            etiqueta();
+            c.appendChild(back); c.appendChild(b);
+            b.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const cambiar = () => { c.classList.toggle('fx-flipped'); b.setAttribute('aria-pressed', String(c.classList.contains('fx-flipped'))); etiqueta(); };
+                if (reduce || !c.animate) { cambiar(); return; }
+                const ida = c.animate([{ transform: 'perspective(1100px) rotateY(0deg)' }, { transform: 'perspective(1100px) rotateY(90deg)' }], { duration: 230, easing: 'ease-in' });
+                ida.onfinish = () => { cambiar(); c.animate([{ transform: 'perspective(1100px) rotateY(-90deg)' }, { transform: 'perspective(1100px) rotateY(0deg)' }], { duration: 260, easing: 'ease-out' }); };
+                if (!c.classList.contains('fx-flipped')) log('INFO', 'exec: docker inspect ' + nombreP(c));
+            });
+        });
+
+        /* ---------- 2. Cubo 3D de habilidades ---------- */
+        const hStack = seccion(/Stack/);
+        if (hStack) {
+            const caras = [
+                ['fa-brands fa-linux', 'Linux', 'Linux', /linux|ubuntu|debian|kali|ssh|lvm|nfs|acl/i],
+                ['fa-brands fa-windows', 'Windows Server', 'Windows Server', /windows|active directory|iis|powershell/i],
+                ['fa-solid fa-network-wired', 'Redes', 'Networking', /cisco|vlan|ipv|nat|wireshark|vpn|dns|dhcp/i],
+                ['fa-brands fa-docker', 'Docker', 'Docker', /docker|compose|virtuali/i],
+                ['fa-solid fa-shield-halved', 'Seguridad', 'Security', /firewall|pki|tls|https|riesgo|risk|acl|vpn/i],
+                ['fa-solid fa-certificate', 'Cisco CCST', 'Cisco CCST', /cisco/i],
+            ];
+            const escena = document.createElement('div');
+            escena.className = 'fx-cube-scene'; escena.setAttribute('aria-hidden', 'true');
+            escena.innerHTML = `<div class="fx-cube">${caras.map((c, i) => `<div class="f${i + 1}" data-i="${i}"><i class="${c[0]}"></i>${bi(c[1], c[2])}</div>`).join('')}</div>`;
+            const hint = document.createElement('p'); hint.className = 'fx-cube-hint';
+            hint.innerHTML = fino ? bi('Arrástralo para girarlo · pulsa una cara para ver sus tecnologías', 'Drag to spin it · click a face to see its technologies')
+                : bi('Desliza para girarlo · toca una cara para ver sus tecnologías', 'Swipe to spin it · tap a face to see its technologies');
+            hStack.after(escena); escena.after(hint);
+            const cubo = escena.querySelector('.fx-cube');
+            let rx = -18, ry = 30, vy = reduce ? 0 : 0.25, visible = false, raf = 0, arr = null, movido = 0;
+            const pintar = () => { cubo.style.setProperty('--cx', rx.toFixed(1) + 'deg'); cubo.style.setProperty('--cy', ry.toFixed(1) + 'deg'); };
+            const bucle = () => { raf = 0; if (!visible) return; if (!arr) { ry += vy; pintar(); } if (vy) raf = requestAnimationFrame(bucle); };
+            alVerse(escena, (on) => { visible = on; if (on && !raf && vy) raf = requestAnimationFrame(bucle); });
+            escena.addEventListener('pointerdown', (e) => { arr = { x: e.clientX, y: e.clientY, rx, ry }; movido = 0; escena.classList.add('drag'); escena.setPointerCapture(e.pointerId); });
+            escena.addEventListener('pointermove', (e) => {
+                if (!arr) return;
+                const dx = e.clientX - arr.x, dy = e.clientY - arr.y; movido = Math.max(movido, Math.abs(dx) + Math.abs(dy));
+                ry = arr.ry + dx * 0.6; rx = Math.max(-70, Math.min(70, arr.rx - dy * 0.6)); pintar();
+            });
+            const soltar = (e) => {
+                if (!arr) return; arr = null; escena.classList.remove('drag');
+                if (movido < 6) {
+                    const el = document.elementFromPoint(e.clientX, e.clientY); const cara = el && el.closest('.fx-cube > div');
+                    if (cara) {
+                        const re = caras[+cara.dataset.i][3];
+                        document.querySelectorAll('.tag.fx-tag-hl').forEach((t) => t.classList.remove('fx-tag-hl'));
+                        const tags = [...hStack.closest('section').querySelectorAll('.tags-grid .tag')].filter((t) => re.test(t.textContent));
+                        tags.forEach((t) => t.classList.add('fx-tag-hl'));
+                        setTimeout(() => tags.forEach((t) => t.classList.remove('fx-tag-hl')), 2600);
+                    }
+                }
+            };
+            escena.addEventListener('pointerup', soltar); escena.addEventListener('pointercancel', soltar);
+            pintar();
+        }
+
+        /* ---------- 3. Paquetes que viajan por la topología ---------- */
+        const topoSvg = document.querySelector('.fx-topo svg');
+        if (topoSvg && !reduce) {
+            const lineas = [...topoSvg.querySelectorAll('line.e')];
+            const ns = 'http://www.w3.org/2000/svg';
+            const g = document.createElementNS(ns, 'g'); g.setAttribute('class', 'fx-pkts'); g.setAttribute('pointer-events', 'none');
+            const n = Math.min(8, lineas.length);
+            for (let i = 0; i < n; i++) {
+                const l = lineas[Math.floor(i * lineas.length / n)];
+                const [x1, y1, x2, y2] = ['x1', 'y1', 'x2', 'y2'].map((a) => l.getAttribute(a));
+                const ida = i % 2 === 0;
+                const c = document.createElementNS(ns, 'circle'); c.setAttribute('r', '2.8'); c.setAttribute('class', 'fx-pk' + (i % 3 === 0 ? ' v' : ''));
+                const m = document.createElementNS(ns, 'animateMotion');
+                m.setAttribute('dur', (1.6 + (i % 4) * 0.45).toFixed(2) + 's'); m.setAttribute('begin', (i * 0.37).toFixed(2) + 's'); m.setAttribute('repeatCount', 'indefinite');
+                m.setAttribute('path', ida ? `M${x1} ${y1} L${x2} ${y2}` : `M${x2} ${y2} L${x1} ${y1}`);
+                c.appendChild(m); g.appendChild(c);
+            }
+            const primerNodo = topoSvg.querySelector('.nd');
+            topoSvg.insertBefore(g, primerNodo || null);
+            alVerse(topoSvg, (on) => { try { on ? topoSvg.unpauseAnimations() : topoSvg.pauseAnimations(); } catch (e) { /* sin SMIL */ } });
+        }
+
+        /* ---------- 4. Cortafuegos en vivo (reglas reales de GlucoNet) ---------- */
+        const secStack = hStack ? hStack.closest('section') : null;
+        if (secStack) {
+            const sec = document.createElement('section');
+            sec.className = 'fx-fw-sec';
+            sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> ${bi('Cortafuegos en vivo', 'Live firewall')}</h2>
+                <div class="fx-fw"><canvas aria-label="Animación de un cortafuegos que deja pasar 443, 8883 y 51820/udp y bloquea el resto" role="img"></canvas>
+                <p>${bi('Mismas reglas que en mi TFC GlucoNet: solo <code>443</code>, <code>8883</code> y <code>51820/udp</code> entran; el resto se descarta y Fail2ban banea a quien insiste.',
+                    'Same rules as my GlucoNet capstone: only <code>443</code>, <code>8883</code> and <code>51820/udp</code> get in; everything else is dropped and Fail2ban bans repeat offenders.')}</p></div>`;
+            secStack.after(sec);
+            const cv = sec.querySelector('canvas'), x = cv.getContext('2d');
+            const OK = ['443/tcp', '8883/tcp', '51820/udp'], NO = ['22/tcp', '23/tcp', '3306/tcp', '3389/tcp', '445/tcp', '21/tcp', '5432/tcp'];
+            let W = 0, H = 170, dpr = 1, col = {}, pk = [], marcas = [], ok = 0, no = 0, ult = 0, sig = 0, visible = false, raf = 0;
+            const colores = () => { const s = getComputedStyle(document.body); col = { txt: s.getPropertyValue('--text-main').trim() || '#E2E8F0', mut: s.getPropertyValue('--text-muted').trim() || '#94A3B8', bor: s.getPropertyValue('--border').trim() || '#1E3A5F', pri: s.getPropertyValue('--primary').trim() || '#38BDF8' }; };
+            const medir = () => { dpr = Math.min(2, window.devicePixelRatio || 1); W = cv.clientWidth; cv.width = W * dpr; cv.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); };
+            const muro = () => W * 0.58;
+            const nuevo = () => { const bueno = Math.random() < 0.5; const lista = bueno ? OK : NO; pk.push({ x: 18, y: 42 + Math.random() * (H - 70), p: lista[Math.floor(Math.random() * lista.length)], bueno, est: 0, v: 70 + Math.random() * 40, a: 1 }); };
+            const dibujar = (dt) => {
+                x.clearRect(0, 0, W, H);
+                const mx = muro();
+                // Internet a la izquierda y servidor a la derecha
+                x.font = '600 10px "Fira Code", monospace'; x.textAlign = 'left'; x.fillStyle = col.mut;
+                x.fillText('internet', 8, 18);
+                x.textAlign = 'right'; x.fillText('gluconet · vps', W - 8, 18);
+                const sx = W - 46, sy = H / 2 - 30;
+                x.strokeStyle = col.pri; x.lineWidth = 1.5; x.strokeRect(sx, sy, 34, 60);
+                for (let i = 0; i < 3; i++) { x.fillStyle = '#10B981'; x.fillRect(sx + 6, sy + 10 + i * 16, 4, 4); x.fillStyle = col.bor; x.fillRect(sx + 14, sy + 11 + i * 16, 14, 2); }
+                // Muro
+                x.fillStyle = 'rgba(248,113,113,.10)'; x.fillRect(mx - 7, 28, 14, H - 40);
+                x.strokeStyle = '#F87171'; x.lineWidth = 2; x.beginPath(); x.moveTo(mx, 28); x.lineTo(mx, H - 12); x.stroke();
+                x.lineWidth = 1; x.strokeStyle = 'rgba(248,113,113,.45)';
+                for (let y = 34; y < H - 12; y += 12) { x.beginPath(); x.moveTo(mx - 7, y); x.lineTo(mx + 7, y); x.stroke(); }
+                x.textAlign = 'center'; x.fillStyle = '#F87171'; x.fillText('ufw', mx, 22);
+                // Contadores
+                x.textAlign = 'left'; x.font = '700 10px "Fira Code", monospace';
+                x.fillStyle = '#10B981'; x.fillText('ALLOW ' + ok, 8, H - 8);
+                x.fillStyle = '#F87171'; x.fillText('DENY ' + no, 78, H - 8);
+                // Paquetes
+                x.font = '600 9.5px "Fira Code", monospace';
+                pk.forEach((p) => {
+                    if (p.est === 0) { p.x += p.v * dt; if (p.x >= mx - 10) { if (p.bueno) { p.est = 1; ok++; } else { p.est = 2; no++; marcas.push({ x: mx, y: p.y, t: 1, p: p.p }); } } }
+                    else if (p.est === 1) { p.x += p.v * dt; p.y += ((H / 2) - p.y) * Math.min(1, dt * 2.2); if (p.x >= sx) p.a = 0; }
+                    else { p.x -= p.v * 1.3 * dt; p.y += 18 * dt; p.a -= dt * 1.1; }
+                    if (p.a <= 0) return;
+                    x.globalAlpha = Math.max(0, p.a);
+                    const c = p.est === 2 ? '#F87171' : (p.est === 1 ? '#10B981' : col.pri);
+                    x.fillStyle = c; x.beginPath(); x.arc(p.x, p.y, 4, 0, 6.3); x.fill();
+                    x.textAlign = 'center'; x.fillText(p.p, p.x, p.y - 8);
+                    x.globalAlpha = 1;
+                });
+                pk = pk.filter((p) => p.a > 0 && p.x > -20);
+                marcas.forEach((m) => { m.t -= dt * 0.9; x.globalAlpha = Math.max(0, m.t); x.fillStyle = '#F87171'; x.textAlign = 'left'; x.font = '700 9.5px "Fira Code", monospace'; x.fillText('DENY', m.x + 10, m.y + 3); x.globalAlpha = 1; });
+                marcas = marcas.filter((m) => m.t > 0);
+            };
+            const bucle = (t) => {
+                raf = 0; if (!visible) return;
+                const dt = Math.min(0.05, (t - (ult || t)) / 1000); ult = t;
+                sig -= dt; if (sig <= 0) { nuevo(); sig = 0.55 + Math.random() * 0.5; }
+                dibujar(dt);
+                raf = requestAnimationFrame(bucle);
+            };
+            colores(); medir();
+            new MutationObserver(colores).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            window.addEventListener('resize', () => { medir(); if (!visible || reduce) dibujar(0); }, { passive: true });
+            if (reduce) {
+                // Imagen fija: algunos paquetes ya filtrados
+                ok = 3; no = 4; [[0.2, 60, '443/tcp', 0], [0.35, 110, '22/tcp', 0], [0.8, 85, '8883/tcp', 1]].forEach(([f, y, p, e]) => pk.push({ x: W * f, y, p, bueno: true, est: e, v: 0, a: 1 }));
+                dibujar(0);
+            } else {
+                alVerse(cv, (on) => { visible = on; ult = 0; if (on && !raf) raf = requestAnimationFrame(bucle); });
+            }
+        }
+
+        /* ---------- 5. El certificado CCST se inclina con el móvil ---------- */
+        const ccst = document.querySelector('.cert-card.fx-holo');
+        if (ccst && !fino && !reduce && 'DeviceOrientationEvent' in window) {
+            let activo = false, escuchando = false;
+            const mover = (e) => {
+                if (!activo || e.gamma == null) return;
+                const gx = Math.max(-30, Math.min(30, e.gamma)) / 30, by = Math.max(-30, Math.min(30, (e.beta || 45) - 45)) / 30;
+                ccst.style.setProperty('--hx', (50 + gx * 50).toFixed(1) + '%'); ccst.style.setProperty('--hy', (50 + by * 50).toFixed(1) + '%');
+                ccst.style.setProperty('--hbx', (50 - gx * 50).toFixed(1) + '%'); ccst.style.setProperty('--hby', (50 - by * 50).toFixed(1) + '%');
+                ccst.style.transform = `perspective(700px) rotateY(${(gx * 9).toFixed(1)}deg) rotateX(${(-by * 7).toFixed(1)}deg)`;
+            };
+            const escuchar = () => { if (escuchando) return; escuchando = true; window.addEventListener('deviceorientation', mover, { passive: true }); };
+            alVerse(ccst, (on) => { activo = on; ccst.classList.toggle('fx-holo-auto', on); if (!on) ccst.style.transform = ''; }, { threshold: 0.6 });
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // iPhone: hay que pedir permiso con un toque
+                ccst.addEventListener('click', () => { DeviceOrientationEvent.requestPermission().then((r) => { if (r === 'granted') escuchar(); }).catch(() => {}); }, { once: true });
+            } else escuchar();
+        }
+
+        /* ---------- 6. Trayectoria en perspectiva al hacer scroll (solo PC) ---------- */
+        if (fino && !reduce && window.innerWidth > 900) {
+            const conts = [...document.querySelectorAll('.main-column .timeline-container')];
+            const items = conts.flatMap((c) => { c.classList.add('fx-pasillo'); c.style.perspective = '1100px'; return [...c.querySelectorAll('.timeline-item')]; });
+            let rafP = 0;
+            const pintarP = () => {
+                rafP = 0; const vh = innerHeight;
+                items.forEach((it) => {
+                    const r = it.getBoundingClientRect(); if (r.bottom < -50 || r.top > vh + 50) return;
+                    const c = (r.top + r.height / 2) / vh;
+                    const deg = c > 0.62 ? Math.min(1, (c - 0.62) / 0.38) * 32 : (c < 0.12 ? -Math.min(1, (0.12 - c) / 0.3) * 10 : 0);
+                    it.style.rotate = `x ${deg.toFixed(1)}deg`;
+                });
+            };
+            window.addEventListener('scroll', () => { if (!rafP) rafP = requestAnimationFrame(pintarP); }, { passive: true });
+            window.addEventListener('load', pintarP, { once: true }); pintarP();
+        }
+
+        /* ---------- 7. Salvapantallas (tecla s) ---------- */
+        let ss = null;
+        window.fxScreensaver = () => {
+            if (ss) return;
+            ss = document.createElement('div'); ss.className = 'fx-ss'; ss.setAttribute('aria-hidden', 'true');
+            ss.innerHTML = `<div class="fx-ss-logo">tomas@koscloud:~$ <span class="r"></span><small>Tomás Kos · Junior SysAdmin</small></div><div class="fx-ss-pie">${T('salvapantallas · mueve el ratón o pulsa una tecla para volver', 'screensaver · move the mouse or press a key to go back')}</div>`;
+            document.body.appendChild(ss); requestAnimationFrame(() => ss.classList.add('on'));
+            log('INFO', T('salvapantallas activado', 'screensaver on'));
+            const logo = ss.querySelector('.fx-ss-logo'), reloj = ss.querySelector('.r');
+            const tonos = ['#38BDF8', '#10B981', '#F59E0B', '#A855F7', '#F472B6', '#22D3EE'];
+            let px = Math.random() * 200 + 40, py = Math.random() * 200 + 40, vx = 150, vy = 115, k = 0, ult = 0, id = 0, t0 = performance.now();
+            logo.style.color = tonos[0];
+            const paso = (t) => {
+                const dt = Math.min(0.05, (t - (ult || t)) / 1000); ult = t;
+                const w = innerWidth - logo.offsetWidth, h = innerHeight - logo.offsetHeight;
+                if (!reduce) { px += vx * dt; py += vy * dt; }
+                if (px <= 0 || px >= w) { vx = -vx; px = Math.max(0, Math.min(w, px)); logo.style.color = tonos[++k % tonos.length]; }
+                if (py <= 0 || py >= h) { vy = -vy; py = Math.max(0, Math.min(h, py)); logo.style.color = tonos[++k % tonos.length]; }
+                logo.style.transform = `translate(${px.toFixed(1)}px, ${py.toFixed(1)}px)`;
+                reloj.textContent = new Date().toLocaleTimeString(L() === 'en' ? 'en-GB' : 'es-ES', { hour12: false });
+                id = requestAnimationFrame(paso);
+            };
+            id = requestAnimationFrame(paso);
+            const salir = (e) => {
+                if (performance.now() - t0 < 500) return;
+                if (e.type === 'mousemove' && Math.abs(e.movementX) + Math.abs(e.movementY) < 4) return;
+                cancelAnimationFrame(id); ['mousemove', 'keydown', 'pointerdown', 'wheel', 'touchstart'].forEach((ev) => window.removeEventListener(ev, salir, true));
+                const v = ss; ss = null; v.classList.remove('on'); setTimeout(() => v.remove(), 400);
+                if (e.type === 'keydown') e.preventDefault();
+            };
+            ['mousemove', 'keydown', 'pointerdown', 'wheel', 'touchstart'].forEach((ev) => window.addEventListener(ev, salir, { capture: true, passive: ev !== 'keydown' }));
+        };
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 's' || e.ctrlKey || e.metaKey || e.altKey || ss) return;
+            if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
+            if (document.querySelector('.fx-pal.open, .fx-modal.open, .fx-matrix')) return;
+            window.fxScreensaver();
+        });
+        // Entradas para la paleta de comandos
+        window.fxAccionesExtra = () => [
+            { ic: 'fa-solid fa-display', t: T('Salvapantallas', 'Screensaver'), g: 's', f: () => window.fxScreensaver() },
+            { ic: 'fa-solid fa-shield-halved', t: T('Ver el cortafuegos en vivo', 'Watch the live firewall'), g: '', f: () => { const s = document.querySelector('.fx-fw-sec'); if (s) s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); } },
+            { ic: 'fa-solid fa-id-card', t: T('Girar mi tarjeta de visita', 'Flip my business card'), g: '', f: () => { const c = document.querySelector('.fx-bcard'); if (c) { c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); setTimeout(() => c.click(), 700); } } },
+        ];
+
+        /* ---------- 8. Tarjeta de visita 3D (delante datos, detrás el QR) ---------- */
+        const qr = document.querySelector('.fx-contact-section .fx-qr-card');
+        if (qr) {
+            const card = document.createElement('div');
+            card.className = 'fx-bcard'; card.setAttribute('role', 'button'); card.tabIndex = 0;
+            card.setAttribute('aria-label', 'Tarjeta de visita: pulsa para ver el código QR');
+            card.innerHTML = `<div class="fx-bcard-in">
+                <div class="fx-bcard-cara fx-bcard-front">
+                    <div class="logo"><span><i class="fa-solid fa-server"></i> koscloud.es</span><span class="chip"></span></div>
+                    <div><h4>Tomás Kos Mardomingo</h4><div class="rol">Junior SysAdmin · ASIR</div></div>
+                    <ul><li><i class="fa-solid fa-phone"></i>692 876 776</li><li><i class="fa-solid fa-globe"></i>www.koscloud.es</li><li><i class="fa-solid fa-certificate"></i>Cisco CCST</li></ul>
+                    <div class="gira">${bi('pulsa para girar ⟲', 'click to flip ⟲')}</div>
+                </div>
+                <div class="fx-bcard-cara fx-bcard-back"></div></div>`;
+            qr.parentNode.insertBefore(card, qr);
+            card.querySelector('.fx-bcard-back').appendChild(qr);
+            const girar = () => { card.classList.toggle('flip'); card.setAttribute('aria-label', card.classList.contains('flip') ? 'Tarjeta de visita: código QR del CV' : 'Tarjeta de visita: pulsa para ver el código QR'); if (card.classList.contains('flip')) log('INFO', T('tarjeta de visita girada', 'business card flipped')); };
+            card.addEventListener('click', girar);
+            card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); girar(); } });
+            if (fino && !reduce) {
+                const inner = card.querySelector('.fx-bcard-in');
+                card.addEventListener('mousemove', (e) => {
+                    const r = card.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+                    card.classList.add('tilt'); inner.style.setProperty('--ty', (px * 22).toFixed(1) + 'deg'); inner.style.setProperty('--tx', (-py * 16).toFixed(1) + 'deg');
+                });
+                card.addEventListener('mouseleave', () => { card.classList.remove('tilt'); inner.style.setProperty('--ty', '0deg'); inner.style.setProperty('--tx', '0deg'); });
+                card.addEventListener('click', () => card.classList.remove('tilt'));
+            }
+        }
+
+        /* ---------- 9. Uptime de la web (primera publicación: 24/09/2026 11:34) ---------- */
+        const pie = document.querySelector('.devops-footer');
+        if (pie) {
+            const INICIO = new Date('2026-09-24T11:34:19+02:00').getTime();
+            const up = document.createElement('div'); up.className = 'fx-uptime';
+            const tail = pie.querySelector('.fx-tail'); tail ? pie.insertBefore(up, tail) : pie.appendChild(up);
+            const dos = (n) => String(n).padStart(2, '0');
+            const tic = () => {
+                const s = Math.max(0, Math.floor((Date.now() - INICIO) / 1000)), d = Math.floor(s / 86400);
+                const hms = `${dos(Math.floor(s % 86400 / 3600))}:${dos(Math.floor(s % 3600 / 60))}:${dos(s % 60)}`;
+                up.innerHTML = `$ uptime → <b>up ${d} ${T(d === 1 ? 'día' : 'días', d === 1 ? 'day' : 'days')}, ${hms}</b> · ${T('primera versión publicada el 24/09/2026', 'first published on 24 Sep 2026')}`;
+            };
+            tic();
+            let id = 0;
+            alVerse(up, (on) => { clearInterval(id); if (on) { tic(); id = setInterval(tic, 1000); } });
+        }
     })();
     </script>
     <!-- FX3D FIN -->
