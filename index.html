@@ -2420,7 +2420,7 @@
             .fx-git .ln0, .fx-git .ln1 { transition: none; stroke-dashoffset: 0; } .fx-git-row { transition: none; } .fx-git .head { animation: none; }
             .hero h1.fx-glitch { animation: none; }
         }
-        @media print { .fx-pal, .fx-apt, .fx-ps, .fx-ps-btn, .fx-tail, .fx-k-btn { display: none !important; } .fx-git-row { opacity: 1 !important; transform: none !important; } }
+        @media print { .fx-pal, .fx-apt, .fx-ps, .fx-ps-btn, .fx-tail, .fx-k-btn, .fx-git-sec { display: none !important; } }
     </style>
     <script id="fx-visual2-js">
     (function () {
@@ -2463,8 +2463,8 @@
         const vigilarTitulos = () => document.querySelectorAll('.section-title').forEach((h) => { if (!h.dataset.fxLog) { h.dataset.fxLog = '1'; vistas.observe(h); } });
         window.addEventListener('load', vigilarTitulos, { once: true });
         document.addEventListener('click', (e) => {
-            const a = e.target.closest && e.target.closest('a[download], #hero-cta');
-            if (a) { const f = a.id === 'hero-cta' ? (document.getElementById('download-pdf') || {}).download || 'CV_Tomas_Kos.pdf' : a.getAttribute('download'); window.fxLog('OK', 'GET /' + f + ' 200 ' + T('(descarga)', '(download)')); }
+            const a = e.target.closest && e.target.closest('a[download]');
+            if (a) { const f = a.getAttribute('download'); window.fxLog('OK', 'GET /' + f + ' 200 ' + T('(descarga)', '(download)')); }
             if (e.target.closest && e.target.closest('#fx-copy-mail')) window.fxLog('INFO', T('email copiado al portapapeles', 'email copied to clipboard'));
             if (e.target.closest && e.target.closest('#fx-entrevista')) window.fxLog('WARN', T('reclutador interesado detectado 😉', 'interested recruiter detected 😉'));
         });
@@ -3061,6 +3061,286 @@
             let id = 0;
             alVerse(up, (on) => { clearInterval(id); if (on) { tic(); id = setInterval(tic, 1000); } });
         }
+    })();
+    </script>
+    <!-- Cuarta tanda (24/11/2026): esfera 3D de tecnologías, homelab isométrico, terminal dentro de un monitor CRT
+         y hoja de papel que se dobla al descargar el PDF. Canvas 2D, SVG y CSS 3D; parado cuando no se ve. -->
+    <style id="fx-visual4-css">
+        /* 1. Esfera 3D de tecnologías */
+        .fx-esfera { position: relative; }
+        .fx-esfera canvas { display: block; width: 100%; height: 380px; cursor: grab; touch-action: pan-y; }
+        .fx-esfera canvas.drag { cursor: grabbing; }
+        .fx-esfera-hint { text-align: center; font-size: .75rem; color: var(--text-muted); margin-top: .3rem; }
+        @media (max-width: 600px) { .fx-esfera canvas { height: 290px; } }
+
+        /* 2. Homelab isométrico */
+        .fx-lab svg { width: 100%; height: auto; max-height: 460px; display: block; overflow: visible; }
+        .fx-lab .floor { fill: rgba(56, 189, 248, .05); stroke: var(--border); stroke-width: 1; }
+        .fx-lab .grid { stroke: var(--border); stroke-width: .6; opacity: .6; }
+        .fx-lab .dev { cursor: pointer; transition: opacity .25s; }
+        .fx-lab .dev .ft { fill: #334155; } .fx-lab .dev .fl { fill: #1E293B; } .fx-lab .dev .fr { fill: #0F172A; }
+        .fx-lab .dev polygon { stroke: #475569; stroke-width: .8; stroke-linejoin: round; transition: stroke .25s; }
+        .fx-lab .dev.pi .ft { fill: #15803D; } .fx-lab .dev.pi .fl { fill: #166534; } .fx-lab .dev.pi .fr { fill: #14532D; }
+        .fx-lab .dev.vps .ft { fill: #0C4A6E; } .fx-lab .dev.vps .fl { fill: #075985; } .fx-lab .dev.vps .fr { fill: #0B3B57; }
+        .fx-lab .dev.on polygon, .fx-lab .dev:hover polygon { stroke: #38BDF8; stroke-width: 1.4; }
+        .fx-lab.sel .dev:not(.on) { opacity: .45; }
+        .fx-lab .led { fill: #22C55E; } .fx-lab .led.a { fill: #F59E0B; }
+        .fx-lab-on .fx-lab .led { animation: fxLabLed 1.1s steps(2, jump-none) infinite; }
+        .fx-lab .led:nth-of-type(2n) { animation-duration: .7s; }
+        @keyframes fxLabLed { to { opacity: .25; } }
+        .fx-lab .lbl { font: 600 11px 'Fira Code', monospace; fill: var(--text-main); pointer-events: none; }
+        .fx-lab .sub { font: 500 9.5px 'Fira Code', monospace; fill: var(--text-muted); pointer-events: none; }
+        .fx-lab .cab { fill: none; stroke: #38BDF8; stroke-width: 1.6; opacity: .55; }
+        .fx-lab .cab.wan { stroke-dasharray: 4 4; }
+        .fx-lab .pk { fill: #38BDF8; } .fx-lab .pk.v { fill: #10B981; }
+        .fx-lab .ant { stroke: #64748B; stroke-width: 2; stroke-linecap: round; }
+        .fx-lab-cap { min-height: 3.2em; margin-top: .4rem; padding: .6rem .8rem; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-base); font-size: .85rem; color: var(--text-main); line-height: 1.45; }
+        .fx-lab-cap b { color: var(--primary); font-family: 'Fira Code', monospace; }
+        .fx-lab-cap .m { color: var(--text-muted); }
+
+        /* 3. Terminal dentro de un monitor CRT */
+        .fx-monitor { perspective: 1400px; }
+        .fx-monitor-cuerpo { position: relative; padding: 14px 14px 30px; border-radius: 20px; background: linear-gradient(160deg, #273449, #111827 60%); border: 1px solid #334155; box-shadow: 0 40px 60px -30px rgba(2, 6, 23, .7), inset 0 1px 0 rgba(255,255,255,.08); transform: rotateX(var(--mx, 0deg)) rotateY(var(--my, 0deg)); transition: transform .4s ease; transform-style: preserve-3d; }
+        .fx-monitor-cuerpo::after { content: 'KOS-CRT 1440'; position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); font: 700 .6rem 'Fira Code', monospace; letter-spacing: .2em; color: #64748B; }
+        .fx-monitor-led { position: absolute; right: 22px; bottom: 11px; width: 7px; height: 7px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 8px #22C55E; }
+        .fx-monitor .fx-term { position: relative; }
+        .fx-monitor .fx-term::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.35)); }
+        .fx-monitor-pie { width: 120px; height: 26px; margin: 0 auto; background: linear-gradient(180deg, #3B4A63, #273449); clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%); }
+        .fx-monitor-base { width: 220px; height: 10px; margin: 0 auto; border-radius: 6px 6px 3px 3px; background: linear-gradient(180deg, #52637E, #2C3A52); border-top: 1px solid #6B7C96; box-shadow: 0 12px 20px -8px rgba(0,0,0,.5); }
+        .fx-monitor.encender .fx-term { animation: fxCrt .9s cubic-bezier(.2,.8,.2,1) 1 both; }
+        @keyframes fxCrt {
+            0% { transform: scale(1, .004); filter: brightness(4); opacity: .2; }
+            35% { transform: scale(1, .004); filter: brightness(4); opacity: 1; }
+            60% { transform: scale(1, 1.02); filter: brightness(1.8); }
+            100% { transform: none; filter: none; }
+        }
+        @media (max-width: 600px) { .fx-monitor-cuerpo { padding: 8px 8px 24px; border-radius: 14px; } .fx-monitor-base { width: 160px; } .fx-monitor-cuerpo::after { font-size: .55rem; } }
+
+        /* 4. Hoja de papel que se dobla al descargar */
+        .fx-hoja { position: fixed; left: 0; top: 0; z-index: 5000; width: 64px; height: 84px; pointer-events: none; transform-style: preserve-3d; perspective: 500px; }
+        .fx-hoja > i { position: absolute; left: 0; width: 100%; height: 50%; background: #fff; border: 1px solid #CBD5E1; box-shadow: 0 6px 16px rgba(2,6,23,.3);
+            background-image: repeating-linear-gradient(180deg, transparent 0 7px, #CBD5E1 7px 8px); background-size: 70% 100%; background-repeat: no-repeat; background-position: center 6px; backface-visibility: visible; }
+        .fx-hoja > i.a { top: 0; transform-origin: center bottom; border-radius: 4px 4px 0 0; }
+        .fx-hoja > i.b { top: 50%; border-radius: 0 0 4px 4px; }
+        .fx-hoja > i.a::before { content: 'PDF'; position: absolute; left: 6px; top: 4px; font: 800 9px 'Inter', sans-serif; color: #fff; background: #DC2626; padding: 1px 4px; border-radius: 2px; }
+
+        @media (prefers-reduced-motion: reduce) { .fx-monitor-cuerpo { transition: none; } .fx-monitor.encender .fx-term { animation: none; } }
+        @media print {
+            .fx-esfera-sec, .fx-lab-sec, .fx-hoja, .fx-monitor-pie, .fx-monitor-base, .fx-monitor-led { display: none !important; }
+            /* La web abre en modo oscuro: al imprimir se usan los colores claros para que los títulos se lean sobre el papel blanco */
+            body.dark-theme { --bg-base: #fff; --bg-card: #fff; --text-main: #0F172A; --text-muted: #475569; --primary: #0284C7; --primary-light: #E0F2FE; --primary-dark: #0369A1; --border: rgba(203, 213, 225, .9); }
+        }
+    </style>
+    <script id="fx-visual4-js">
+    (function () {
+        'use strict';
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fino = window.matchMedia('(pointer: fine)').matches;
+        const L = () => document.body.classList.contains('lang-en') ? 'en' : 'es';
+        const T = (es, en) => L() === 'en' ? en : es;
+        const bi = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
+        const alVerse = (el, cb, op) => new IntersectionObserver((ents) => ents.forEach((e) => cb(e.isIntersecting, e)), op || {}).observe(el);
+        const txtVisible = (el) => { const s = el.querySelector(L() === 'en' ? '.en' : '.es'); return (s || el).textContent.replace(/\s+/g, ' ').trim(); };
+        const proyectosSec = (() => { const p = document.querySelector('.project-card'); return p ? p.closest('section') : null; })();
+
+        /* ---------- 1. Esfera 3D con todo el stack ---------- */
+        const hStack = [...document.querySelectorAll('.section-title')].find((h) => /Stack/.test(h.textContent));
+        const tagsStack = hStack ? [...hStack.closest('section').querySelectorAll('.tags-grid .tag')].filter((t) => !/✓/.test(t.textContent)) : [];
+        const gitSec = document.querySelector('.fx-git-sec');
+        if (tagsStack.length && (gitSec || proyectosSec)) {
+            const sec = document.createElement('section');
+            sec.className = 'fx-esfera-sec';
+            sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-globe"></i> ${bi('Mi stack en 3D', 'My stack in 3D')}</h2>
+                <div class="fx-esfera"><canvas role="img" aria-label="Esfera giratoria con las tecnologías del CV"></canvas>
+                <div class="fx-esfera-hint">${fino ? bi('Arrástrala para girarla · pulsa una tecnología para verla en el CV', 'Drag to spin it · click a technology to find it in the CV') : bi('Desliza para girarla · toca una tecnología para verla en el CV', 'Swipe to spin it · tap a technology to find it in the CV')}</div></div>`;
+            (gitSec || proyectosSec).after(sec);
+            const cv = sec.querySelector('canvas'), x = cv.getContext('2d');
+            let W = 0, H = 0, dpr = 1, R = 120, RX = 160, palabras = [], col = {}, ax = 0.35, ay = 0, vx = 0, vy = reduce ? 0 : 0.0045, arr = null, visible = false, raf = 0, movido = 0, sel = -1, selT = 0;
+            const cargar = () => {
+                const n = tagsStack.length, ga = Math.PI * (3 - Math.sqrt(5));
+                palabras = tagsStack.map((t, i) => { const y = 1 - (i / (n - 1)) * 2, r = Math.sqrt(1 - y * y), th = ga * i; return { t: txtVisible(t).replace(/\s*\(.*?\)\s*/g, ' ').replace(/\s+/g, ' ').trim(), el: t, x: Math.cos(th) * r, y, z: Math.sin(th) * r }; });
+            };
+            const colores = () => { const s = getComputedStyle(document.body); col = { txt: s.getPropertyValue('--text-main').trim() || '#E2E8F0', pri: s.getPropertyValue('--primary').trim() || '#38BDF8' }; };
+            const medir = () => { dpr = Math.min(2, window.devicePixelRatio || 1); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); R = H * 0.4; RX = Math.min(W * 0.4, R * 1.7); };
+            const proy = [];
+            const dibujar = () => {
+                x.clearRect(0, 0, W, H);
+                const cx = Math.cos(ax), sx = Math.sin(ax), cy = Math.cos(ay), sy = Math.sin(ay);
+                proy.length = 0;
+                palabras.forEach((p, i) => {
+                    const x1 = p.x * cy + p.z * sy, z1 = -p.x * sy + p.z * cy;
+                    const y2 = p.y * cx - z1 * sx, z2 = p.y * sx + z1 * cx;
+                    const k = 1.9 / (2.6 - z2);
+                    proy.push({ i, X: W / 2 + x1 * RX * k, Y: H / 2 + y2 * R * k, z: z2, k });
+                });
+                proy.sort((a, b) => a.z - b.z);
+                x.textAlign = 'center'; x.textBaseline = 'middle';
+                proy.forEach((q) => {
+                    const p = palabras[q.i], f = (q.z + 1) / 2;
+                    const esSel = q.i === sel && selT > 0;
+                    x.globalAlpha = esSel ? 1 : 0.22 + f * 0.78;
+                    x.font = `${f > 0.55 || esSel ? 700 : 500} ${(9.5 + f * 6) * (esSel ? 1.25 : 1)}px "Fira Code", monospace`;
+                    x.fillStyle = esSel ? '#10B981' : (f > 0.6 ? col.pri : col.txt);
+                    x.fillText(p.t, q.X, q.Y);
+                    q.w = x.measureText(p.t).width;
+                });
+                x.globalAlpha = 1;
+            };
+            const bucle = () => {
+                raf = 0; if (!visible) return;
+                if (!arr) { ay += vy; ax += vx; vx *= 0.96; if (!reduce && Math.abs(vy) < 0.0045) vy += (0.0045 * Math.sign(vy || 1) - vy) * 0.02; }
+                if (selT > 0) selT -= 1;
+                dibujar();
+                raf = requestAnimationFrame(bucle);
+            };
+            cargar(); colores(); medir(); dibujar();
+            new MutationObserver(() => { cargar(); colores(); dibujar(); }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            window.addEventListener('resize', () => { medir(); dibujar(); }, { passive: true });
+            alVerse(cv, (on) => { visible = on; if (on && !raf) raf = requestAnimationFrame(bucle); });
+            cv.addEventListener('pointerdown', (e) => { arr = { x: e.clientX, y: e.clientY, t: performance.now() }; movido = 0; cv.classList.add('drag'); cv.setPointerCapture(e.pointerId); });
+            cv.addEventListener('pointermove', (e) => {
+                if (!arr) return;
+                const dx = e.clientX - arr.x, dy = e.clientY - arr.y; movido += Math.abs(dx) + Math.abs(dy);
+                ay += dx * 0.008; ax += dy * 0.008; vy = dx * 0.0016; vx = dy * 0.0016; arr.x = e.clientX; arr.y = e.clientY;
+                if (!visible || reduce) dibujar();
+            });
+            const soltar = (e) => {
+                if (!arr) return; arr = null; cv.classList.remove('drag');
+                if (movido > 6) return;
+                const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+                const hit = [...proy].reverse().find((q) => q.z > -0.2 && Math.abs(px - q.X) < (q.w || 40) / 2 + 4 && Math.abs(py - q.Y) < 11);
+                if (!hit) return;
+                sel = hit.i; selT = 90; if (reduce) dibujar();
+                const t = palabras[hit.i].el;
+                t.classList.add('fx-tag-hl');
+                t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+                setTimeout(() => t.classList.remove('fx-tag-hl'), 2600);
+                if (window.fxLog) window.fxLog('INFO', 'grep -r "' + palabras[hit.i].t + '" cv/');
+            };
+            cv.addEventListener('pointerup', soltar); cv.addEventListener('pointercancel', () => { arr = null; cv.classList.remove('drag'); });
+        }
+
+        /* ---------- 2. Homelab isométrico (datos de GlucoNet y de la cloud privada) ---------- */
+        if (proyectosSec) {
+            const S = 1, CX = 250, CY = 92;
+            const P = (x, y, z) => [CX + (x - y) * 0.866 * S, CY + (x + y) * 0.5 * S - z * S];
+            const pts = (a) => a.map((p) => P(...p).map((n) => n.toFixed(1)).join(',')).join(' ');
+            const caja = (x, y, z, w, d, h) =>
+                `<polygon class="fl" points="${pts([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]])}"/>` +
+                `<polygon class="fr" points="${pts([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]])}"/>` +
+                `<polygon class="ft" points="${pts([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]])}"/>`;
+            const led = (x, y, z, a) => { const [px, py] = P(x, y, z); return `<circle class="led${a ? ' a' : ''}" cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="2.2"/>`; };
+            const txt = (x, y, z, t, s) => { const [px, py] = P(x, y, z); return `<text class="lbl" x="${px.toFixed(1)}" y="${py.toFixed(1)}" text-anchor="middle">${t}</text>` + (s ? (Array.isArray(s) ? s.map((v, i) => `<text class="sub ${i ? 'en' : 'es'}" x="${px.toFixed(1)}" y="${(py + 12).toFixed(1)}" text-anchor="middle">${v}</text>`).join('') : `<text class="sub" x="${px.toFixed(1)}" y="${(py + 12).toFixed(1)}" text-anchor="middle">${s}</text>`) : ''); };
+            const ruta = (a) => 'M' + a.map((p) => P(...p).map((n) => n.toFixed(1)).join(' ')).join(' L');
+            // Suelo y rejilla
+            let grid = '';
+            for (let i = 0; i <= 220; i += 44) { grid += `<path class="grid" d="${ruta([[i, 0, 0], [i, 220, 0]])}"/><path class="grid" d="${ruta([[0, i, 0], [220, i, 0]])}"/>`; }
+            const suelo = `<polygon class="floor" points="${pts([[0, 0, 0], [220, 0, 0], [220, 220, 0], [0, 220, 0]])}"/>${grid}`;
+            // Cables (por el suelo) y enlace WAN hacia el VPS
+            const cPi = [[60, 150, 0], [60, 175, 0], [125, 175, 0]];
+            const cSrv = [[60, 150, 0], [60, 60, 0], [135, 60, 0]];
+            const wan = [[40, 150, 26], [40, 150, 60], [-52, 132, 60]];
+            const cables = `<path id="fxlab-c1" class="cab" d="${ruta(cPi)}"/><path id="fxlab-c2" class="cab" d="${ruta(cSrv)}"/><path id="fxlab-c3" class="cab wan" d="${ruta(wan)}"/>`;
+            const pk = (id, dur, beg, v, rev) => `<circle class="pk${v ? ' v' : ''}" r="3"><animateMotion dur="${dur}s" begin="${beg}s" repeatCount="indefinite"${rev ? ' keyPoints="1;0" keyTimes="0;1" calcMode="linear"' : ''}><mpath href="#${id}"/></animateMotion></circle>`;
+            const paquetes = pk('fxlab-c1', 2.2, 0, true, true) + pk('fxlab-c3', 2.6, 0.6, true) + pk('fxlab-c2', 2.8, 0.3) + pk('fxlab-c2', 2.8, 1.7, false, true);
+            // Equipos
+            const router = `<g class="dev" data-d="router" tabindex="0">${caja(30, 140, 0, 50, 26, 12)}
+                <line class="ant" x1="${P(38, 142, 12)[0]}" y1="${P(38, 142, 12)[1]}" x2="${P(38, 142, 34)[0]}" y2="${P(38, 142, 34)[1]}"/>
+                <line class="ant" x1="${P(72, 142, 12)[0]}" y1="${P(72, 142, 12)[1]}" x2="${P(72, 142, 34)[0]}" y2="${P(72, 142, 34)[1]}"/>
+                ${led(36, 166, 8)}${led(44, 166, 8)}${led(52, 166, 8, 1)}${txt(55, 175, -22, 'router', '192.168.1.0/24')}</g>`;
+            const pi = `<g class="dev pi" data-d="pi" tabindex="0">${caja(125, 160, 0, 44, 30, 5)}${caja(132, 166, 5, 12, 12, 4)}${caja(150, 168, 5, 14, 8, 6)}
+                ${led(128, 190, 3)}${led(134, 190, 3, 1)}${txt(150, 200, -20, 'raspberry-pi', ['GlucoNet · casa', 'GlucoNet · home'])}</g>`;
+            const srv = `<g class="dev" data-d="srv" tabindex="0">${caja(135, 40, 0, 40, 50, 72)}
+                ${led(175, 52, 60)}${led(175, 60, 60, 1)}${led(175, 52, 48)}${led(175, 60, 48)}${led(175, 52, 36)}
+                ${txt(232, 40, 30, 'cloud', 'self-hosted · Linux')}</g>`;
+            const vps = `<g class="dev vps" data-d="vps" tabindex="0">${caja(-80, 110, 60, 55, 45, 28)}
+                ${led(-25, 118, 78)}${led(-25, 126, 78)}${led(-25, 134, 78, 1)}${txt(-52, 132, 124, 'vps · docker', 'Internet')}</g>`;
+            const sec = document.createElement('section');
+            sec.className = 'fx-lab-sec';
+            sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-house-signal"></i> ${bi('Mi homelab', 'My homelab')}</h2>
+                <div class="fx-lab"><svg viewBox="20 -40 470 330" role="img" aria-label="Homelab: router, Raspberry Pi de GlucoNet, servidor de la cloud privada y VPS con Docker">${suelo}${cables}${paquetes}${router}${pi}${srv}${vps}</svg></div>
+                <div class="fx-lab-cap" aria-live="polite"></div>`;
+            proyectosSec.after(sec);
+            // Encuadre ajustado a lo dibujado
+            try { const svgEl = sec.querySelector('svg'), bb = svgEl.getBBox(); if (bb.width) svgEl.setAttribute('viewBox', `${(bb.x - 10).toFixed(0)} ${(bb.y - 10).toFixed(0)} ${(bb.width + 20).toFixed(0)} ${(bb.height + 20).toFixed(0)}`); } catch (e) { /* se queda el viewBox por defecto */ }
+            const info = {
+                router: [`<b>router</b> · 192.168.1.0/24`, 'La red de casa no abre ningún puerto hacia dentro: todo sale cifrado.', 'The home network opens no inbound ports: everything goes out encrypted.'],
+                pi: [`<b>raspberry-pi</b> · GlucoNet`, 'Recoge las lecturas de glucosa y las envía por MQTT/TLS (8883) al VPS. Solo hace conexiones de salida.', 'Collects glucose readings and sends them over MQTT/TLS (8883) to the VPS. Outbound connections only.'],
+                srv: [`<b>cloud</b> · self-hosted`, 'Mi cloud privada: servidor Linux (Ubuntu) con volúmenes de almacenamiento y la seguridad de los datos como prioridad.', 'My private cloud: Linux (Ubuntu) server with storage volumes and data security first.'],
+                vps: [`<b>vps</b> · Docker Compose`, 'Servidor de GlucoNet: DMZ, aplicación y datos en redes separadas; solo entran 443, 8883 y 51820/udp (WireGuard).', 'GlucoNet server: DMZ, application and data on separate networks; only 443, 8883 and 51820/udp (WireGuard) get in.'],
+            };
+            const lab = sec.querySelector('.fx-lab'), cap = sec.querySelector('.fx-lab-cap'), svg = lab.querySelector('svg');
+            const base = () => { cap.innerHTML = `<span class="m">${T('Pasa el ratón o toca un equipo para ver qué hace.', 'Hover or tap a device to see what it does.')}</span>`; };
+            const ver = (d) => {
+                lab.classList.add('sel'); lab.querySelectorAll('.dev').forEach((g) => g.classList.toggle('on', g.dataset.d === d));
+                const i = info[d]; cap.innerHTML = `${i[0]} — ${T(i[1], i[2])}`;
+            };
+            const limpiar = () => { lab.classList.remove('sel'); lab.querySelectorAll('.dev.on').forEach((g) => g.classList.remove('on')); base(); };
+            lab.querySelectorAll('.dev').forEach((g) => {
+                g.addEventListener('mouseenter', () => ver(g.dataset.d)); g.addEventListener('focus', () => ver(g.dataset.d));
+                g.addEventListener('click', (e) => { e.stopPropagation(); ver(g.dataset.d); });
+            });
+            lab.addEventListener('mouseleave', limpiar);
+            document.addEventListener('click', (e) => { if (!sec.contains(e.target)) limpiar(); });
+            new MutationObserver(() => { const on = lab.querySelector('.dev.on'); on ? ver(on.dataset.d) : base(); }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            base();
+            if (reduce) { try { svg.pauseAnimations(); } catch (e) { /* sin SMIL */ } }
+            else alVerse(svg, (on) => { sec.classList.toggle('fx-lab-on', on); try { on ? svg.unpauseAnimations() : svg.pauseAnimations(); } catch (e) { /* sin SMIL */ } });
+        }
+
+        /* ---------- 3. El terminal dentro de un monitor CRT que se enciende ---------- */
+        const term = document.getElementById('fx-term');
+        if (term) {
+            const mon = document.createElement('div'); mon.className = 'fx-monitor';
+            const cuerpo = document.createElement('div'); cuerpo.className = 'fx-monitor-cuerpo';
+            term.parentNode.insertBefore(mon, term);
+            cuerpo.appendChild(term); cuerpo.insertAdjacentHTML('beforeend', '<span class="fx-monitor-led" aria-hidden="true"></span>');
+            mon.appendChild(cuerpo); mon.insertAdjacentHTML('beforeend', '<div class="fx-monitor-pie" aria-hidden="true"></div><div class="fx-monitor-base" aria-hidden="true"></div>');
+            if (!reduce) {
+                const o = new IntersectionObserver((ents) => ents.forEach((e) => { if (e.isIntersecting) { mon.classList.add('encender'); o.disconnect(); setTimeout(() => mon.classList.remove('encender'), 1000); } }), { threshold: 0.35 });
+                o.observe(mon);
+                if (fino) {
+                    mon.addEventListener('mousemove', (e) => {
+                        const r = mon.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+                        cuerpo.style.setProperty('--my', (px * 5).toFixed(2) + 'deg'); cuerpo.style.setProperty('--mx', (-py * 4).toFixed(2) + 'deg');
+                    });
+                    mon.addEventListener('mouseleave', () => { cuerpo.style.setProperty('--my', '0deg'); cuerpo.style.setProperty('--mx', '0deg'); });
+                }
+            }
+        }
+
+        /* ---------- 4. Hoja que se dobla y vuela al descargar un PDF ---------- */
+        let ultHoja = 0;
+        document.addEventListener('click', (e) => {
+            if (reduce) return;
+            const a = e.target.closest && e.target.closest('a[href$=".pdf"]');
+            if (!a || performance.now() - ultHoja < 900) return;
+            ultHoja = performance.now();
+            let ox = e.clientX, oy = e.clientY;
+            if (!ox && !oy) {
+                const cta = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
+                const r = (cta && cta.getBoundingClientRect().width ? cta : a).getBoundingClientRect();
+                ox = r.width ? r.left + r.width / 2 : innerWidth / 2; oy = r.height ? r.top + r.height / 2 : innerHeight / 2;
+            }
+            const fab = document.querySelector('.fab-container');
+            const fr = fab ? fab.getBoundingClientRect() : { left: innerWidth - 60, top: innerHeight - 60, width: 0, height: 0 };
+            const dx = fr.left + fr.width / 2 - 32, dy = fr.top + fr.height / 2 - 42;
+            const h = document.createElement('div'); h.className = 'fx-hoja'; h.setAttribute('aria-hidden', 'true');
+            h.innerHTML = '<i class="b"></i><i class="a"></i>';
+            document.body.appendChild(h);
+            const x0 = ox - 32, y0 = oy - 42;
+            h.style.transform = `translate(${x0}px, ${y0}px)`;
+            const sup = h.querySelector('.a');
+            sup.animate([{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(-180deg)' }], { duration: 380, delay: 120, easing: 'cubic-bezier(.5,0,.3,1)', fill: 'forwards' });
+            const vuelo = h.animate([
+                { transform: `translate(${x0}px, ${y0}px) scale(.6) rotate(0deg)`, opacity: 0 },
+                { transform: `translate(${x0}px, ${y0 - 20}px) scale(1) rotate(-4deg)`, opacity: 1, offset: 0.15 },
+                { transform: `translate(${x0}px, ${y0 - 26}px) scale(1) rotate(-4deg)`, opacity: 1, offset: 0.45 },
+                { transform: `translate(${(x0 + dx) / 2}px, ${Math.min(y0, dy) - 80}px) scale(.7) rotate(14deg)`, opacity: 1, offset: 0.75 },
+                { transform: `translate(${dx}px, ${dy}px) scale(.2) rotate(30deg)`, opacity: 0 },
+            ], { duration: 1150, easing: 'ease-in-out', fill: 'forwards' });
+            vuelo.onfinish = () => h.remove();
+        }, true);
     })();
     </script>
     <!-- FX3D FIN -->
