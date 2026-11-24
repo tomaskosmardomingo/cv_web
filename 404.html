@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>404 · Paquete perdido | Tomás Kos</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+    <style>
+        :root { color-scheme: dark; --bg: #0B1220; --card: #111A2E; --borde: #1E3A5F; --txt: #E2E8F0; --gris: #64748B; --azul: #38BDF8; --verde: #10B981; --ambar: #FBBF24; --rojo: #F87171; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; background: radial-gradient(circle at 50% 0%, #13213b 0%, var(--bg) 60%); color: var(--txt); font-family: 'Fira Code', ui-monospace, Consolas, monospace; }
+        main { width: min(640px, 100%); }
+        .codigo { font-size: clamp(4.5rem, 20vw, 8rem); font-weight: 800; line-height: 1; margin: 0; letter-spacing: -.04em; background: linear-gradient(135deg, var(--azul), var(--verde)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        h1 { font-family: system-ui, 'Segoe UI', sans-serif; font-size: 1.35rem; margin: .4rem 0 1.2rem; }
+        .term { border: 1px solid var(--borde); border-radius: 12px; background: var(--card); overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,.45); }
+        .barra { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--borde); }
+        .barra i { width: 11px; height: 11px; border-radius: 50%; background: #334155; }
+        .barra i:nth-child(1) { background: #F87171; } .barra i:nth-child(2) { background: #FBBF24; } .barra i:nth-child(3) { background: #34D399; }
+        pre { margin: 0; padding: 14px 16px; min-height: 13.5em; font: 500 .82rem/1.6 inherit; white-space: pre-wrap; word-break: break-word; }
+        .p { color: var(--verde); } .g { color: var(--gris); } .a { color: var(--azul); } .w { color: var(--ambar); } .r { color: var(--rojo); }
+        .cursor { display: inline-block; width: .55em; height: 1.05em; vertical-align: -2px; background: var(--azul); animation: parpadeo 1s steps(1) infinite; }
+        @keyframes parpadeo { 50% { opacity: 0; } }
+        .volver { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.4rem; padding: .75rem 1.3rem; border-radius: 10px; background: var(--azul); color: #0B1220; font: 700 .95rem system-ui, 'Segoe UI', sans-serif; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+        .volver:hover, .volver:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(56,189,248,.35); outline: none; }
+        .pista { margin-top: .9rem; color: var(--gris); font-size: .78rem; }
+        @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } .volver { transition: none; } }
+    </style>
+</head>
+<body>
+<main>
+    <p class="codigo" aria-hidden="true">404</p>
+    <h1 id="titulo">Paquete perdido en la red</h1>
+    <div class="term" role="img" aria-labelledby="titulo">
+        <div class="barra"><i></i><i></i><i></i></div>
+        <pre id="out"></pre>
+    </div>
+    <a class="volver" id="volver" href="/">← Volver al CV</a>
+    <p class="pista" id="pista">Error 404 · la página que buscas no existe en www.koscloud.es</p>
+</main>
+<script>
+(function () {
+    'use strict';
+    var en = /^en\b/i.test(navigator.language || '');
+    var ruta = location.pathname.replace(/[<>&"']/g, '').slice(0, 60) || '/';
+    var T = function (es, eng) { return en ? eng : es; };
+    if (en) {
+        document.documentElement.lang = 'en';
+        document.title = '404 · Packet lost | Tomás Kos';
+        document.getElementById('titulo').textContent = 'Packet lost on the network';
+        document.getElementById('volver').textContent = '← Back to the CV';
+        document.getElementById('pista').textContent = 'Error 404 · the page you are looking for does not exist on www.koscloud.es';
+    }
+    var L = [
+        '<span class="p">visitante@internet</span>:<span class="a">~</span>$ traceroute www.koscloud.es' + ruta,
+        '<span class="g">traceroute to www.koscloud.es' + ruta + ', 30 hops max</span>',
+        ' 1  <span class="a">router-de-casa</span>          1.2 ms',
+        ' 2  <span class="a">isp-gateway</span>             8.4 ms',
+        ' 3  <span class="a">vercel-edge</span>            14.9 ms',
+        ' 4  <span class="a">www.koscloud.es</span>        16.1 ms',
+        ' 5  <span class="w">* * *</span>  <span class="g">' + T('(la ruta termina aquí)', '(the route ends here)') + '</span>',
+        '<span class="r">HTTP 404</span> ' + T('· el recurso ' + ruta + ' no existe', '· resource ' + ruta + ' not found'),
+        '<span class="g"># ' + T('El CV sí está online. Pulsa el botón para volver.', 'The CV is online. Press the button to go back.') + '</span>'
+    ];
+    var out = document.getElementById('out');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cursor = '<span class="cursor"></span>';
+    if (reduce) { out.innerHTML = L.join('\n') + '\n' + cursor; return; }
+    var i = 0;
+    (function sig() {
+        out.innerHTML = L.slice(0, i).join('\n') + (i ? '\n' : '') + cursor;
+        if (i++ < L.length) setTimeout(sig, i === 1 ? 400 : (i === 7 ? 1100 : 380));
+    })();
+    document.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === 'Escape') location.href = '/'; });
+})();
+</script>
+</body>
+</html>

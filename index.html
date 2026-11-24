@@ -1192,6 +1192,7 @@
                 ['projects', T('proyectos', 'projects')], ['experience', T('experiencia laboral', 'work experience')], ['certs', T('certificaciones', 'certifications')],
                 ['contact', T('cómo contactarme', 'how to reach me')], ['ping tomas', T('comprobar si estoy disponible', 'check if I am available')],
                 ['download', T('descargar el CV en PDF', 'download the PDF CV')], ['theme / lang', T('cambiar tema o idioma', 'switch theme or language')],
+                ['nmap tomas', T('escanear mis servicios', 'scan my services')], ['htop', T('procesos en marcha', 'running processes')], ['apt install tomas', T('instalarme en tu empresa', 'install me in your company')], ['ssh tomas', T('conectarte a mi servidor', 'connect to my server')],
                 ['sudo contratar', T('ya sabes 😉', 'you know 😉')], ['clear', T('limpiar la pantalla', 'clear the screen')],
             ].map((x) => Array.isArray(x) ? `  <span class="k">${x[0].padEnd(15)}</span><span class="m">${x[1]}</span>` : x).join('\n'),
             whoami: () => `<span class="k">${esc(tx(hero && hero.querySelector('h1')) || 'Tomás Kos Mardomingo')}</span>\n${esc(T('Administrador de Sistemas & Redes IT', 'Junior IT Systems & Network Administrator'))}\n<span class="m">${esc(tx(hero && hero.querySelector('.summary')))}</span>`,
@@ -1238,7 +1239,7 @@
         COMANDOS.certifications = COMANDOS.certs; COMANDOS.experiencia = COMANDOS.experience; COMANDOS.proyectos = COMANDOS.projects;
         COMANDOS.contacto = COMANDOS.contact; COMANDOS.ayuda = COMANDOS.help; COMANDOS['cat contact.txt'] = COMANDOS.contact;
         COMANDOS['cat cv_tomas_kos.pdf'] = COMANDOS.download;
-        const NOMBRES = ['help', 'whoami', 'neofetch', 'skills', 'projects', 'experience', 'certs', 'contact', 'ls', 'download', 'theme', 'lang', 'date', 'ping tomas', 'sudo contratar', 'sudo hire', 'clear', 'exit'];
+        const NOMBRES = ['help', 'whoami', 'neofetch', 'skills', 'projects', 'experience', 'certs', 'contact', 'ls', 'download', 'theme', 'lang', 'date', 'ping tomas', 'nmap tomas', 'htop', 'apt install tomas', 'ssh tomas', 'sudo contratar', 'sudo hire', 'clear', 'exit'];
 
         let ocupado = false;
         function ejecutar(cmdOriginal) {
@@ -1267,6 +1268,51 @@
                     linea(`<span class="p">✔ ${T('Acceso concedido.', 'Access granted.')}</span> ${T('Escríbeme a', 'Email me at')} <a href="mailto:tomaskoskos@gmail.com">tomaskoskos@gmail.com</a> ${T('o llama al', 'or call')} <span class="k">692 876 776</span>`);
                     ocupado = false;
                 }, reduce ? 0 : 450 * (pasos.length + 1));
+                return;
+            }
+            // Saca varias líneas con un pequeño retraso entre ellas (como si el comando trabajara)
+            const secuencia = (lineas, ms) => {
+                ocupado = true;
+                lineas.forEach((l, i) => setTimeout(() => { linea(l); if (i === lineas.length - 1) ocupado = false; }, reduce ? 0 : ms * (i + 1)));
+            };
+            if (/^nmap( |$)/.test(c)) {
+                const pu = [['22/tcp', 'open', 'ssh', 'OpenSSH · ' + T('solo con clave', 'key-only')], ['53/tcp', 'open', 'domain', 'BIND9 · DNS'], ['67/udp', 'open', 'dhcp', 'ISC DHCP'],
+                    ['80/tcp', 'open', 'http', 'Nginx · Apache · IIS'], ['389/tcp', 'open', 'ldap', 'Active Directory'], ['443/tcp', 'open', 'https', 'TLS · PKI (OpenSSL)'],
+                    ['3306/tcp', 'open', 'mysql', 'MySQL · MariaDB'], ['8883/tcp', 'open', 'mqtt-tls', 'Mosquitto (GlucoNet)'], ['51820/udp', 'open', 'wireguard', 'VPN']];
+                secuencia([`<span class="m">Starting Nmap ( https://nmap.org ) ${T('contra', 'against')} tomas.koscloud.es</span>`,
+                    `<span class="k">PORT       STATE  SERVICE    ${T('VERSIÓN', 'VERSION')}</span>`,
+                    ...pu.map(([p, s, n, v]) => `${p.padEnd(11)}<span class="p">${s.padEnd(7)}</span>${n.padEnd(11)}<span class="m">${v}</span>`),
+                    `<span class="p">${T('Nmap terminado: 1 candidato (1 host up) · listo para entrevista', 'Nmap done: 1 candidate (1 host up) · ready for interview')}</span>`], 180);
+                return;
+            }
+            if (c === 'htop' || c === 'top') {
+                const pr = [['1', 'dockerd', 'Docker / Compose'], ['22', 'sshd', T('administración remota', 'remote admin')], ['53', 'named', 'BIND9'], ['80', 'nginx', T('proxy inverso + HTTPS', 'reverse proxy + HTTPS')],
+                    ['389', 'ad-ds', 'Active Directory / GPO'], ['3306', 'mysqld', 'MySQL / MariaDB'], ['51820', 'wg-quick', 'WireGuard'], ['2027', 'asir', T('2.º curso en U-tad', '2nd year at U-tad')], ['5050', 'english', T('inglés B1', 'English B1')]];
+                const barra = (n) => '[' + '|'.repeat(n) + ' '.repeat(20 - n) + ']';
+                secuencia([`<span class="k">  CPU </span>${barra(17)} <span class="m">${T('aprendiendo a tope', 'learning at full speed')}</span>`,
+                    `<span class="k">  Mem </span>${barra(14)} <span class="m">${T('apuntes de ASIR', 'ASIR notes')}</span>`,
+                    `<span class="k">  PID   USER   %CPU  COMMAND</span>`,
+                    ...pr.map(([pid, cmd, d]) => `  ${pid.padEnd(6)}tomas  ${(3 + Math.random() * 20).toFixed(1).padStart(4)}  <span class="p">${cmd.padEnd(9)}</span><span class="m">${d}</span>`)], 90);
+                return;
+            }
+            if (/^(sudo )?apt(-get)? install/.test(c)) {
+                const pasos = [T('Leyendo lista de paquetes... Hecho', 'Reading package lists... Done'), T('Creando árbol de dependencias... Hecho', 'Building dependency tree... Done'),
+                    T('Se instalarán los siguientes paquetes NUEVOS:', 'The following NEW packages will be installed:'),
+                    '  <span class="k">tomas</span> linux windows-server cisco-ccst docker redes seguridad',
+                    ...[10, 35, 60, 85, 100].map((p) => `${T('Progreso', 'Progress')}: [<span class="p">${'#'.repeat(p / 5)}</span>${'.'.repeat(20 - p / 5)}] ${p}%`),
+                    T('Configurando tomas (2.0-asir) ...', 'Setting up tomas (2.0-asir) ...'),
+                    `<span class="p">✔ ${T('tomas instalado. Disponible para prácticas: escribe <b>contact</b>', 'tomas installed. Available for internships: type <b>contact</b>')}</span>`];
+                secuencia(pasos, 230);
+                return;
+            }
+            if (/^ssh( |$)/.test(c)) {
+                secuencia([`<span class="m">${T('Conectando con koscloud.es (22/tcp)…', 'Connecting to koscloud.es (22/tcp)…')}</span>`,
+                    `<span class="m">${T('Autenticación con clave pública: OK', 'Public key authentication: OK')}</span>`,
+                    `<span class="k">${T('Bienvenido a KosCloud', 'Welcome to KosCloud')}</span> · GNU/Linux`,
+                    `  ${T('Administrador', 'Admin')}: Tomás Kos Mardomingo · Junior SysAdmin`,
+                    `  ${T('Estado', 'Status')}: <span class="p">${T('disponible para prácticas (FE)', 'available for internships')}</span>`,
+                    `  ${T('Proyecto activo', 'Active project')}: GlucoNet (TFC)`,
+                    `<span class="m">${T('Última conexión: hoy, desde tu navegador', 'Last login: today, from your browser')}</span>`], 260);
                 return;
             }
             if (c === 'matrix' || c === 'sudo matrix') {
@@ -2291,6 +2337,337 @@
             const k = (e.key || '').toLowerCase();
             posK = k === KONAMI[posK] ? posK + 1 : (k === KONAMI[0] ? 1 : 0);
             if (posK === KONAMI.length) { posK = 0; window.fxMatrix(); }
+        });
+    })();
+    </script>
+    <!-- Segunda tanda de detalles (24/11/2026): paleta de comandos Ctrl+K y atajos, barra de lectura estilo apt,
+         glitch en el nombre, favicon con LED, trayectoria como git log, proyectos como docker ps y log en vivo (tail -f). -->
+    <style id="fx-visual2-css">
+        /* Paleta de comandos */
+        .fx-k-btn { font: 700 .72rem 'Fira Code', monospace; }
+        .fx-pal { position: fixed; inset: 0; z-index: 3500; display: flex; align-items: flex-start; justify-content: center; padding: 12vh 16px 16px; background: rgba(2, 6, 23, .62); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s linear .2s; }
+        .fx-pal.open { opacity: 1; visibility: visible; transition: opacity .2s ease; }
+        .fx-pal-box { width: min(620px, 100%); border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); box-shadow: 0 30px 80px rgba(0,0,0,.45); overflow: hidden; transform: translateY(-8px) scale(.98); transition: transform .2s ease; }
+        .fx-pal.open .fx-pal-box { transform: none; }
+        .fx-pal-in { display: flex; align-items: center; gap: .6rem; padding: .85rem 1rem; border-bottom: 1px solid var(--border); font-family: 'Fira Code', monospace; color: var(--primary); }
+        .fx-pal-in input { flex: 1; border: 0; outline: 0; background: transparent; color: var(--text-main); font: 500 1rem 'Inter', sans-serif; }
+        .fx-pal-list { max-height: min(56vh, 420px); overflow-y: auto; padding: .4rem; }
+        .fx-pal-it { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .6rem .75rem; border: 0; border-radius: 9px; background: none; color: var(--text-main); font: 500 .92rem 'Inter', sans-serif; text-align: left; cursor: pointer; }
+        .fx-pal-it i { width: 1.1rem; text-align: center; color: var(--primary); }
+        .fx-pal-it .grp { margin-left: auto; font: 600 .7rem 'Fira Code', monospace; color: var(--text-muted); }
+        .fx-pal-it kbd, .fx-pal-pie kbd { font: 600 .7rem 'Fira Code', monospace; padding: .05rem .4rem; border: 1px solid var(--border); border-radius: 5px; color: var(--text-muted); background: var(--bg-base); }
+        .fx-pal-it.sel { background: var(--primary); color: #fff; }
+        .fx-pal-it.sel i, .fx-pal-it.sel .grp { color: #fff; }
+        .fx-pal-vacio { padding: 1rem; color: var(--text-muted); font-size: .9rem; text-align: center; }
+        .fx-pal-pie { display: flex; gap: 1rem; flex-wrap: wrap; padding: .55rem 1rem; border-top: 1px solid var(--border); font-size: .72rem; color: var(--text-muted); }
+
+        /* Barra de lectura estilo apt */
+        .fx-apt { position: fixed; left: 50%; top: 78px; z-index: 1001; transform: translate(-50%, -6px); padding: .3rem .8rem; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font: 600 .74rem 'Fira Code', monospace; white-space: pre; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+        .fx-apt.on { opacity: 1; transform: translate(-50%, 0); }
+        .fx-apt b { color: var(--primary); font-weight: 700; }
+        @media (max-width: 899px) { .fx-apt { display: none; } }
+
+        /* Glitch en el nombre */
+        .hero h1.fx-glitch { animation: fxGlitch .5s steps(2, jump-none) 1; }
+        @keyframes fxGlitch {
+            0% { transform: translate(0); filter: drop-shadow(3px 0 #ff00c8) drop-shadow(-3px 0 #00e5ff); clip-path: inset(0 0 55% 0); }
+            20% { transform: translate(-4px, 1px); clip-path: inset(40% 0 20% 0); }
+            40% { transform: translate(3px, -1px) skewX(-6deg); filter: drop-shadow(-3px 0 #ff00c8) drop-shadow(3px 0 #00e5ff); clip-path: inset(10% 0 60% 0); }
+            60% { transform: translate(-2px, 0); clip-path: inset(70% 0 0 0); }
+            80% { transform: translate(2px, 1px); clip-path: inset(0); filter: drop-shadow(2px 0 #ff00c8) drop-shadow(-2px 0 #00e5ff); }
+            100% { transform: none; filter: none; clip-path: none; }
+        }
+
+        /* Trayectoria como git log */
+        .fx-git { position: relative; font-family: 'Fira Code', monospace; }
+        .fx-git svg { position: absolute; left: 0; top: 0; width: 60px; overflow: visible; }
+        .fx-git .ln0, .fx-git .ln1 { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: var(--len); stroke-dashoffset: var(--len); transition: stroke-dashoffset 1.6s ease; }
+        .fx-git .ln0 { stroke: var(--primary); } .fx-git .ln1 { stroke: #10B981; }
+        .fx-git.on .ln0, .fx-git.on .ln1 { stroke-dashoffset: 0; }
+        .fx-git circle { stroke: var(--bg-card); stroke-width: 3; opacity: 0; transition: opacity .3s ease; }
+        .fx-git.on circle { opacity: 1; }
+        .fx-git .head { animation: fxHead 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+        @keyframes fxHead { 50% { transform: scale(1.35); } }
+        .fx-git-row { display: flex; align-items: center; gap: .55rem; height: 46px; padding-left: 64px; font-size: .8rem; opacity: 0; transform: translateX(-8px); transition: opacity .4s ease, transform .4s ease; }
+        .fx-git.on .fx-git-row { opacity: 1; transform: none; }
+        .fx-git-row .h { color: #F59E0B; flex: none; }
+        .fx-git-row .msg { flex: 1; min-width: 0; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Inter', sans-serif; font-size: .88rem; }
+        .fx-git-row .msg b { font-family: 'Fira Code', monospace; font-weight: 600; color: var(--primary); }
+        .fx-git-row .ref { flex: none; font-size: .68rem; padding: .05rem .45rem; border-radius: 999px; border: 1px solid currentColor; }
+        .fx-git-row .ref.hd { color: #10B981; } .fx-git-row .ref.tg { color: #F59E0B; }
+        .fx-git-row .d { flex: none; color: var(--text-muted); font-size: .74rem; }
+        @media (max-width: 600px) { .fx-git-row .h, .fx-git-row .ref { display: none; } .fx-git-row { gap: .4rem; padding-left: 58px; } .fx-git-row .msg { font-size: .76rem; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; } .fx-git-row .d { font-size: .64rem; } }
+
+        /* docker ps */
+        .fx-ps-btn { margin-top: .6rem; display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .7rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--primary); font: 600 .78rem 'Fira Code', monospace; cursor: pointer; }
+        .fx-ps-btn:hover, .fx-ps-btn[aria-expanded="true"] { border-color: var(--primary); }
+        .fx-ps { grid-column: 1 / -1; display: none; overflow-x: auto; border-radius: 10px; background: #0B1220; border: 1px solid #1E3A5F; }
+        .fx-ps.open { display: block; }
+        .fx-ps table { width: 100%; border-collapse: collapse; font: 500 .7rem 'Fira Code', monospace; color: #CBD5E1; white-space: nowrap; }
+        .fx-ps th { text-align: left; color: #38BDF8; font-weight: 700; padding: .5rem .5rem; border-bottom: 1px solid #1E3A5F; }
+        .fx-ps td:nth-child(3), .fx-ps td:nth-child(4) { white-space: normal; }
+        .fx-ps td { padding: .45rem .5rem; border-bottom: 1px solid rgba(30, 58, 95, .5); }
+        .fx-ps tbody tr { cursor: pointer; } .fx-ps tbody tr:hover { background: rgba(56, 189, 248, .08); }
+        .fx-ps .up { color: #10B981; } .fx-ps .ex { color: #F59E0B; } .fx-ps .m { color: #64748B; }
+
+        /* tail -f */
+        .fx-tail { margin-top: .8rem; text-align: left; border-radius: 10px; background: #0B1220; border: 1px solid #1E3A5F; overflow: hidden; }
+        .fx-tail .t { padding: .4rem .8rem; font: 600 .72rem 'Fira Code', monospace; color: #64748B; border-bottom: 1px solid #1E3A5F; }
+        .fx-tail pre { margin: 0; padding: .5rem .8rem; height: 8.6em; overflow: hidden; font: 500 .74rem/1.45 'Fira Code', monospace; color: #CBD5E1; white-space: pre-wrap; word-break: break-word; }
+        .fx-tail .i { color: #38BDF8; } .fx-tail .w { color: #FBBF24; } .fx-tail .o { color: #10B981; } .fx-tail .m { color: #64748B; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fx-git .ln0, .fx-git .ln1 { transition: none; stroke-dashoffset: 0; } .fx-git-row { transition: none; } .fx-git .head { animation: none; }
+            .hero h1.fx-glitch { animation: none; }
+        }
+        @media print { .fx-pal, .fx-apt, .fx-ps, .fx-ps-btn, .fx-tail, .fx-k-btn { display: none !important; } .fx-git-row { opacity: 1 !important; transform: none !important; } }
+    </style>
+    <script id="fx-visual2-js">
+    (function () {
+        'use strict';
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fino = window.matchMedia('(pointer: fine)').matches;
+        const L = () => document.body.classList.contains('lang-en') ? 'en' : 'es';
+        const T = (es, en) => L() === 'en' ? en : es;
+        const bi = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
+        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const visibleTxt = (el) => { if (!el) return ''; const s = el.querySelector(L() === 'en' ? '.en' : '.es'); return (s || el).textContent.replace(/\s+/g, ' ').trim(); };
+        const sinTildes = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        const enCampo = (e) => e.target.closest && e.target.closest('input, textarea, select, [contenteditable]');
+
+        /* ---------- tail -f: log en vivo de la visita (lo usan las demás partes) ---------- */
+        const lineasLog = [];
+        let preLog = null;
+        const hora = () => new Date().toLocaleTimeString('es-ES', { hour12: false });
+        window.fxLog = (nivel, texto) => {
+            const cls = { INFO: 'i', WARN: 'w', OK: 'o' }[nivel] || 'm';
+            lineasLog.push(`<span class="m">${hora()}</span> <span class="${cls}">[${nivel}]</span> ${esc(texto)}`);
+            if (lineasLog.length > 6) lineasLog.shift();
+            if (preLog) preLog.innerHTML = lineasLog.join('\n');
+        };
+        const pie = document.querySelector('.devops-footer');
+        if (pie) {
+            const tail = document.createElement('div');
+            tail.className = 'fx-tail';
+            tail.innerHTML = `<div class="t">$ tail -f /var/log/koscloud/access.log <span>${bi('· lo que haces en esta visita', '· what you do on this visit')}</span></div><pre aria-live="off"></pre>`;
+            pie.appendChild(tail);
+            preLog = tail.querySelector('pre');
+        }
+        window.fxLog('INFO', T('sesión iniciada · idioma ', 'session started · language ') + L() + (document.body.classList.contains('dark-theme') ? T(' · tema oscuro', ' · dark theme') : T(' · tema claro', ' · light theme')));
+        // Secciones vistas
+        const slug = (t) => '/' + sinTildes(t).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const vistas = new IntersectionObserver((ents) => ents.forEach((e) => {
+            if (!e.isIntersecting) return; vistas.unobserve(e.target);
+            window.fxLog('OK', 'GET ' + slug(visibleTxt(e.target)) + ' 200');
+        }), { threshold: 0.9 });
+        const vigilarTitulos = () => document.querySelectorAll('.section-title').forEach((h) => { if (!h.dataset.fxLog) { h.dataset.fxLog = '1'; vistas.observe(h); } });
+        window.addEventListener('load', vigilarTitulos, { once: true });
+        document.addEventListener('click', (e) => {
+            const a = e.target.closest && e.target.closest('a[download], #hero-cta');
+            if (a) { const f = a.id === 'hero-cta' ? (document.getElementById('download-pdf') || {}).download || 'CV_Tomas_Kos.pdf' : a.getAttribute('download'); window.fxLog('OK', 'GET /' + f + ' 200 ' + T('(descarga)', '(download)')); }
+            if (e.target.closest && e.target.closest('#fx-copy-mail')) window.fxLog('INFO', T('email copiado al portapapeles', 'email copied to clipboard'));
+            if (e.target.closest && e.target.closest('#fx-entrevista')) window.fxLog('WARN', T('reclutador interesado detectado 😉', 'interested recruiter detected 😉'));
+        });
+        new MutationObserver((ms) => ms.forEach((m) => {
+            const antes = m.oldValue || '', ahora = document.body.className;
+            if (/dark-theme/.test(antes) !== /dark-theme/.test(ahora)) window.fxLog('INFO', T('tema cambiado a ', 'theme switched to ') + (/dark-theme/.test(ahora) ? T('oscuro', 'dark') : T('claro', 'light')));
+            if (/lang-en/.test(antes) !== /lang-en/.test(ahora)) window.fxLog('INFO', T('idioma cambiado a español', 'language switched to English'));
+        })).observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true });
+        const termIn = document.querySelector('.fx-terminal-section input');
+        // En fase de captura: el terminal vacía el campo al pulsar Enter
+        if (termIn) document.addEventListener('keydown', (e) => { if (e.target === termIn && e.key === 'Enter' && termIn.value.trim()) window.fxLog('INFO', 'exec: ' + termIn.value.trim().slice(0, 40)); }, true);
+        setTimeout(() => window.fxLog('INFO', T('el visitante sigue leyendo… buena señal', 'visitor still reading… good sign')), 45000);
+
+        /* ---------- Favicon con LED de estado ---------- */
+        (function favicon() {
+            const link = document.querySelector('link[rel="icon"]') || Object.assign(document.head.appendChild(document.createElement('link')), { rel: 'icon' });
+            const dibujar = (led) => {
+                const c = document.createElement('canvas'); c.width = c.height = 32; const x = c.getContext('2d');
+                x.fillStyle = '#0F172A'; x.beginPath(); x.roundRect ? x.roundRect(2, 3, 28, 26, 5) : x.rect(2, 3, 28, 26); x.fill();
+                x.fillStyle = '#38BDF8'; [8, 15, 22].forEach((y) => x.fillRect(7, y, 13, 3));
+                x.fillStyle = led ? '#22C55E' : '#14532D'; x.beginPath(); x.arc(24, 9.5, 3, 0, 6.3); x.fill();
+                return c.toDataURL('image/png');
+            };
+            const on = dibujar(true), off = dibujar(false);
+            link.href = on;
+            if (reduce) return;
+            let estado = true;
+            setInterval(() => { estado = !estado; link.href = estado ? on : off; }, 1000);
+        })();
+
+        /* ---------- Glitch al pasar el ratón por el nombre ---------- */
+        const h1 = document.querySelector('.hero h1');
+        if (h1 && fino && !reduce) {
+            let bloqueo = false;
+            h1.addEventListener('mouseenter', () => {
+                if (bloqueo) return; bloqueo = true;
+                h1.classList.add('fx-glitch');
+                setTimeout(() => { h1.classList.remove('fx-glitch'); }, 520);
+                setTimeout(() => { bloqueo = false; }, 1500);
+            });
+        }
+
+        /* ---------- Barra de lectura estilo apt ---------- */
+        const apt = document.createElement('div');
+        apt.className = 'fx-apt'; apt.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(apt);
+        let tApt = 0, rafApt = 0, leidoEntero = false;
+        const pintarApt = () => {
+            rafApt = 0;
+            const max = document.documentElement.scrollHeight - innerHeight;
+            const p = max > 0 ? Math.min(1, scrollY / max) : 1, n = Math.round(p * 20);
+            const nav = document.getElementById('main-nav');
+            apt.style.top = ((nav ? nav.getBoundingClientRect().bottom : 64) + 8) + 'px';
+            apt.innerHTML = p >= 0.995 ? `<b>✔</b> ${T('CV leído entero · ¿hablamos?', 'CV fully read · shall we talk?')}`
+                : `${T('Leyendo el CV…', 'Reading the CV…')} [<b>${'█'.repeat(n)}</b>${'░'.repeat(20 - n)}] ${String(Math.round(p * 100)).padStart(3)}%`;
+            if (p >= 0.995 && !leidoEntero) { leidoEntero = true; window.fxLog('OK', T('CV leído entero', 'CV fully read')); }
+            apt.classList.add('on');
+            clearTimeout(tApt); tApt = setTimeout(() => apt.classList.remove('on'), 1200);
+        };
+        window.addEventListener('scroll', () => { if (!rafApt) rafApt = requestAnimationFrame(pintarApt); }, { passive: true });
+
+        /* ---------- Trayectoria como git log ---------- */
+        const formacion = [...document.querySelectorAll('.main-column > section')].find((s) => s.querySelector('.fa-graduation-cap'));
+        if (formacion) {
+            // [carril, mensaje es, mensaje en, fecha, referencia]
+            const C = [
+                [0, '<b>wip(tfc):</b> GlucoNet, infraestructura segura en Docker', '<b>wip(tfc):</b> GlucoNet, secure Docker infrastructure', '2026/27', 'hd'],
+                [1, '<b>feat(trabajo):</b> cajero / reponedor en El Corte Inglés', '<b>feat(work):</b> cashier / stock clerk at El Corte Inglés', '07/2026', ''],
+                [0, '<b>cert:</b> IA generativa aplicada al desarrollo (U-tad)', '<b>cert:</b> generative AI applied to development (U-tad)', '06/2026', ''],
+                [1, '<b>feat(prácticas):</b> servidor de streaming en U-tad, +50 conexiones', '<b>feat(internship):</b> streaming server at U-tad, 50+ connections', '05/2026', ''],
+                [0, '<b>cert:</b> Cisco CCST IT Support', '<b>cert:</b> Cisco CCST IT Support', '05/2026', 'tg'],
+                [0, '<b>feat:</b> empiezo el CFGS ASIR en U-tad', '<b>feat:</b> start ASIR higher vocational degree at U-tad', '09/2025', ''],
+                [1, '<b>feat(homelab):</b> cloud privada self-hosted', '<b>feat(homelab):</b> self-hosted private cloud', '2025', ''],
+                [1, '<b>feat(trabajo):</b> camarero en Grupo Switch', '<b>feat(work):</b> waiter at Grupo Switch', '07/2025', ''],
+                [0, '<b>merge:</b> Bachillerato (Ciencias Sociales) terminado', '<b>merge:</b> baccalaureate (social sciences) completed', '05/2025', ''],
+                [0, '<b>init:</b> Bachillerato en Gredos San Diego', '<b>init:</b> baccalaureate at Gredos San Diego', '09/2023', ''],
+            ];
+            const H = 46, X = [14, 40], y = (i) => i * H + H / 2;
+            const hash = (i) => ['a1f3c9e', '7b2d4e0', 'c94e1a7', '3e8f0b2', 'f0c1ca5', '58ab7d3', 'd2e6f41', '9c07b8e', '4be2a90', '0init00'][i];
+            const ref = (r) => r === 'hd' ? '<span class="ref hd">HEAD → main</span>' : r === 'tg' ? '<span class="ref tg">tag: v1.0-ccst</span>' : '';
+            const prim1 = C.findIndex((c) => c[0] === 1), ult1 = C.length - 1 - [...C].reverse().findIndex((c) => c[0] === 1);
+            const d0 = `M${X[0]} ${y(0)} V${y(C.length - 1)}`;
+            // Rama de trabajo y proyectos: sale del merge del bachillerato y vuelve a main en HEAD
+            const d1 = `M${X[0]} ${y(ult1 + 1)} C${X[0]} ${y(ult1 + 1) - 22} ${X[1]} ${y(ult1) + 22} ${X[1]} ${y(ult1)} V${y(prim1)} C${X[1]} ${y(prim1) - 22} ${X[0]} ${y(0) + 22} ${X[0]} ${y(0)}`;
+            const puntos = C.map((c, i) => `<circle class="${i === 0 ? 'head' : ''}" cx="${X[c[0]]}" cy="${y(i)}" r="${i === 0 ? 7 : 6}" fill="${c[0] ? '#10B981' : (c[4] === 'tg' ? '#F59E0B' : 'var(--primary)')}"/>`).join('');
+            const sec = document.createElement('section');
+            sec.className = 'fx-git-sec';
+            sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-code-branch"></i> ${bi('Mi trayectoria · git log', 'My path · git log')}</h2>
+                <div class="fx-git"><svg height="${C.length * H}" viewBox="0 0 60 ${C.length * H}" aria-hidden="true"><path class="ln0" d="${d0}"/><path class="ln1" d="${d1}"/>${puntos}</svg>
+                ${C.map((c, i) => `<div class="fx-git-row" style="transition-delay:${(i * 0.08).toFixed(2)}s"><span class="h">${hash(i)}</span>${ref(c[4])}<span class="msg">${bi(c[1], c[2])}</span><span class="d">${c[3]}</span></div>`).join('')}</div>`;
+            formacion.after(sec);
+            const git = sec.querySelector('.fx-git');
+            git.querySelectorAll('path').forEach((p) => { const l = Math.ceil(p.getTotalLength ? p.getTotalLength() : 600); p.style.setProperty('--len', l); });
+            new IntersectionObserver((ents, o) => ents.forEach((e) => { if (e.isIntersecting) { git.classList.add('on'); o.disconnect(); } }), { threshold: 0.25 }).observe(git);
+        }
+
+        /* ---------- Proyectos en vista docker ps ---------- */
+        const rackTxt = document.querySelector('.fx-rack-txt');
+        const proyectos = [...document.querySelectorAll('.project-card')];
+        if (rackTxt && proyectos.length) {
+            const datos = (p) => {
+                const t = (p.querySelector('.item-title .es') || p.querySelector('.item-title')).textContent;
+                if (/gluco/i.test(t)) return ['gluconet:dev', `<span class="up">${T('Up · en desarrollo', 'Up · in progress')}</span>`, '443/tcp, 8883/tcp, 51820/udp', 'gluconet'];
+                if (/stream/i.test(t)) return ['streaming:2026', `<span class="ex">${T('Exited (0) · prácticas may. 2026', 'Exited (0) · internship May 2026')}</span>`, '<span class="m">—</span>', 'streaming'];
+                if (/cloud/i.test(t)) return ['cloud:selfhosted', `<span class="up">${T('Up · desde 2025', 'Up · since 2025')}</span>`, '<span class="m">—</span>', 'cloud'];
+                return ['proyecto:latest', '<span class="up">Up</span>', '—', t.trim().split(' ')[0].toLowerCase()];
+            };
+            const ids = ['3f9a1c2b7d10', '8e4d2a6c91f3', 'b7c0e5d4a218'];
+            rackTxt.insertAdjacentHTML('beforeend', `<button type="button" class="fx-ps-btn" aria-expanded="false"><i class="fa-brands fa-docker"></i> $ docker ps</button>`);
+            const wrap = rackTxt.closest('.fx-rack-wrap');
+            const ps = document.createElement('div');
+            ps.className = 'fx-ps';
+            const pintarPs = () => {
+                ps.innerHTML = `<table><thead><tr><th>CONTAINER ID</th><th>IMAGE</th><th>STATUS</th><th>PORTS</th><th>NAMES</th></tr></thead><tbody>${proyectos.map((p, i) => {
+                    const [img, st, pt, nm] = datos(p); return `<tr data-p="${i}"><td class="m">${ids[i] || '000000000000'}</td><td>${img}</td><td>${st}</td><td>${pt}</td><td>${nm}</td></tr>`; }).join('')}</tbody></table>`;
+            };
+            wrap.appendChild(ps);
+            const btnPs = rackTxt.querySelector('.fx-ps-btn');
+            btnPs.addEventListener('click', () => {
+                const abrir = !ps.classList.contains('open');
+                if (abrir) { pintarPs(); window.fxLog('INFO', 'exec: docker ps'); }
+                ps.classList.toggle('open', abrir); btnPs.setAttribute('aria-expanded', String(abrir));
+            });
+            ps.addEventListener('click', (e) => {
+                const tr = e.target.closest('tr[data-p]'); if (!tr) return;
+                const p = proyectos[+tr.dataset.p];
+                p.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+                p.classList.add('fx-flash'); setTimeout(() => p.classList.remove('fx-flash'), 1800);
+            });
+        }
+
+        /* ---------- Paleta de comandos (Ctrl+K) y atajos de teclado ---------- */
+        const clic = (sel) => () => { const el = typeof sel === 'string' ? document.querySelector(sel) : sel(); if (el) el.click(); };
+        const ir = (el) => () => { if (!el) return; const nav = document.getElementById('main-nav'); const alto = nav ? nav.getBoundingClientRect().height : 70; window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - alto - 16, behavior: reduce ? 'auto' : 'smooth' }); };
+        const acciones = () => {
+            const secciones = [...document.querySelectorAll('.section-title')].map((h) => {
+                const ic = h.querySelector('i'); return { ic: ic ? ic.className : 'fa-solid fa-hashtag', t: T('Ir a: ', 'Go to: ') + visibleTxt(h), g: T('sección', 'section'), f: ir(h) };
+            });
+            return [
+                { ic: 'fa-solid fa-file-pdf', t: T('Descargar CV en PDF', 'Download CV (PDF)'), g: 'd', f: clic('#download-pdf') },
+                { ic: 'fa-solid fa-language', t: T('Descargar CV en inglés', 'Download CV in English'), g: '', f: () => { const a = document.createElement('a'); a.href = './CV_Tomas_Kos_EN.pdf'; a.download = 'CV_Tomas_Kos_EN.pdf'; document.body.appendChild(a); a.click(); a.remove(); window.fxLog('OK', 'GET /CV_Tomas_Kos_EN.pdf 200'); } },
+                { ic: 'fa-solid fa-file-lines', t: T('Descargar CV para portales (ATS)', 'Download ATS-friendly CV'), g: '', f: () => { const a = document.createElement('a'); a.href = './CV_Tomas_Kos_ATS.pdf'; a.download = 'CV_Tomas_Kos_ATS.pdf'; document.body.appendChild(a); a.click(); a.remove(); window.fxLog('OK', 'GET /CV_Tomas_Kos_ATS.pdf 200'); } },
+                { ic: 'fa-solid fa-circle-half-stroke', t: T('Cambiar tema claro / oscuro', 'Toggle light / dark theme'), g: 't', f: clic('#theme-toggle') },
+                { ic: 'fa-solid fa-globe', t: T('Cambiar idioma (English)', 'Switch language (Español)'), g: 'l', f: clic('#lang-toggle') },
+                { ic: 'fa-regular fa-copy', t: T('Copiar mi email', 'Copy my email'), g: '', f: clic('#fx-copy-mail') },
+                { ic: 'fa-solid fa-calendar-check', t: T('Agendar una entrevista', 'Book an interview'), g: '', f: clic('#fx-entrevista') },
+                { ic: 'fa-solid fa-qrcode', t: T('Compartir / QR', 'Share / QR'), g: '', f: clic('.fx-hero-actions .fx-btn2') },
+                { ic: 'fa-brands fa-linkedin', t: 'LinkedIn', g: '', f: () => window.open('https://www.linkedin.com/in/tomás-kos', '_blank', 'noopener') },
+                { ic: 'fa-brands fa-github', t: 'GitHub', g: '', f: () => window.open('https://github.com/tomaskosmardomingo', '_blank', 'noopener') },
+                { ic: 'fa-solid fa-terminal', t: T('Abrir el terminal interactivo', 'Open the interactive terminal'), g: '', f: () => { const s = document.querySelector('.fx-terminal-section'); if (s) { s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); setTimeout(() => { const i = s.querySelector('input'); if (i) i.focus({ preventScroll: true }); }, 600); } } },
+                { ic: 'fa-brands fa-docker', t: T('Ver proyectos como docker ps', 'View projects as docker ps'), g: '', f: () => { const b = document.querySelector('.fx-ps-btn'); if (b) { if (b.getAttribute('aria-expanded') !== 'true') b.click(); b.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); } } },
+                { ic: 'fa-solid fa-print', t: T('Imprimir el CV', 'Print the CV'), g: '', f: () => window.print() },
+                { ic: 'fa-solid fa-code', t: T('Modo Matrix (easter egg)', 'Matrix mode (easter egg)'), g: '', f: () => { if (window.fxMatrix) window.fxMatrix(); } },
+                ...secciones,
+            ];
+        };
+        const pal = document.createElement('div');
+        pal.className = 'fx-pal'; pal.setAttribute('role', 'dialog'); pal.setAttribute('aria-modal', 'true'); pal.setAttribute('aria-label', 'Comandos');
+        pal.innerHTML = `<div class="fx-pal-box"><div class="fx-pal-in"><span>&gt;</span><input type="text" autocomplete="off" spellcheck="false" aria-label="Buscar comando"><kbd>Esc</kbd></div><div class="fx-pal-list" role="listbox"></div>
+            <div class="fx-pal-pie"><span><kbd>↑</kbd><kbd>↓</kbd> ${bi('moverse', 'move')}</span><span><kbd>Enter</kbd> ${bi('ejecutar', 'run')}</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd> ${bi('abrir', 'open')}</span><span><kbd>t</kbd> ${bi('tema', 'theme')} · <kbd>l</kbd> ${bi('idioma', 'language')} · <kbd>d</kbd> ${bi('descargar', 'download')} · <kbd>/</kbd> ${bi('buscar', 'search')} · <kbd>?</kbd> ${bi('atajos', 'shortcuts')}</span></div></div>`;
+        document.body.appendChild(pal);
+        const pIn = pal.querySelector('input'), pList = pal.querySelector('.fx-pal-list');
+        let lista = [], sel = 0, foco = null;
+        const pintar = () => {
+            const q = sinTildes(pIn.value.trim());
+            const todas = acciones();
+            lista = q ? todas.filter((a) => q.split(/\s+/).every((w) => sinTildes(a.t).includes(w))) : todas;
+            sel = Math.min(sel, Math.max(0, lista.length - 1));
+            pList.innerHTML = lista.length ? lista.map((a, i) => `<button type="button" class="fx-pal-it${i === sel ? ' sel' : ''}" role="option" data-i="${i}"><i class="${a.ic}"></i><span>${esc(a.t)}</span>${a.g && a.g.length === 1 ? `<kbd class="grp">${a.g}</kbd>` : (a.g ? `<span class="grp">${esc(a.g)}</span>` : '')}</button>`).join('')
+                : `<div class="fx-pal-vacio">${T('Nada coincide. Prueba con «proyectos», «pdf» o «tema».', 'Nothing matches. Try “projects”, “pdf” or “theme”.')}</div>`;
+            const s = pList.querySelector('.sel'); if (s) s.scrollIntoView({ block: 'nearest' });
+        };
+        const abrirPal = () => { foco = document.activeElement; pIn.value = ''; sel = 0; pintar(); pal.classList.add('open'); setTimeout(() => pIn.focus(), 30); window.fxLog('INFO', T('paleta de comandos abierta', 'command palette opened')); };
+        const cerrarPal = () => { pal.classList.remove('open'); if (foco && foco.focus) foco.focus({ preventScroll: true }); };
+        const ejecutarPal = (i) => { const a = lista[i]; if (!a) return; cerrarPal(); setTimeout(a.f, 60); };
+        pIn.addEventListener('input', () => { sel = 0; pintar(); });
+        pIn.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') { sel = (sel + 1) % Math.max(1, lista.length); pintar(); e.preventDefault(); }
+            else if (e.key === 'ArrowUp') { sel = (sel - 1 + lista.length) % Math.max(1, lista.length); pintar(); e.preventDefault(); }
+            else if (e.key === 'Enter') { ejecutarPal(sel); e.preventDefault(); }
+            else if (e.key === 'Escape') { cerrarPal(); e.preventDefault(); }
+        });
+        pList.addEventListener('click', (e) => { const b = e.target.closest('.fx-pal-it'); if (b) ejecutarPal(+b.dataset.i); });
+        pal.addEventListener('click', (e) => { if (e.target === pal) cerrarPal(); });
+        // Botón en la barra de arriba
+        const controles = document.querySelector('.nav-controls');
+        if (controles) {
+            const b = document.createElement('button');
+            b.className = 'theme-btn fx-k-btn'; b.type = 'button'; b.title = 'Ctrl + K'; b.setAttribute('aria-label', 'Paleta de comandos (Ctrl+K)');
+            b.innerHTML = '<i class="fa-solid fa-terminal"></i>';
+            b.addEventListener('click', abrirPal);
+            controles.insertBefore(b, controles.firstChild);
+        }
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); pal.classList.contains('open') ? cerrarPal() : abrirPal(); return; }
+            if (pal.classList.contains('open') || enCampo(e) || e.ctrlKey || e.metaKey || e.altKey) return;
+            if (document.querySelector('.fx-modal.open, .fx-matrix')) return;
+            const k = e.key;
+            if (k === 't') clic('#theme-toggle')();
+            else if (k === 'l') clic('#lang-toggle')();
+            else if (k === 'd') clic('#download-pdf')();
+            else if (k === '?') { abrirPal(); }
+            else if (k === '/') { const s = document.getElementById('searchInput'); if (s) { e.preventDefault(); const t = document.getElementById('search-toggle'); if (t && getComputedStyle(t).display !== 'none') t.click(); s.focus(); } }
         });
     })();
     </script>
