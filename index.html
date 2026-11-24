@@ -2362,8 +2362,8 @@
         .fx-pal-pie { display: flex; gap: 1rem; flex-wrap: wrap; padding: .55rem 1rem; border-top: 1px solid var(--border); font-size: .72rem; color: var(--text-muted); }
 
         /* Barra de lectura estilo apt */
-        .fx-apt { position: fixed; left: 50%; top: 78px; z-index: 1001; transform: translate(-50%, -6px); padding: .3rem .8rem; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font: 600 .74rem 'Fira Code', monospace; white-space: pre; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; box-shadow: 0 6px 20px rgba(0,0,0,.2); }
-        .fx-apt.on { opacity: 1; transform: translate(-50%, 0); }
+        .fx-apt { position: fixed; left: 18px; bottom: 18px; z-index: 900; transform: translateY(6px); padding: .25rem .6rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); font: 600 .66rem 'Fira Code', monospace; white-space: pre; opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; }
+        .fx-apt.on { opacity: .85; transform: none; }
         .fx-apt b { color: var(--primary); font-weight: 700; }
         @media (max-width: 899px) { .fx-apt { display: none; } }
 
@@ -2515,12 +2515,11 @@
         const pintarApt = () => {
             rafApt = 0;
             const max = document.documentElement.scrollHeight - innerHeight;
-            const p = max > 0 ? Math.min(1, scrollY / max) : 1, n = Math.round(p * 20);
-            const nav = document.getElementById('main-nav');
-            apt.style.top = ((nav ? nav.getBoundingClientRect().bottom : 64) + 8) + 'px';
+            const p = max > 0 ? Math.min(1, scrollY / max) : 1, n = Math.round(p * 10);
             apt.innerHTML = p >= 0.995 ? `<b>✔</b> ${T('CV leído entero · ¿hablamos?', 'CV fully read · shall we talk?')}`
-                : `${T('Leyendo el CV…', 'Reading the CV…')} [<b>${'█'.repeat(n)}</b>${'░'.repeat(20 - n)}] ${String(Math.round(p * 100)).padStart(3)}%`;
+                : `${T('leyendo', 'reading')} <b>${'▰'.repeat(n)}</b>${'▱'.repeat(10 - n)} ${String(Math.round(p * 100)).padStart(3)}%`;
             if (p >= 0.995 && !leidoEntero) { leidoEntero = true; window.fxLog('OK', T('CV leído entero', 'CV fully read')); }
+            if (p < 0.02) { apt.classList.remove('on'); return; }
             apt.classList.add('on');
             clearTimeout(tApt); tApt = setTimeout(() => apt.classList.remove('on'), 1200);
         };
