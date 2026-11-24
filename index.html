@@ -1269,6 +1269,11 @@
                 }, reduce ? 0 : 450 * (pasos.length + 1));
                 return;
             }
+            if (c === 'matrix' || c === 'sudo matrix') {
+                const ok = typeof window.fxMatrix === 'function' && window.fxMatrix();
+                linea(ok ? `<span class="p">${T('Entrando en la matriz… (Esc o clic para salir)', 'Entering the matrix… (Esc or click to exit)')}</span>` : `<span class="m">${T('La matriz está en pausa (movimiento reducido).', 'The matrix is paused (reduced motion).')}</span>`);
+                return;
+            }
             if (c.startsWith('sudo')) { linea(`<span class="e">${T('Permiso denegado. Prueba con', 'Permission denied. Try')} <b>sudo contratar</b></span>`); return; }
             const f = COMANDOS[c];
             if (!f) { linea(`<span class="e">${esc(cmd)}: ${T('orden no encontrada', 'command not found')}.</span> <span class="m">${T('Escribe', 'Type')} <b>help</b></span>`); return; }
@@ -1915,6 +1920,377 @@
         window.addEventListener('beforeprint', () => {
             document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right').forEach((el) => el.classList.add('active'));
             document.querySelectorAll('.lang-progress[data-width]').forEach((b) => { b.style.width = b.dataset.width; });
+        });
+    })();
+    </script>
+    <!-- Animaciones visuales (24/11/2026): tema en círculo, certificado holográfico, títulos que se descifran,
+         paquete por la trayectoria, rack 3D de proyectos, topología de habilidades, monitor en vivo y easter egg Matrix.
+         Todo es CSS 3D / SVG / canvas 2D sin librerías; se para cuando no se ve y respeta "reducir movimiento". -->
+    <style id="fx-visual-css">
+        /* 1. Cambio de tema con círculo (View Transitions) */
+        ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+        /* 2. Certificado holográfico */
+        .fx-holo { isolation: isolate; }
+        .fx-holo::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 3; opacity: 0; transition: opacity .35s ease;
+            background:
+                radial-gradient(circle at var(--hx, 50%) var(--hy, 50%), rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 38%),
+                linear-gradient(115deg, transparent 18%, rgba(255,0,170,.28) 32%, rgba(0,229,255,.30) 44%, rgba(255,230,0,.26) 56%, rgba(0,255,140,.26) 66%, transparent 80%);
+            background-size: 100% 100%, 260% 260%; background-position: center, var(--hbx, 50%) var(--hby, 50%); mix-blend-mode: color-dodge; }
+        .fx-holo:hover::after, .fx-holo.fx-holo-auto::after { opacity: 1; }
+        .fx-holo .fx-holo-sello { position: absolute; top: .55rem; right: .7rem; z-index: 4; font: 700 .62rem 'Fira Code', monospace; letter-spacing: .08em; color: var(--primary); border: 1px solid var(--primary); border-radius: 999px; padding: .1rem .45rem; background: var(--bg-card); }
+
+        /* 3. Títulos que se descifran */
+        .fx-cifrando { font-variant-ligatures: none; }
+
+        /* 4. Paquete que recorre la trayectoria */
+        .timeline-progress::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--primary), 0 0 14px 4px var(--accent); opacity: calc(var(--progress) * 40); }
+        .timeline-item.fx-hop-on::before { background: var(--primary); box-shadow: 0 0 0 4px rgba(14,165,233,.22), 0 0 14px var(--accent); }
+        .fx-hop-ring { position: absolute; left: -25px; top: .4rem; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; pointer-events: none; z-index: 1; }
+        .timeline-item.fx-hop-on .fx-hop-ring { animation: fxHop .9s ease-out 1; }
+        .fx-hop-tag { position: absolute; right: 0; top: .15rem; font: 600 .68rem 'Fira Code', monospace; color: var(--primary); opacity: 0; transform: translateX(-6px); transition: opacity .4s ease, transform .4s ease; white-space: nowrap; pointer-events: none; }
+        .timeline-item.fx-hop-on .fx-hop-tag { opacity: .85; transform: none; }
+        @keyframes fxHop { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(3.2); } }
+        @media (max-width: 768px) { .fx-hop-ring { left: -22px; width: 12px; height: 12px; top: .3rem; } .fx-hop-tag { display: none; } }
+
+        /* 5. Rack de servidores 3D */
+        .fx-rack-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 1.2rem; align-items: center; margin: 0 0 1.6rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-base); }
+        .fx-rack-txt h3 { font: 700 1.02rem 'Plus Jakarta Sans', sans-serif; color: var(--text-main); margin: 0 0 .35rem; }
+        .fx-rack-txt p { margin: 0; font-size: .86rem; color: var(--text-muted); line-height: 1.5; }
+        .fx-rack-txt code { font: 600 .78rem 'Fira Code', monospace; color: var(--primary); }
+        .fx-rack-scene { perspective: 900px; height: 250px; display: flex; align-items: center; justify-content: center; }
+        .fx-rack { --ry: -24deg; --rx: 8deg; position: relative; width: 200px; padding: 12px 10px; border-radius: 6px; transform-style: preserve-3d; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .5s cubic-bezier(.2,.8,.2,1);
+            background: linear-gradient(180deg, #1f2a3d, #121a29); border: 1px solid #2c3a52; box-shadow: 0 30px 40px -20px rgba(0,0,0,.55); }
+        .fx-rack-side { position: absolute; top: 0; left: 100%; width: 70px; height: 100%; transform-origin: left center; transform: rotateY(90deg); background: linear-gradient(90deg, #0d1422, #18233a); border: 1px solid #2c3a52; border-radius: 0 6px 6px 0;
+            background-image: repeating-linear-gradient(180deg, rgba(255,255,255,.05) 0 2px, transparent 2px 9px); }
+        .fx-rack-top { position: absolute; left: 0; bottom: 100%; width: 100%; height: 70px; transform-origin: center bottom; transform: rotateX(90deg); background: linear-gradient(0deg, #233149, #162036); border: 1px solid #2c3a52; }
+        .fx-u { position: relative; display: flex; align-items: center; gap: 6px; width: 100%; height: 30px; margin: 0 0 6px; padding: 0 8px; border: 1px solid #33445f; border-radius: 3px; background: linear-gradient(180deg, #2a3850, #1b2639); color: #cfe3ff; font: 600 10px 'Fira Code', monospace; text-align: left; cursor: default; transform: translateZ(4px); transition: transform .25s ease, background .25s ease, box-shadow .25s ease; }
+        .fx-u:last-child { margin-bottom: 0; }
+        button.fx-u { cursor: pointer; }
+        button.fx-u:hover, button.fx-u:focus-visible { transform: translateZ(22px); background: linear-gradient(180deg, #2f4a6e, #1d3352); box-shadow: 0 0 0 1px var(--accent), 0 6px 18px rgba(14,165,233,.35); outline: none; }
+        .fx-u .n { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .fx-u .leds { display: flex; gap: 3px; }
+        .fx-u .leds i { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+        .fx-u .leds i.a { background: #f59e0b; box-shadow: 0 0 5px #f59e0b; }
+        .fx-u .bays { width: 34px; height: 12px; border-radius: 2px; background: repeating-linear-gradient(90deg, #0b1220 0 6px, #34465f 6px 7px); }
+        .fx-u .ports { width: 44px; height: 10px; background: repeating-linear-gradient(90deg, #0b1220 0 5px, transparent 5px 7px); border-radius: 1px; }
+        .fx-rack-wrap.fx-on .fx-u .leds i { animation: fxLed 1.3s steps(2, jump-none) infinite; }
+        .fx-rack-wrap.fx-on .fx-u .leds i:nth-child(2) { animation-duration: .7s; animation-delay: .2s; }
+        .fx-rack-wrap.fx-on .fx-u:nth-child(odd) .leds i { animation-duration: .9s; }
+        @keyframes fxLed { 0% { opacity: 1; } 100% { opacity: .25; } }
+        .project-card.fx-flash { box-shadow: 0 0 0 2px var(--primary), 0 0 28px rgba(14,165,233,.45) !important; }
+        @media (max-width: 768px) { .fx-rack-wrap { grid-template-columns: 1fr; } .fx-rack-scene { height: 230px; } }
+
+        /* 6. Topología de habilidades */
+        .fx-topo { margin: 0 0 1.2rem; }
+        .fx-topo svg { width: 100%; height: auto; display: block; overflow: visible; }
+        .fx-topo .e { stroke: var(--border); stroke-width: 1.4; transition: stroke .25s, opacity .25s; }
+        .fx-topo .nd { cursor: pointer; }
+        .fx-topo .nd rect { fill: var(--bg-base); stroke: var(--border); stroke-width: 1; transition: fill .25s, stroke .25s, opacity .25s; }
+        .fx-topo .nd circle { fill: var(--primary); }
+        .fx-topo .nd text { font: 600 11.5px 'Fira Code', monospace; fill: var(--text-main); transition: opacity .25s; }
+        .fx-topo .nd.g-red circle { fill: #10B981; } .fx-topo .nd.g-seg circle { fill: #F59E0B; } .fx-topo .nd.g-win circle { fill: #A855F7; }
+        .fx-topo.fx-sel .e:not(.on) { opacity: .18; }
+        .fx-topo.fx-sel .nd:not(.on) rect, .fx-topo.fx-sel .nd:not(.on) text { opacity: .35; }
+        .fx-topo .e.on { stroke: var(--primary); stroke-width: 2; stroke-dasharray: 5 4; animation: fxDash .7s linear infinite; }
+        .fx-topo .nd.on rect { stroke: var(--primary); fill: var(--bg-card); }
+        .fx-topo-hint { font-size: .75rem; color: var(--text-muted); margin-top: .3rem; text-align: center; }
+        .tag.fx-tag-hl { color: var(--primary) !important; border-color: var(--primary) !important; box-shadow: 0 0 0 1px var(--primary); }
+        @keyframes fxDash { to { stroke-dashoffset: -18; } }
+
+        /* 7. Monitor en vivo */
+        .fx-mon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; margin-top: 1rem; text-align: left; }
+        .fx-mon-c { border: 1px solid var(--border); border-radius: 10px; padding: .55rem .7rem; background: var(--bg-base); }
+        .fx-mon-c .t { display: flex; justify-content: space-between; font-size: .72rem; color: var(--text-muted); }
+        .fx-mon-c .v { color: var(--primary); font-weight: 700; }
+        .fx-mon-c svg { width: 100%; height: 30px; display: block; margin-top: .3rem; }
+        .fx-mon-c polyline { fill: none; stroke: var(--primary); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+        .fx-mon-c polygon { fill: var(--primary); opacity: .12; }
+        .fx-mon-nota { grid-column: 1 / -1; font-size: .7rem; color: var(--text-muted); text-align: center; }
+        @media (max-width: 600px) { .fx-mon { grid-template-columns: 1fr; } }
+
+        /* 8. Matrix */
+        .fx-matrix { position: fixed; inset: 0; z-index: 4000; background: #000; cursor: pointer; opacity: 0; transition: opacity .5s ease; }
+        .fx-matrix.on { opacity: 1; }
+        .fx-matrix-msg { position: fixed; left: 50%; top: 50%; z-index: 4001; transform: translate(-50%, -50%); padding: 1rem 1.4rem; border: 1px solid #22c55e; border-radius: 10px; background: rgba(0,0,0,.82); color: #4ade80; font: 600 1rem 'Fira Code', monospace; text-align: center; opacity: 0; transition: opacity .6s ease; pointer-events: none; }
+        .fx-matrix-msg.on { opacity: 1; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fx-rack-wrap .fx-u .leds i, .fx-topo .e.on, .timeline-item .fx-hop-ring { animation: none !important; }
+            .fx-rack { transition: none; }
+        }
+        @media print { .fx-rack-wrap, .fx-topo, .fx-mon, .fx-matrix, .fx-matrix-msg, .fx-hop-tag, .fx-holo-sello { display: none !important; } .timeline-progress::after { display: none; } }
+    </style>
+    <script id="fx-visual-js">
+    (function () {
+        'use strict';
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fino = window.matchMedia('(pointer: fine)').matches;
+        const L = () => document.body.classList.contains('lang-en') ? 'en' : 'es';
+        const T = (es, en) => L() === 'en' ? en : es;
+        const bi = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
+        // Ejecuta cb mientras el elemento está en pantalla (on=true) y lo para al salir (on=false)
+        const alVerse = (el, cb, opciones) => new IntersectionObserver((ents) => ents.forEach((e) => cb(e.isIntersecting, e)), opciones || {}).observe(el);
+
+        /* ---------- 1. Cambio de tema con un círculo que sale del botón ---------- */
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest && e.target.closest('#theme-toggle');
+            if (!btn || reduce || !document.startViewTransition) return; // sin soporte: lo hace el botón de siempre
+            e.stopPropagation(); e.preventDefault();
+            const r = btn.getBoundingClientRect();
+            const x = e.clientX || r.left + r.width / 2, y = e.clientY || r.top + r.height / 2;
+            const radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+            const vt = document.startViewTransition(() => {
+                document.body.classList.toggle('dark-theme');
+                const i = btn.querySelector('i');
+                if (i) i.className = document.body.classList.contains('dark-theme') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            });
+            vt.ready.then(() => {
+                document.documentElement.animate({ clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radio}px at ${x}px ${y}px)`] },
+                    { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)', pseudoElement: '::view-transition-new(root)' });
+            }).catch(() => {});
+        }, true);
+
+        /* ---------- 2. Certificado Cisco CCST holográfico ---------- */
+        const ccst = [...document.querySelectorAll('.cert-card')].find((c) => /CCST/.test(c.textContent));
+        if (ccst) {
+            ccst.classList.add('fx-holo');
+            ccst.insertAdjacentHTML('beforeend', '<span class="fx-holo-sello">CISCO · CCST</span>');
+            if (fino && !reduce) {
+                ccst.addEventListener('mousemove', (e) => {
+                    const r = ccst.getBoundingClientRect();
+                    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+                    ccst.style.setProperty('--hx', (px * 100).toFixed(1) + '%');
+                    ccst.style.setProperty('--hy', (py * 100).toFixed(1) + '%');
+                    ccst.style.setProperty('--hbx', (100 - px * 100).toFixed(1) + '%');
+                    ccst.style.setProperty('--hby', (100 - py * 100).toFixed(1) + '%');
+                }, { passive: true });
+            } else if (!reduce) {
+                // En móvil el brillo pasa solo una vez al aparecer
+                alVerse(ccst, (on) => { if (on) { ccst.classList.add('fx-holo-auto'); setTimeout(() => ccst.classList.remove('fx-holo-auto'), 1600); } }, { threshold: 0.7 });
+            }
+        }
+
+        /* ---------- 3. Títulos que se "descifran" al aparecer ---------- */
+        const SIMBOLOS = '!<>-_\\/[]{}=+*^?#01$%&';
+        function descifrar(el) {
+            const original = el.textContent, n = original.length, dur = 700, t0 = performance.now();
+            el.classList.add('fx-cifrando');
+            const paso = (t) => {
+                const p = Math.min(1, (t - t0) / dur), fijos = Math.floor(p * n);
+                let s = original.slice(0, fijos);
+                for (let i = fijos; i < n; i++) s += original[i] === ' ' ? ' ' : SIMBOLOS[(Math.random() * SIMBOLOS.length) | 0];
+                el.textContent = s;
+                if (p < 1) requestAnimationFrame(paso); else { el.textContent = original; el.classList.remove('fx-cifrando'); }
+            };
+            requestAnimationFrame(paso);
+        }
+        if (!reduce) {
+            const obs = new IntersectionObserver((ents) => ents.forEach((e) => {
+                if (!e.isIntersecting) return;
+                obs.unobserve(e.target);
+                e.target.querySelectorAll('.es, .en').forEach((s) => { if (s.children.length === 0 && s.textContent.trim()) descifrar(s); });
+            }), { threshold: 0.8 });
+            const vigilar = () => document.querySelectorAll('.section-title').forEach((h) => { if (!h.dataset.fxCifra) { h.dataset.fxCifra = '1'; obs.observe(h); } });
+            vigilar(); window.addEventListener('load', vigilar, { once: true });
+        }
+
+        /* ---------- 4. Un "paquete" recorre la trayectoria como un traceroute ---------- */
+        const contenedores = [...document.querySelectorAll('.timeline-container')];
+        contenedores.forEach((c) => c.querySelectorAll('.timeline-item').forEach((it, i) => {
+            it.insertAdjacentHTML('afterbegin', '<span class="fx-hop-ring" aria-hidden="true"></span>' +
+                `<span class="fx-hop-tag" aria-hidden="true">hop ${i + 1} · ${(0.3 + Math.random() * 0.6).toFixed(2)} ms</span>`);
+        }));
+        let pendienteHop = false;
+        const revisarHops = () => {
+            pendienteHop = false;
+            contenedores.forEach((c) => {
+                const p = parseFloat(c.style.getPropertyValue('--progress')) || 0, alto = c.offsetHeight * p;
+                c.querySelectorAll('.timeline-item').forEach((it) => it.classList.toggle('fx-hop-on', it.offsetTop + 8 <= alto && p > 0));
+            });
+        };
+        window.addEventListener('scroll', () => { if (!pendienteHop) { pendienteHop = true; requestAnimationFrame(() => requestAnimationFrame(revisarHops)); } }, { passive: true });
+        window.addEventListener('load', revisarHops, { once: true });
+
+        /* ---------- 5. Rack de servidores 3D: cada servidor es un proyecto ---------- */
+        const proyectos = [...document.querySelectorAll('.project-card')];
+        const secProy = proyectos.length ? proyectos[0].closest('section') : null;
+        if (secProy) {
+            const nombre = (p) => { const t = p.querySelector('.item-title .es') || p.querySelector('.item-title'); return (t ? t.textContent : '').split('·')[0].replace(/\(.*?\)/g, '').trim(); };
+            // Nombre corto tipo hostname para cada servidor
+            const host = (p) => { const t = nombre(p); return /gluco/i.test(t) ? 'gluconet' : /stream/i.test(t) ? 'streaming' : /cloud/i.test(t) ? 'cloud' : t.split(' ')[0].toLowerCase(); };
+            const unidades = proyectos.map((p, i) => `<button class="fx-u" type="button" data-p="${i}" aria-label="${nombre(p)}" title="${nombre(p)}"><span class="leds"><i></i><i class="${i === 0 ? 'a' : ''}"></i></span><span class="n">srv0${i + 1} · ${host(p)}</span></button>`).join('');
+            const wrap = document.createElement('div');
+            wrap.className = 'fx-rack-wrap';
+            wrap.innerHTML = `<div class="fx-rack-txt">
+                    <h3>${bi('Mi rack de proyectos', 'My project rack')}</h3>
+                    <p>${bi('Cada servidor es uno de mis proyectos. <b>Pulsa uno</b> para ir a él.', 'Each server is one of my projects. <b>Click one</b> to jump to it.')}</p>
+                    <p style="margin-top:.5rem"><code>$ uptime</code> ${bi('· todos los servicios en marcha', '· all services up')}</p>
+                </div>
+                <div class="fx-rack-scene"><div class="fx-rack">
+                    <span class="fx-rack-top"></span><span class="fx-rack-side"></span>
+                    <div class="fx-u"><span class="leds"><i></i><i></i></span><span class="n">fw01 · firewall</span><span class="ports"></span></div>
+                    <div class="fx-u"><span class="leds"><i></i><i></i></span><span class="n">sw01 · switch</span><span class="ports"></span></div>
+                    ${unidades}
+                    <div class="fx-u"><span class="leds"><i></i><i class="a"></i></span><span class="n">nas01 · backup</span><span class="bays"></span></div>
+                </div></div>`;
+            const titulo = secProy.querySelector('.section-title');
+            (titulo ? titulo : secProy.firstChild).after(wrap);
+            const rack = wrap.querySelector('.fx-rack');
+            wrap.addEventListener('click', (e) => {
+                const b = e.target.closest('button.fx-u'); if (!b) return;
+                const p = proyectos[+b.dataset.p]; if (!p) return;
+                p.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+                p.classList.add('fx-flash'); setTimeout(() => p.classList.remove('fx-flash'), 1800);
+            });
+            if (fino && !reduce) {
+                const escena = wrap.querySelector('.fx-rack-scene');
+                escena.addEventListener('mousemove', (e) => {
+                    const r = escena.getBoundingClientRect();
+                    const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+                    rack.style.setProperty('--ry', (-24 + px * 34).toFixed(1) + 'deg');
+                    rack.style.setProperty('--rx', (8 - py * 14).toFixed(1) + 'deg');
+                }, { passive: true });
+                escena.addEventListener('mouseleave', () => { rack.style.removeProperty('--ry'); rack.style.removeProperty('--rx'); });
+            }
+            // Los LED solo parpadean mientras el rack se ve
+            if (!reduce) alVerse(wrap, (on) => wrap.classList.toggle('fx-on', on));
+        }
+
+        /* ---------- 6. Habilidades como topología de red ---------- */
+        const stack = document.querySelector('aside .skills-category');
+        if (stack) {
+            // [id, texto, x, y, grupo, palabras para resaltar etiquetas]
+            const N = [
+                ['lin', 'Linux', 115, 62, '', /linux|ubuntu|debian|kali|ssh|lvm|nfs|acl/i],
+                ['dck', 'Docker', 38, 26, '', /docker/i],
+                ['sh', 'Bash/PS', 38, 104, '', /bash|powershell/i],
+                ['ngx', 'Nginx', 205, 26, '', /nginx|apache|iis|lamp/i],
+                ['sql', 'SQL', 298, 26, '', /sql|mysql|maria/i],
+                ['dns', 'DNS/DHCP', 128, 140, '', /dns|dhcp/i],
+                ['win', 'Win Server', 48, 178, 'g-win', /windows/i],
+                ['ad', 'AD / GPO', 118, 214, 'g-win', /active directory|gpo/i],
+                ['fw', 'Firewall', 220, 112, 'g-seg', /firewall|ufw|iptables/i],
+                ['vpn', 'VPN', 300, 88, 'g-seg', /vpn/i],
+                ['pki', 'PKI/TLS', 268, 168, 'g-seg', /pki|openssl|https|tls/i],
+                ['vln', 'VLAN/OSPF', 205, 214, 'g-red', /vlan|ospf|nat|ipv/i],
+                ['cis', 'Cisco', 300, 214, 'g-red', /cisco|wireshark/i],
+            ];
+            const E = [['lin', 'dck'], ['lin', 'sh'], ['lin', 'ngx'], ['lin', 'dns'], ['lin', 'fw'], ['dck', 'ngx'], ['ngx', 'sql'], ['dck', 'sh'], ['ngx', 'pki'],
+                ['win', 'ad'], ['win', 'dns'], ['ad', 'dns'], ['win', 'sh'], ['fw', 'vpn'], ['fw', 'vln'], ['vpn', 'pki'], ['vln', 'cis'], ['cis', 'fw'], ['sql', 'vpn']];
+            const P = Object.fromEntries(N.map((n) => [n[0], n]));
+            const ancho = (t) => t.length * 7 + 22;
+            const aristas = E.map(([a, b]) => `<line class="e" data-a="${a}" data-b="${b}" x1="${P[a][2]}" y1="${P[a][3]}" x2="${P[b][2]}" y2="${P[b][3]}"/>`).join('');
+            const nodos = N.map(([id, t, x, y, g]) => { const w = ancho(t); return `<g class="nd ${g}" data-id="${id}" tabindex="0" role="button" aria-label="${t}"><rect x="${x - w / 2}" y="${y - 12}" width="${w}" height="24" rx="12"/><circle cx="${x - w / 2 + 10}" cy="${y}" r="3.5"/><text x="${x - w / 2 + 18}" y="${y + 4}">${t}</text></g>`; }).join('');
+            const topo = document.createElement('div');
+            topo.className = 'fx-topo';
+            topo.innerHTML = `<svg viewBox="-4 6 348 232" role="img" aria-label="Topología de mis habilidades">${aristas}${nodos}</svg><div class="fx-topo-hint">${bi('Pasa el ratón (o toca) un nodo para ver con qué lo uso', 'Hover (or tap) a node to see what I use it with')}</div>`;
+            stack.before(topo);
+            const svg = topo.querySelector('svg');
+            const tags = [...document.querySelectorAll('aside .skills-category .tag')];
+            const limpiar = () => { svg.classList.remove('fx-sel'); svg.querySelectorAll('.on').forEach((x) => x.classList.remove('on')); tags.forEach((t) => t.classList.remove('fx-tag-hl')); };
+            const elegir = (id) => {
+                limpiar(); svg.classList.add('fx-sel');
+                svg.querySelector(`.nd[data-id="${id}"]`).classList.add('on');
+                svg.querySelectorAll('.e').forEach((l) => {
+                    if (l.dataset.a === id || l.dataset.b === id) { l.classList.add('on'); svg.querySelector(`.nd[data-id="${l.dataset.a === id ? l.dataset.b : l.dataset.a}"]`).classList.add('on'); }
+                });
+                tags.forEach((t) => { if (P[id][5].test(t.textContent)) t.classList.add('fx-tag-hl'); });
+            };
+            svg.querySelectorAll('.nd').forEach((g) => {
+                g.addEventListener('mouseenter', () => elegir(g.dataset.id));
+                g.addEventListener('focus', () => elegir(g.dataset.id));
+                g.addEventListener('click', (e) => { e.stopPropagation(); elegir(g.dataset.id); });
+            });
+            svg.addEventListener('mouseleave', limpiar);
+            document.addEventListener('click', (e) => { if (!topo.contains(e.target)) limpiar(); });
+        }
+
+        /* ---------- 7. Monitor en vivo de la visita (datos reales de este navegador) ---------- */
+        const pie = document.querySelector('.devops-footer');
+        if (pie) {
+            const tarjeta = (id, es, en) => `<div class="fx-mon-c"><div class="t"><span>${bi(es, en)}</span><span class="v" id="fx-mon-${id}">—</span></div><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polygon id="fx-mon-${id}-a"/><polyline id="fx-mon-${id}-l"/></svg></div>`;
+            const mon = document.createElement('div');
+            mon.className = 'fx-mon';
+            mon.innerHTML = tarjeta('fps', 'Fotogramas/s', 'Frames/s') + tarjeta('ping', 'Ping al servidor', 'Server ping') + tarjeta('mem', 'Memoria JS', 'JS memory') +
+                `<div class="fx-mon-nota">${bi('Monitor en vivo de tu visita: medido ahora mismo en tu navegador', 'Live monitor of your visit: measured right now in your browser')}</div>`;
+            pie.appendChild(mon);
+            const series = { fps: [], ping: [], mem: [] };
+            const dibujar = (id, valor, max, texto) => {
+                const s = series[id]; s.push(valor); if (s.length > 30) s.shift();
+                const m = Math.max(max, ...s) || 1;
+                const pts = s.map((v, i) => `${(i / 29 * 100).toFixed(1)},${(28 - v / m * 26).toFixed(1)}`).join(' ');
+                document.getElementById(`fx-mon-${id}-l`).setAttribute('points', pts);
+                document.getElementById(`fx-mon-${id}-a`).setAttribute('points', pts ? `0,30 ${pts} ${((s.length - 1) / 29 * 100).toFixed(1)},30` : '');
+                document.getElementById(`fx-mon-${id}`).textContent = texto;
+            };
+            let visible = false, frames = 0, rafMon = 0, ivMon = 0, ivPing = 0;
+            const contar = () => { frames++; rafMon = requestAnimationFrame(contar); };
+            const ping = async () => {
+                if (!/^https?:$/.test(location.protocol)) { dibujar('ping', 0, 50, 'local'); return; }
+                const t0 = performance.now();
+                try { await fetch('/robots.txt?p=' + Date.now(), { method: 'HEAD', cache: 'no-store' }); const ms = performance.now() - t0; dibujar('ping', ms, 50, ms.toFixed(0) + ' ms'); }
+                catch (e) { dibujar('ping', 0, 50, 'offline'); }
+            };
+            const tick = () => {
+                dibujar('fps', frames, 60, String(frames)); frames = 0;
+                if (performance.memory) { const mb = performance.memory.usedJSHeapSize / 1048576; dibujar('mem', mb, 10, mb.toFixed(1) + ' MB'); }
+                else { const n = document.getElementsByTagName('*').length; dibujar('mem', n, 1000, n + ' nodos'); }
+            };
+            const arrancar = () => {
+                if (!visible || document.hidden || ivMon) return;
+                frames = 0; rafMon = requestAnimationFrame(contar);
+                ivMon = setInterval(tick, 1000); ivPing = setInterval(ping, 4000); ping();
+            };
+            const parar = () => { cancelAnimationFrame(rafMon); clearInterval(ivMon); clearInterval(ivPing); ivMon = ivPing = rafMon = 0; };
+            alVerse(mon, (on) => { visible = on; if (on) arrancar(); else parar(); });
+            document.addEventListener('visibilitychange', () => { if (document.hidden) parar(); else arrancar(); });
+        }
+
+        /* ---------- 8. Easter egg: lluvia de código (sudo matrix en el terminal o código Konami) ---------- */
+        let enMatrix = false;
+        window.fxMatrix = function () {
+            if (enMatrix) return false;
+            if (reduce) return false;
+            enMatrix = true;
+            const cv = document.createElement('canvas'); cv.className = 'fx-matrix'; cv.setAttribute('aria-hidden', 'true');
+            const msg = document.createElement('div'); msg.className = 'fx-matrix-msg';
+            msg.innerHTML = T('Acceso root concedido… es broma 😉<br><small>Escribe <b>sudo contratar</b> en el terminal</small>', 'Root access granted… just kidding 😉<br><small>Type <b>sudo hire</b> in the terminal</small>');
+            document.body.append(cv, msg);
+            const ctx = cv.getContext('2d');
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5), tam = 16;
+            cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; ctx.scale(dpr, dpr);
+            const cols = Math.ceil(innerWidth / tam), gotas = Array.from({ length: cols }, () => Math.random() * -40);
+            const letras = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ01ASIR<>/{}$#';
+            ctx.font = `${tam}px 'Fira Code', monospace`;
+            let ultimo = 0, raf = 0; const t0 = performance.now();
+            const cerrar = () => { cancelAnimationFrame(raf); cv.classList.remove('on'); msg.classList.remove('on'); setTimeout(() => { cv.remove(); msg.remove(); enMatrix = false; }, 550); document.removeEventListener('keydown', esc); };
+            const esc = (e) => { if (e.key === 'Escape') cerrar(); };
+            const pintar = (t) => {
+                raf = requestAnimationFrame(pintar);
+                if (t - ultimo < 33) return; ultimo = t;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.09)'; ctx.fillRect(0, 0, innerWidth, innerHeight);
+                for (let i = 0; i < cols; i++) {
+                    const y = gotas[i] * tam;
+                    ctx.fillStyle = Math.random() < 0.04 ? '#d1fae5' : '#22c55e';
+                    ctx.fillText(letras[(Math.random() * letras.length) | 0], i * tam, y);
+                    if (y > innerHeight && Math.random() > 0.975) gotas[i] = 0; else gotas[i]++;
+                }
+                if (t - t0 > 2200) msg.classList.add('on');
+                if (t - t0 > 7500) cerrar();
+            };
+            cv.addEventListener('click', cerrar); document.addEventListener('keydown', esc);
+            requestAnimationFrame(() => cv.classList.add('on'));
+            raf = requestAnimationFrame(pintar);
+            return true;
+        };
+        const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+        let posK = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.target.closest && e.target.closest('input, textarea, [contenteditable]')) return;
+            const k = (e.key || '').toLowerCase();
+            posK = k === KONAMI[posK] ? posK + 1 : (k === KONAMI[0] ? 1 : 0);
+            if (posK === KONAMI.length) { posK = 0; window.fxMatrix(); }
         });
     })();
     </script>
