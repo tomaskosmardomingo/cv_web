@@ -527,15 +527,16 @@
                         <div class="project-header">
                             <i class="fa-solid fa-heart-pulse project-icon"></i>
                             <div>
-                                <h3 class="item-title"><span class="es">GlucoNet · Proyecto final (TFC)</span><span class="en">GlucoNet · Final Project (TFC)</span> <span class="tag-next-badge"><span class="es">En desarrollo</span><span class="en">In progress</span></span></h3>
+                                <h3 class="item-title"><span class="es">GlucoNet · Proyecto final (TFC)</span><span class="en">GlucoNet · Final Project (TFC)</span> <span class="tag-next-badge"><span class="es">En diseño</span><span class="en">In design</span></span></h3>
                                 <div class="item-org"><span class="es">Proyecto Intermodular ASIR | 2026/27</span><span class="en">ASIR Capstone Project | 2026/27</span></div>
                             </div>
                         </div>
                         <div class="item-desc-3d">
                             <p>
-                                <span class="es">Infraestructura segura que recibe <strong>en tiempo real</strong> datos de glucosa (diabetes tipo 1), los guarda y los muestra en una web con alertas por Telegram. Servicios en <strong>Docker Compose</strong> con redes separadas (DMZ / aplicación / datos): bróker <strong>MQTT con TLS</strong> (Mosquitto), <strong>PostgreSQL + TimescaleDB</strong> y proxy <strong>Nginx con HTTPS</strong>. Solo se exponen 443, 8883 y la VPN <strong>WireGuard</strong>; administración por SSH con clave, Fail2ban, copias cifradas y monitorización. Datos de salud tratados según el RGPD.</span>
-                                <span class="en">Secure infrastructure that receives glucose readings (type 1 diabetes) <strong>in real time</strong>, stores them and displays them on a web dashboard with Telegram alerts. Services in <strong>Docker Compose</strong> with segmented networks (DMZ / app / data): <strong>MQTT over TLS</strong> broker (Mosquitto), <strong>PostgreSQL + TimescaleDB</strong> and an <strong>Nginx HTTPS</strong> reverse proxy. Only 443, 8883 and the <strong>WireGuard</strong> VPN are exposed; key-based SSH administration, Fail2ban, encrypted backups and monitoring. Health data handled under GDPR.</span>
+                                <span class="es">Diseño de una infraestructura segura que recibirá <strong>en tiempo real</strong> datos de glucosa (diabetes tipo 1), los guardará y los mostrará en una web con alertas por Telegram. Planteo servicios en <strong>Docker Compose</strong> con redes separadas (DMZ / aplicación / datos): bróker <strong>MQTT con TLS</strong> (Mosquitto), <strong>PostgreSQL + TimescaleDB</strong> y proxy <strong>Nginx con HTTPS</strong>. Solo se expondrían 443, 8883 y la VPN <strong>WireGuard</strong>; administración por SSH con clave, Fail2ban, copias cifradas y monitorización. Datos de salud tratados según el RGPD.</span>
+                                <span class="en">Design of a secure infrastructure that will receive glucose readings (type 1 diabetes) <strong>in real time</strong>, store them and display them on a web dashboard with Telegram alerts. Planned services in <strong>Docker Compose</strong> with segmented networks (DMZ / app / data): <strong>MQTT over TLS</strong> broker (Mosquitto), <strong>PostgreSQL + TimescaleDB</strong> and an <strong>Nginx HTTPS</strong> reverse proxy. Only 443, 8883 and the <strong>WireGuard</strong> VPN would be exposed; key-based SSH administration, Fail2ban, encrypted backups and monitoring. Health data handled under GDPR.</span>
                             </p>
+                            <p style="margin-top:.7rem;font-size:.85rem;font-style:italic;color:var(--text-muted)"><i class="fa-solid fa-circle-info"></i> <span class="es">Proyecto en fase de diseño: todavía no está implementado y la arquitectura y las tecnologías pueden cambiar.</span><span class="en">Project in the design phase: it is not built yet and the architecture and technologies may change.</span></p>
                         </div>
                         <div class="tags-grid-3d"><span class="tag">Docker Compose</span> <span class="tag">MQTT / TLS</span> <span class="tag">PostgreSQL</span> <span class="tag">WireGuard</span> <span class="tag">Nginx</span></div>
                     </article>
@@ -1019,7 +1020,7 @@
             // ATS Plain-Text Generator (ACTUALIZADO CON EL NUEVO CV)
             document.getElementById('download-ats').addEventListener('click', (e) => {
                 e.preventDefault();
-                const txtData = `Tomás Kos Mardomingo\nJunior SysAdmin | Administrador de Sistemas Informáticos en Red | Redes y Seguridad\nGuadarrama, Madrid | 692 876 776 | tomaskoskos@gmail.com\nLinkedIn: linkedin.com/in/tomás-kos | GitHub: github.com/tomaskosmardomingo | Portfolio: www.koscloud.es\n\nPERFIL PROFESIONAL\nEstudiante de 2.º de ASIR en U-tad con certificación Cisco CCST. Trabajo con servidores Linux y Windows Server (Active Directory), redes, Docker y seguridad (cortafuegos, VPN y HTTPS). Busco prácticas (Formación en Empresa) o un primer puesto como Junior SysAdmin, técnico de redes o técnico de soporte IT.\n\nEXPERIENCIA LABORAL\nAdministrador de Sistemas (prácticas) | U-tad | Las Rozas de Madrid | 05/2026\n- Puesta en marcha de un servidor de streaming en Linux (Raspberry Pi) para emisiones en directo.\n- Monitorización de la red, pruebas de conectividad y resolución de incidencias en directo.\nCamarero | Grupo Switch (catering de bodas) | 07/2025 – actualidad\n- Servicio en banquetes de alto volumen, en equipo y bajo presión.\nCajero / Reponedor | El Corte Inglés (Supercor) | Guadarrama | 07/2026 – 09/2026\n- Atención al cliente, cobro en TPV y control de stock en horas punta.\n\nFORMACIÓN ACADÉMICA\nCiclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR) | U-tad Centro Profesional | 09/2025 – 06/2027\nBachillerato (Ciencias Sociales) | Gredos San Diego | 09/2023 – 05/2025\n\nPROYECTOS\n- GlucoNet (proyecto final de ASIR, en desarrollo): plataforma que recibe datos de glucosa en tiempo real por MQTT con TLS, los guarda en PostgreSQL y los muestra en una web HTTPS (Nginx) con alertas por Telegram. Docker Compose con redes separadas, VPN WireGuard y Fail2ban.\n- Servidor de streaming (prácticas en U-tad): Linux en Raspberry Pi con Icecast y OBS Studio; picos de más de 50 conexiones simultáneas.\n- Cloud privada self-hosted (proyecto propio): servidor Linux con volúmenes cifrados, permisos por usuario (ACL) y sincronización remota segura.\n\nCOMPETENCIAS TÉCNICAS\n- Sistemas: Linux (Ubuntu Server, Debian), Windows Server 2019, Active Directory, GPO, Docker, Docker Compose, VirtualBox, Vagrant, Amazon AWS, Bash, PowerShell.\n- Redes y seguridad: Cisco, VLAN, OSPF, NAT, TCP/IP, IPv4, IPv6, subnetting, firewall (UFW, iptables), VPN, PKI y certificados (OpenSSL), Wireshark, Kali Linux.\n- Servicios y bases de datos: DNS (BIND9), DHCP, Nginx, Apache, IIS, HTTPS, MySQL, MariaDB, SQL, Git, GitHub.\n\nCERTIFICACIONES\n- CCST – Cisco Certified Support Technician IT Support | Cisco | 05/2026\n- Inteligencia Artificial Generativa Aplicada al Desarrollo | U-tad | 06/2026\n\nIDIOMAS\n- Español: nativo\n- Inglés: medio-alto (B1)`;
+                const txtData = `Tomás Kos Mardomingo\nJunior SysAdmin | Administrador de Sistemas Informáticos en Red | Redes y Seguridad\nGuadarrama, Madrid | 692 876 776 | tomaskoskos@gmail.com\nLinkedIn: linkedin.com/in/tomás-kos | GitHub: github.com/tomaskosmardomingo | Portfolio: www.koscloud.es\n\nPERFIL PROFESIONAL\nEstudiante de 2.º de ASIR en U-tad con certificación Cisco CCST. Trabajo con servidores Linux y Windows Server (Active Directory), redes, Docker y seguridad (cortafuegos, VPN y HTTPS). Busco prácticas (Formación en Empresa) o un primer puesto como Junior SysAdmin, técnico de redes o técnico de soporte IT.\n\nEXPERIENCIA LABORAL\nAdministrador de Sistemas (prácticas) | U-tad | Las Rozas de Madrid | 05/2026\n- Puesta en marcha de un servidor de streaming en Linux (Raspberry Pi) para emisiones en directo.\n- Monitorización de la red, pruebas de conectividad y resolución de incidencias en directo.\nCamarero | Grupo Switch (catering de bodas) | 07/2025 – actualidad\n- Servicio en banquetes de alto volumen, en equipo y bajo presión.\nCajero / Reponedor | El Corte Inglés (Supercor) | Guadarrama | 07/2026 – 09/2026\n- Atención al cliente, cobro en TPV y control de stock en horas punta.\n\nFORMACIÓN ACADÉMICA\nCiclo Formativo de Grado Superior en Administración de Sistemas Informáticos en Red (ASIR) | U-tad Centro Profesional | 09/2025 – 06/2027\nBachillerato (Ciencias Sociales) | Gredos San Diego | 09/2023 – 05/2025\n\nPROYECTOS\n- GlucoNet (proyecto final de ASIR, en fase de diseño y sujeto a cambios): plataforma prevista para recibir datos de glucosa en tiempo real por MQTT con TLS, guardarlos en PostgreSQL y mostrarlos en una web HTTPS (Nginx) con alertas por Telegram. Diseño con Docker Compose, redes separadas, VPN WireGuard y Fail2ban.\n- Servidor de streaming (prácticas en U-tad): Linux en Raspberry Pi con Icecast y OBS Studio; picos de más de 50 conexiones simultáneas.\n- Cloud privada self-hosted (proyecto propio): servidor Linux con volúmenes cifrados, permisos por usuario (ACL) y sincronización remota segura.\n\nCOMPETENCIAS TÉCNICAS\n- Sistemas: Linux (Ubuntu Server, Debian), Windows Server 2019, Active Directory, GPO, Docker, Docker Compose, VirtualBox, Vagrant, Amazon AWS, Bash, PowerShell.\n- Redes y seguridad: Cisco, VLAN, OSPF, NAT, TCP/IP, IPv4, IPv6, subnetting, firewall (UFW, iptables), VPN, PKI y certificados (OpenSSL), Wireshark, Kali Linux.\n- Servicios y bases de datos: DNS (BIND9), DHCP, Nginx, Apache, IIS, HTTPS, MySQL, MariaDB, SQL, Git, GitHub.\n\nCERTIFICACIONES\n- CCST – Cisco Certified Support Technician IT Support | Cisco | 05/2026\n- Inteligencia Artificial Generativa Aplicada al Desarrollo | U-tad | 06/2026\n\nIDIOMAS\n- Español: nativo\n- Inglés: medio-alto (B1)`;
                 const blob = new Blob([txtData], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1279,7 +1280,7 @@
             if (/^nmap( |$)/.test(c)) {
                 const pu = [['22/tcp', 'open', 'ssh', 'OpenSSH · ' + T('solo con clave', 'key-only')], ['53/tcp', 'open', 'domain', 'BIND9 · DNS'], ['67/udp', 'open', 'dhcp', 'ISC DHCP'],
                     ['80/tcp', 'open', 'http', 'Nginx · Apache · IIS'], ['389/tcp', 'open', 'ldap', 'Active Directory'], ['443/tcp', 'open', 'https', 'TLS · PKI (OpenSSL)'],
-                    ['3306/tcp', 'open', 'mysql', 'MySQL · MariaDB'], ['8883/tcp', 'open', 'mqtt-tls', 'Mosquitto (GlucoNet)'], ['51820/udp', 'open', 'wireguard', 'VPN']];
+                    ['3306/tcp', 'open', 'mysql', 'MySQL · MariaDB'], ['8883/tcp', 'open', 'mqtt-tls', 'Mosquitto'], ['51820/udp', 'open', 'wireguard', 'VPN']];
                 secuencia([`<span class="m">Starting Nmap ( https://nmap.org ) ${T('contra', 'against')} tomas.koscloud.es</span>`,
                     `<span class="k">PORT       STATE  SERVICE    ${T('VERSIÓN', 'VERSION')}</span>`,
                     ...pu.map(([p, s, n, v]) => `${p.padEnd(11)}<span class="p">${s.padEnd(7)}</span>${n.padEnd(11)}<span class="m">${v}</span>`),
@@ -1312,7 +1313,7 @@
                     `<span class="k">${T('Bienvenido a KosCloud', 'Welcome to KosCloud')}</span> · GNU/Linux`,
                     `  ${T('Administrador', 'Admin')}: Tomás Kos Mardomingo · Junior SysAdmin`,
                     `  ${T('Estado', 'Status')}: <span class="p">${T('disponible para prácticas (FE)', 'available for internships')}</span>`,
-                    `  ${T('Proyecto activo', 'Active project')}: GlucoNet (TFC)`,
+                    `  ${T('Proyecto en diseño', 'Project in design')}: GlucoNet (TFC)`,
                     `<span class="m">${T('Última conexión: hoy, desde tu navegador', 'Last login: today, from your browser')}</span>`], 260);
                 return;
             }
@@ -1897,8 +1898,9 @@
             </svg>`;
             const btn = document.createElement('button');
             btn.type = 'button'; btn.className = 'fx-arch-btn';
-            btn.innerHTML = '<i class="fa-solid fa-diagram-project"></i> ' + bi('Ver arquitectura de red', 'View network architecture') + ' <i class="fa-solid fa-up-right-and-down-left-from-center"></i>';
-            const mArch = modal(`<h3><i class="fa-solid fa-diagram-project"></i> ${bi('GlucoNet · arquitectura de red', 'GlucoNet · network architecture')}</h3>
+            btn.innerHTML = '<i class="fa-solid fa-diagram-project"></i> ' + bi('Ver arquitectura prevista', 'View planned architecture') + ' <i class="fa-solid fa-up-right-and-down-left-from-center"></i>';
+            const mArch = modal(`<h3><i class="fa-solid fa-diagram-project"></i> ${bi('GlucoNet · arquitectura prevista', 'GlucoNet · planned architecture')}</h3>
+                <p style="margin:-.3rem 0 .8rem;font-size:.85rem;font-style:italic;color:var(--text-muted)"><i class="fa-solid fa-circle-info"></i> ${bi('Diseño previsto para mi TFC: todavía no está implementado y puede cambiar.', 'Planned design for my capstone: it is not built yet and may change.')}</p>
                 <div class="fx-arch"><div class="fx-arch-scroll" id="fx-arch-svg"></div>
                 <div class="fx-arch-hint">${bi('Desliza el diagrama hacia los lados →', 'Swipe the diagram sideways →')}</div>
                 <div class="fx-arch-legend">
@@ -2544,7 +2546,7 @@
         if (formacion) {
             // [carril, mensaje es, mensaje en, fecha, referencia]
             const C = [
-                [0, '<b>wip(tfc):</b> GlucoNet, infraestructura segura en Docker', '<b>wip(tfc):</b> GlucoNet, secure Docker infrastructure', '2026/27', 'hd'],
+                [0, '<b>design(tfc):</b> GlucoNet, en fase de diseño (puede cambiar)', '<b>design(tfc):</b> GlucoNet, in design (subject to change)', '2026/27', 'hd'],
                 [1, '<b>feat(trabajo):</b> cajero / reponedor en El Corte Inglés', '<b>feat(work):</b> cashier / stock clerk at El Corte Inglés', '07/2026', ''],
                 [0, '<b>cert:</b> IA generativa aplicada al desarrollo (U-tad)', '<b>cert:</b> generative AI applied to development (U-tad)', '06/2026', ''],
                 [1, '<b>feat(prácticas):</b> servidor de streaming en U-tad, +50 conexiones', '<b>feat(internship):</b> streaming server at U-tad, 50+ connections', '05/2026', ''],
@@ -2580,7 +2582,7 @@
         if (rackTxt && proyectos.length) {
             const datos = (p) => {
                 const t = (p.querySelector('.item-title .es') || p.querySelector('.item-title')).textContent;
-                if (/gluco/i.test(t)) return ['gluconet:dev', `<span class="ex">${T('Created · en desarrollo', 'Created · in progress')}</span>`, '443/tcp, 8883/tcp, 51820/udp', 'gluconet'];
+                if (/gluco/i.test(t)) return ['gluconet:draft', `<span class="ex">${T('Created · en diseño', 'Created · in design')}</span>`, '443/tcp, 8883/tcp, 51820/udp', 'gluconet'];
                 if (/stream/i.test(t)) return ['streaming:2026', `<span class="ex">${T('Exited (0) · prácticas may. 2026', 'Exited (0) · internship May 2026')}</span>`, '<span class="m">—</span>', 'streaming'];
                 if (/cloud/i.test(t)) return ['cloud:selfhosted', `<span class="up">${T('Up · desde 2025', 'Up · since 2025')}</span>`, '<span class="m">—</span>', 'cloud'];
                 return ['proyecto:latest', '<span class="up">Up</span>', '—', t.trim().split(' ')[0].toLowerCase()];
@@ -2775,9 +2777,9 @@
             const tags = [...c.querySelectorAll('.tags-grid-3d .tag')].map((x) => `<span class="tag">${x.innerHTML}</span>`).join('');
             const filas = [];
             if (/gluco/i.test(t)) {
-                filas.push(['STATUS', bi('En desarrollo · TFC', 'In progress · capstone')]);
-                filas.push(['PORTS', '443/tcp · 8883/tcp · 51820/udp']);
-                filas.push(['SECURITY', bi('Cortafuegos + Fail2ban; administración solo por WireGuard y SSH con clave', 'Firewall + Fail2ban; admin only via WireGuard and key-based SSH')]);
+                filas.push(['STATUS', bi('En diseño · TFC · sujeto a cambios', 'In design · capstone · subject to change')]);
+                filas.push(['PORTS', bi('Previstos: 443/tcp · 8883/tcp · 51820/udp', 'Planned: 443/tcp · 8883/tcp · 51820/udp')]);
+                filas.push(['SECURITY', bi('Prevista: cortafuegos + Fail2ban; administración solo por WireGuard y SSH con clave', 'Planned: firewall + Fail2ban; admin only via WireGuard and key-based SSH')]);
             } else if (/stream/i.test(t)) {
                 filas.push(['STATUS', bi('Terminado · prácticas U-tad', 'Finished · U-tad internship')]);
                 filas.push(['LOAD', bi('Picos de más de 50 conexiones simultáneas', 'Peaks of 50+ concurrent connections')]);
@@ -2874,15 +2876,15 @@
             alVerse(topoSvg, (on) => { try { on ? topoSvg.unpauseAnimations() : topoSvg.pauseAnimations(); } catch (e) { /* sin SMIL */ } });
         }
 
-        /* ---------- 4. Cortafuegos en vivo (reglas reales de GlucoNet) ---------- */
+        /* ---------- 4. Cortafuegos en vivo (reglas previstas para GlucoNet) ---------- */
         const secStack = hStack ? hStack.closest('section') : null;
         if (secStack) {
             const sec = document.createElement('section');
             sec.className = 'fx-fw-sec';
             sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> ${bi('Cortafuegos en vivo', 'Live firewall')}</h2>
                 <div class="fx-fw"><canvas aria-label="Animación de un cortafuegos que deja pasar 443, 8883 y 51820/udp y bloquea el resto" role="img"></canvas>
-                <p>${bi('Simulación con las reglas que he diseñado para mi TFC GlucoNet (en desarrollo): solo <code>443</code>, <code>8883</code> y <code>51820/udp</code> entran; el resto se descarta.',
-                    'Simulation of the rules I designed for my GlucoNet capstone (in progress): only <code>443</code>, <code>8883</code> and <code>51820/udp</code> get in; everything else is dropped.')}</p></div>`;
+                <p>${bi('Simulación con las reglas que he diseñado para mi TFC GlucoNet (en diseño, pueden cambiar): solo <code>443</code>, <code>8883</code> y <code>51820/udp</code> entran; el resto se descarta.',
+                    'Simulation of the rules I designed for my GlucoNet capstone (in design, subject to change): only <code>443</code>, <code>8883</code> and <code>51820/udp</code> get in; everything else is dropped.')}</p></div>`;
             secStack.after(sec);
             const cv = sec.querySelector('canvas'), x = cv.getContext('2d');
             const OK = ['443/tcp', '8883/tcp', '51820/udp'], NO = ['22/tcp', '23/tcp', '3306/tcp', '3389/tcp', '445/tcp', '21/tcp', '5432/tcp'];
