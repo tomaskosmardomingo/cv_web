@@ -443,19 +443,38 @@
                     <i class="fa-solid fa-terminal"></i> 
                     <span id="typewriter"></span><span class="cursor"></span>
                 </div>
-                <p class="summary">
-                    <span class="es">Estudiante de 2.º de ASIR en U-tad con certificación <strong>Cisco CCST</strong>. Trabajo con servidores <strong>Linux y Windows Server (Active Directory)</strong>, redes, Docker y seguridad (cortafuegos, VPN y HTTPS). Busco <strong>prácticas (FE)</strong> o un primer puesto como Junior SysAdmin.</span>
-                    <span class="en">Second-year Network &amp; Systems Administration (ASIR) student at U-tad, <strong>Cisco CCST</strong> certified. Hands-on with <strong>Linux and Windows Server (Active Directory)</strong>, networking, Docker and security (firewalls, VPN and HTTPS). Looking for an <strong>internship</strong> or a first Junior SysAdmin role.</span>
+                <!-- Frase gancho: lo que sé hacer -->
+                <p class="fx-gancho">
+                    <span class="es">Configuro y mantengo servidores Linux y Windows, redes y cortafuegos.</span>
+                    <span class="en">I set up and maintain Linux and Windows servers, networks and firewalls.</span>
                 </p>
+                <p class="summary">
+                    <span class="es">Estudiante de 2.º de ASIR en U-tad. Trabajo con <strong>Active Directory</strong>, Docker, VPN y HTTPS. Busco <strong>prácticas (FE)</strong> o un primer puesto como Junior SysAdmin.</span>
+                    <span class="en">Second-year Network &amp; Systems Administration (ASIR) student at U-tad. Hands-on with <strong>Active Directory</strong>, Docker, VPN and HTTPS. Looking for an <strong>internship</strong> or a first Junior SysAdmin role.</span>
+                </p>
+                <!-- Datos rápidos -->
+                <ul class="fx-datos">
+                    <li><i class="fa-solid fa-graduation-cap"></i> <span class="es">2.º ASIR · U-tad</span><span class="en">2nd-year ASIR · U-tad</span></li>
+                    <li><a href="https://www.credly.com/badges/42bab3c6-9e62-4cc6-bb53-45102ddb2e17" target="_blank" rel="noopener"><i class="fa-solid fa-circle-check"></i> Cisco CCST <span class="es">verificada</span><span class="en">verified</span></a></li>
+                    <li><i class="fa-solid fa-location-dot"></i> <span class="es">Guadarrama, Madrid</span><span class="en">Guadarrama, Madrid (Spain)</span></li>
+                </ul>
+                <!-- Stack: en PC rodea la esfera; en móvil va en una fila -->
+                <ul class="fx-stack">
+                    <li style="--a: -100deg"><i class="fa-brands fa-linux"></i> Linux</li>
+                    <li style="--a: -40deg"><i class="fa-brands fa-windows"></i> Windows Server</li>
+                    <li style="--a: 20deg"><i class="fa-solid fa-network-wired"></i> Cisco</li>
+                    <li style="--a: 80deg"><i class="fa-brands fa-docker"></i> Docker</li>
+                    <li style="--a: 140deg"><i class="fa-solid fa-shield-halved"></i> <span class="es">Seguridad</span><span class="en">Security</span></li>
+                </ul>
 
                 <button class="cta-btn" id="hero-cta"><i class="fa-solid fa-file-arrow-down"></i> <span class="es">Descargar CV</span><span class="en">Download CV</span></button>
 
                 <div class="contact-grid">
-                    <span class="contact-tag"><i class="fa-solid fa-phone"></i> 692 876 776</span>
-                    <span class="contact-tag"><i class="fa-solid fa-location-dot"></i> <span class="es">Guadarrama, Madrid</span><span class="en">Guadarrama, Madrid (Spain)</span></span>
                     <a href="mailto:tomaskoskos@gmail.com" class="contact-tag"><i class="fa-solid fa-envelope"></i> tomaskoskos@gmail.com</a>
-                    <a href="https://www.linkedin.com/in/tomás-kos" target="_blank" class="contact-tag"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-                    <a href="https://github.com/tomaskosmardomingo" target="_blank" class="contact-tag"><i class="fa-brands fa-github"></i> GitHub</a>
+                    <span class="contact-tag"><i class="fa-solid fa-phone"></i> 692 876 776</span>
+                    <a href="https://www.linkedin.com/in/tomás-kos" target="_blank" rel="noopener" class="contact-tag fx-ct-icono" data-tip="LinkedIn"><i class="fa-brands fa-linkedin"></i> <span class="fx-ct-txt">LinkedIn</span></a>
+                    <a href="https://github.com/tomaskosmardomingo" target="_blank" rel="noopener" class="contact-tag fx-ct-icono" data-tip="GitHub"><i class="fa-brands fa-github"></i> <span class="fx-ct-txt">GitHub</span></a>
+                    <span class="contact-tag fx-ct-loc"><i class="fa-solid fa-location-dot"></i> <span class="es">Guadarrama, Madrid</span><span class="en">Guadarrama, Madrid (Spain)</span></span>
                 </div>
             </div>
         </header>
@@ -802,7 +821,7 @@
             function startTyping() {
                 clearTimeout(typeInterval);
                 const isEs = document.body.classList.contains('lang-es');
-                const text = isEs ? "Administrador de Sistemas & Redes IT" : "Junior IT Systems & Network Administrator";
+                const text = isEs ? "Técnico de Sistemas y Redes junior" : "Junior Systems & Network Technician";
                 setTimeout(() => typeWriter(text, 0), 300);
             }
 
@@ -1209,7 +1228,7 @@
                 ['nmap tomas', T('escanear mis servicios', 'scan my services')], ['htop', T('procesos en marcha', 'running processes')], ['apt install tomas', T('instalarme en tu empresa', 'install me in your company')], ['ssh tomas', T('conectarte a mi servidor', 'connect to my server')],
                 ['sudo contratar', T('ya sabes 😉', 'you know 😉')], ['clear', T('limpiar la pantalla', 'clear the screen')],
             ].map((x) => Array.isArray(x) ? `  <span class="k">${x[0].padEnd(15)}</span><span class="m">${x[1]}</span>` : x).join('\n'),
-            whoami: () => `<span class="k">${esc(tx(hero && hero.querySelector('h1')) || 'Tomás Kos Mardomingo')}</span>\n${esc(T('Administrador de Sistemas & Redes IT', 'Junior IT Systems & Network Administrator'))}\n<span class="m">${esc(tx(hero && hero.querySelector('.summary')))}</span>`,
+            whoami: () => `<span class="k">${esc(tx(hero && hero.querySelector('h1')) || 'Tomás Kos Mardomingo')}</span>\n${esc(T('Técnico de Sistemas y Redes junior', 'Junior Systems & Network Technician'))}\n<span class="m">${esc(tx(hero && hero.querySelector('.summary')))}</span>`,
             neofetch: () => {
                 const up = Math.floor((Date.now() - inicio) / 1000);
                 const info = [
@@ -2626,7 +2645,7 @@
     })();
     </script>
     <!-- Segunda tanda de detalles (24/11/2026): paleta de comandos Ctrl+K y atajos, barra de lectura estilo apt,
-         glitch en el nombre, favicon con LED, trayectoria como git log, proyectos como docker ps y log en vivo (tail -f). -->
+         favicon con LED, trayectoria como git log, proyectos como docker ps y log en vivo (tail -f). -->
     <style id="fx-visual2-css">
         /* Paleta de comandos */
         .fx-k-btn { font: 700 .72rem 'Fira Code', monospace; }
@@ -2651,17 +2670,6 @@
         .fx-apt.on { opacity: .85; transform: none; }
         .fx-apt b { color: var(--primary); font-weight: 700; }
         @media (max-width: 899px) { .fx-apt { display: none; } }
-
-        /* Glitch en el nombre */
-        .hero h1.fx-glitch { animation: fxGlitch .5s steps(2, jump-none) 1; }
-        @keyframes fxGlitch {
-            0% { transform: translate(0); filter: drop-shadow(3px 0 #ff00c8) drop-shadow(-3px 0 #00e5ff); clip-path: inset(0 0 55% 0); }
-            20% { transform: translate(-4px, 1px); clip-path: inset(40% 0 20% 0); }
-            40% { transform: translate(3px, -1px) skewX(-6deg); filter: drop-shadow(-3px 0 #ff00c8) drop-shadow(3px 0 #00e5ff); clip-path: inset(10% 0 60% 0); }
-            60% { transform: translate(-2px, 0); clip-path: inset(70% 0 0 0); }
-            80% { transform: translate(2px, 1px); clip-path: inset(0); filter: drop-shadow(2px 0 #ff00c8) drop-shadow(-2px 0 #00e5ff); }
-            100% { transform: none; filter: none; clip-path: none; }
-        }
 
         /* Trayectoria como git log */
         .fx-git { position: relative; font-family: 'Fira Code', monospace; }
@@ -2703,7 +2711,6 @@
 
         @media (prefers-reduced-motion: reduce) {
             .fx-git .ln0, .fx-git .ln1 { transition: none; stroke-dashoffset: 0; } .fx-git-row { transition: none; } .fx-git .head { animation: none; }
-            .hero h1.fx-glitch { animation: none; }
         }
         @media print { .fx-pal, .fx-apt, .fx-ps, .fx-ps-btn, .fx-tail, .fx-k-btn, .fx-git-sec { display: none !important; } }
     </style>
@@ -2790,17 +2797,6 @@
             setInterval(() => { estado = !estado; link.href = estado ? on : off; }, 1000);
         }, 0);
 
-        /* ---------- Glitch al pasar el ratón por el nombre ---------- */
-        const h1 = document.querySelector('.hero h1');
-        if (h1 && fino && !reduce) {
-            let bloqueo = false;
-            h1.addEventListener('mouseenter', () => {
-                if (bloqueo) return; bloqueo = true;
-                h1.classList.add('fx-glitch');
-                setTimeout(() => { h1.classList.remove('fx-glitch'); }, 520);
-                setTimeout(() => { bloqueo = false; }, 1500);
-            });
-        }
 
         /* ---------- Barra de lectura estilo apt ---------- */
         const apt = document.createElement('div');
@@ -3892,6 +3888,94 @@
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(iniciar, 0)); else setTimeout(iniciar, 0);
     })();
     </script>
+    <!-- ===== PORTADA (portada.html, lo mete aplicar_fx3d.js tras movil) =====
+         Lo primero que se ve: disponibilidad que destaca, frase gancho, datos rápidos con la CCST verificada,
+         stack alrededor de la esfera y contactos compactos para que mande «Descargar CV». Solo CSS. -->
+    <style id="fx-portada-css">
+        /* Disponibilidad: más contraste y un punto que late */
+        .hero .status-badge { background: rgba(16, 185, 129, .2); border-color: rgba(52, 211, 153, .6); color: #6EE7B7; font-size: .9rem; }
+        .hero .status-dot { position: relative; flex: none; background: #34D399; box-shadow: 0 0 10px #34D399; animation: none; }
+        .hero .status-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #34D399; animation: fxLatido 1.8s ease-out infinite; }
+        @keyframes fxLatido { 0% { transform: scale(.5); opacity: .9; } 100% { transform: scale(1.9); opacity: 0; } }
+
+        /* Frase gancho y resumen corto */
+        .hero .fx-gancho { margin: -.3rem 0 .8rem; font: 700 1.5rem/1.35 'Plus Jakarta Sans', sans-serif; letter-spacing: -.3px; color: #F8FAFC; }
+        .hero .summary { text-align: left; font-size: 1.03rem; line-height: 1.7; color: #CBD5E1; margin-bottom: 1.1rem; }
+
+        /* Datos rápidos */
+        .fx-datos { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1.3rem; margin: 0 0 1.9rem; padding: 0; font: 500 .92rem 'Inter', sans-serif; color: #E2E8F0; }
+        .fx-datos li { display: inline-flex; align-items: center; gap: .45rem; }
+        .fx-datos i { color: #7DD3FC; }
+        .fx-datos a { display: inline-flex; align-items: center; gap: .45rem; padding: .32rem .8rem; border-radius: 999px; background: rgba(16, 185, 129, .16); border: 1px solid rgba(52, 211, 153, .55); color: #A7F3D0; font-weight: 600; text-decoration: none; transition: background .2s, transform .2s; }
+        .fx-datos a i { color: #34D399; }
+        .fx-datos a:hover { background: rgba(16, 185, 129, .3); transform: translateY(-2px); }
+        .fx-datos a:focus-visible { outline: 2px solid #7DD3FC; outline-offset: 3px; }
+        @media (min-width: 1101px) { .hero .hero-content > .fx-gancho, .hero .hero-content > .fx-datos { max-width: 60%; } }
+
+        /* Stack: pastillas alrededor de la esfera (PC) o en una fila (móvil y vista rápida) */
+        .fx-stack { list-style: none; margin: 0; padding: 0; }
+        .fx-stack li { display: inline-flex; align-items: center; gap: .45rem; padding: .42rem .85rem; border-radius: 999px; background: rgba(15, 23, 42, .78); border: 1px solid rgba(125, 211, 252, .38); color: #E0F2FE; font: 600 .84rem 'Inter', sans-serif; white-space: nowrap; box-shadow: 0 6px 18px rgba(2, 6, 23, .35); }
+        .fx-stack i { color: #7DD3FC; font-size: 1rem; }
+        @media (min-width: 1101px) {
+            /* Mismo hueco que la esfera (.fx-globe), calculado desde .hero-content */
+            .fx-stack { position: absolute; top: 50%; right: calc(-4rem - 1% - .08rem); width: min(calc(44% + 3.52rem), 520px); aspect-ratio: 1 / 1; transform: translateY(-50%); container-type: inline-size; pointer-events: none; }
+            .fx-stack li { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(var(--a)) translate(38cqw) rotate(calc(-1 * var(--a))); animation: fxFlota 6s ease-in-out infinite; }
+            .fx-stack li:nth-child(2) { animation-delay: -1.2s; } .fx-stack li:nth-child(3) { animation-delay: -2.4s; }
+            .fx-stack li:nth-child(4) { animation-delay: -3.6s; } .fx-stack li:nth-child(5) { animation-delay: -4.8s; }
+        }
+        @keyframes fxFlota { 50% { translate: 0 -7px; } }
+        @media (max-width: 1100px) { .fx-stack { display: flex; flex-wrap: wrap; gap: .45rem; margin: -1rem 0 1.7rem; } }
+        body.fx-rapida .fx-stack { position: static; transform: none; width: auto; aspect-ratio: auto; display: flex; flex-wrap: wrap; gap: .45rem; margin: -1rem 0 1.7rem; }
+        body.fx-rapida .fx-stack li { position: static; transform: none; animation: none; }
+
+        /* Contactos compactos: correo y teléfono con texto, LinkedIn y GitHub como iconos */
+        .hero .contact-grid { gap: .6rem; align-items: center; }
+        .hero .contact-tag { padding: .55rem 1.05rem; font-size: .9rem; }
+        .hero .fx-ct-loc { display: none; }
+        .hero .fx-ct-icono { position: relative; width: 2.75rem; height: 2.75rem; padding: 0; justify-content: center; font-size: 1.15rem; }
+        .fx-ct-txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+        .hero .fx-ct-icono::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translate(-50%, 4px); padding: .25rem .55rem; border-radius: 6px; background: #0F172A; color: #E2E8F0; font: 600 .75rem 'Inter', sans-serif; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; }
+        .hero .fx-ct-icono:hover::after, .hero .fx-ct-icono:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+
+        /* PC: la «vista rápida» pasa al final para que los contactos queden a la vista; en pantallas bajas, todo más compacto */
+        @media (min-width: 1101px) {
+            .hero .hero-content { display: flex; flex-direction: column; align-items: flex-start; }
+            .hero .hero-content > .fx-rapida-btn { order: 2; margin-top: 1rem; }
+        }
+        @media (min-width: 1101px) and (max-height: 860px) {
+            .hero { padding-top: 2.8rem; padding-bottom: 2.6rem; }
+            .hero .status-badge { margin-bottom: 1.1rem; }
+            .hero h1 { font-size: 3.7rem; }
+            .hero .role { margin-bottom: 1.1rem; }
+            .fx-datos { margin-bottom: 1.4rem; }
+            .fx-hero-actions { margin-bottom: 1.1rem; }
+        }
+        @media (max-width: 1100px) { .hero .fx-gancho { font-size: 1.3rem; } }
+        @media (max-width: 600px) {
+            .hero .role { font-size: .84rem; min-height: 1.6em; flex-wrap: nowrap; white-space: nowrap; }
+            .hero .fx-gancho { font-size: 1.12rem; margin: -.2rem 0 .8rem; }
+            /* En el móvil sobra el párrafo: la frase, los datos y el stack ya lo dicen */
+            .hero .summary { display: none; }
+            .fx-datos { gap: .4rem .7rem; font-size: .78rem; margin-bottom: 1.1rem; }
+            .fx-datos a { padding: .26rem .65rem; }
+            .fx-stack { gap: .35rem; margin: -.4rem 0 1.2rem; }
+            .fx-stack li { padding: .3rem .6rem; font-size: .74rem; }
+            .fx-stack i { font-size: .85rem; }
+            .hero .contact-grid { grid-template-columns: 1fr auto auto; }
+            .hero .contact-tag[href^="mailto"] { grid-column: 1 / -1; }
+            .hero .fx-ct-icono { width: 2.9rem; height: auto; min-height: 2.55rem; padding: .5rem; font-size: 1.1rem; }
+            .hero .fx-ct-icono::after { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) { .hero .status-dot::after, .fx-stack li { animation: none !important; } }
+        @media print {
+            .fx-stack { display: none !important; }
+            .hero .fx-gancho, .fx-datos, .fx-datos a, .fx-datos i { color: #000 !important; background: none !important; border-color: #ccc !important; }
+            .hero .fx-ct-loc { display: inline-flex !important; }
+            .hero .fx-ct-icono { width: auto; height: auto; padding: .3rem .6rem; }
+            .hero .fx-ct-icono .fx-ct-txt { position: static; width: auto; height: auto; clip: auto; clip-path: none; }
+            .hero .fx-ct-icono::after { display: none; }
+        }
+    </style>
     <!-- ===== AVATAR EN PÍXELES (avatar.html, lo mete aplicar_fx3d.js) =====
          Tomás en pixel art en la esquina: guía por secciones, reacciones a lo que haces en la web, logros,
          chistes al pulsarlo, se puede arrastrar de esquina, minimizar y silenciar. Solo SVG + CSS, sin librerías. -->
