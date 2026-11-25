@@ -2740,14 +2740,24 @@
         if (termIn) document.addEventListener('keydown', (e) => { if (e.target === termIn && e.key === 'Enter' && termIn.value.trim()) window.fxLog('INFO', 'exec: ' + termIn.value.trim().slice(0, 40)); }, true);
         setTimeout(() => window.fxLog('INFO', T('el visitante sigue leyendo… buena señal', 'visitor still reading… good sign')), 45000);
 
-        /* ---------- Favicon con LED de estado ---------- */
-        (function favicon() {
+        /* ---------- Favicon: la cabeza del avatar en píxeles con un LED de estado ---------- */
+        setTimeout(function favicon() {
             const link = document.querySelector('link[rel="icon"]') || Object.assign(document.head.appendChild(document.createElement('link')), { rel: 'icon' });
+            const BASE = window.fxAvatarBase, P = window.fxAvatarPixeles;
             const dibujar = (led) => {
                 const c = document.createElement('canvas'); c.width = c.height = 32; const x = c.getContext('2d');
-                x.fillStyle = '#0F172A'; x.beginPath(); x.roundRect ? x.roundRect(2, 3, 28, 26, 5) : x.rect(2, 3, 28, 26); x.fill();
-                x.fillStyle = '#38BDF8'; [8, 15, 22].forEach((y) => x.fillRect(7, y, 13, 3));
-                x.fillStyle = led ? '#22C55E' : '#14532D'; x.beginPath(); x.arc(24, 9.5, 3, 0, 6.3); x.fill();
+                if (BASE && P) {
+                    // 16x16 píxeles del avatar (pelo, cara y cuello) a 2 px cada uno, con ojos, cejas y sonrisa
+                    const pon = (ch, cx, cy) => { if (P.C[ch]) { x.fillStyle = P.C[ch]; x.fillRect(cx * 2, cy * 2, 2, 2); } };
+                    BASE.slice(0, 16).forEach((fila, cy) => [...fila].forEach((ch, cx) => pon(ch, cx, cy)));
+                    [[4, 8, 'W'], [5, 8, 'E'], [10, 8, 'E'], [11, 8, 'W'], [4, 7, 'H'], [5, 7, 'H'], [6, 7, 'H'], [9, 7, 'H'], [10, 7, 'H'], [11, 7, 'H'], [6, 12, 'M'], [9, 12, 'M'], [7, 13, 'M'], [8, 13, 'M']].forEach(([cx, cy, ch]) => pon(ch, cx, cy));
+                    x.fillStyle = '#0F172A'; x.beginPath(); x.arc(27, 5, 4.5, 0, 6.3); x.fill();
+                    x.fillStyle = led ? '#22C55E' : '#14532D'; x.beginPath(); x.arc(27, 5, 3, 0, 6.3); x.fill();
+                } else {
+                    x.fillStyle = '#0F172A'; x.beginPath(); x.roundRect ? x.roundRect(2, 3, 28, 26, 5) : x.rect(2, 3, 28, 26); x.fill();
+                    x.fillStyle = '#38BDF8'; [8, 15, 22].forEach((y) => x.fillRect(7, y, 13, 3));
+                    x.fillStyle = led ? '#22C55E' : '#14532D'; x.beginPath(); x.arc(24, 9.5, 3, 0, 6.3); x.fill();
+                }
                 return c.toDataURL('image/png');
             };
             const on = dibujar(true), off = dibujar(false);
@@ -2755,7 +2765,7 @@
             if (reduce) return;
             let estado = true;
             setInterval(() => { estado = !estado; link.href = estado ? on : off; }, 1000);
-        })();
+        }, 0);
 
         /* ---------- Glitch al pasar el ratón por el nombre ---------- */
         const h1 = document.querySelector('.hero h1');
@@ -3981,6 +3991,30 @@
         .fx-av .c-cohete { animation: fxav-cohete 1.2s steps(6) .2s forwards; }
         .fx-av.a-matrix svg { filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(5) brightness(.9); }
 
+        /* Andar al cambiar de esquina */
+        @keyframes fxav-anda { 50% { transform: translateY(-3px) rotate(-3deg); } }
+        .fx-av.anda .fx-av-mueve { animation: fxav-anda .22s steps(1) infinite; }
+        .fx-av.mira-izq svg { transform: scaleX(-1); }
+        /* Ropa según la fecha */
+        .fx-av.t-navidad .c-navidad, .fx-av.t-nuevo .c-fiesta, .fx-av.t-halloween .c-calabaza, .fx-av.t-verano .c-gafas { display: inline; }
+        .fx-av.t-navidad.a-gorro .c-navidad, .fx-av.t-navidad.a-fiesta .c-navidad { display: none; }
+        /* Botón para jugar dentro del panel de logros */
+        .fx-av-logros .jugar { width: 100%; margin-top: .7rem; padding: .45rem; border: 2px solid #38BDF8; background: transparent; color: inherit; font: 600 .72rem 'Fira Code', monospace; cursor: pointer; }
+        .fx-av-logros .jugar:hover, .fx-av-logros .jugar:focus-visible { background: rgba(56, 189, 248, .15); outline: none; }
+        /* Minijuego Firewall defender */
+        .fx-av-juego { position: fixed; inset: 0; z-index: 3300; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(2, 6, 23, .82); }
+        .fx-av-jcaja { width: min(420px, 100%); padding: 12px; background: #0F172A; color: #E2E8F0; border: 3px solid #38BDF8; box-shadow: 6px 6px 0 rgba(0, 0, 0, .5); font: .78rem/1.45 'Fira Code', monospace; }
+        .fx-av-jcab { display: flex; align-items: center; gap: .7rem; margin-bottom: 8px; }
+        .fx-av-jcab b { flex: 1; color: #38BDF8; letter-spacing: .05em; }
+        .fx-av-jcab .vid { color: #F43F5E; }
+        .fx-av-jcab button, .fx-av-jbtns button { border: 2px solid #38BDF8; background: transparent; color: #E2E8F0; font: 600 .75rem 'Fira Code', monospace; cursor: pointer; padding: .3rem .6rem; }
+        .fx-av-jcab button:hover, .fx-av-jbtns button:hover, .fx-av-jcab button:focus-visible, .fx-av-jbtns button:focus-visible { background: rgba(56, 189, 248, .18); outline: none; }
+        .fx-av-juego canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; background: #020617; touch-action: none; cursor: crosshair; border: 2px solid #1E3A5F; }
+        .fx-av-jtxt { margin: 8px 0 0; color: #94A3B8; min-height: 2.9em; }
+        .fx-av-jtxt b.r { color: #F87171; } .fx-av-jtxt b.v { color: #34D399; }
+        .fx-av-jbtns { display: flex; gap: 8px; margin-top: 8px; }
+        .fx-av-jbtns .empezar { background: #38BDF8; color: #04121F; }
+        .fx-av-jbtns .empezar:hover { background: #7DD3FC; }
         @media (max-width: 760px) {
             .fx-av { --u: 3.3px; left: calc(10px - 6 * var(--u)); bottom: calc(78px + env(safe-area-inset-bottom, 0px)); }
             .fx-av.derecha { right: calc(10px - 6 * var(--u)); bottom: calc(78px + env(safe-area-inset-bottom, 0px)); }
@@ -3990,7 +4024,7 @@
         }
         body.fx-rapida .fx-av, body.fx-rapida .fx-av-tab, body:has(.fx-cookies.on) .fx-av, body:has(.fx-pal.open) .fx-av, body:has(.fx-msheet.open) .fx-av { opacity: 0 !important; visibility: hidden !important; }
         @media (prefers-reduced-motion: reduce) { .fx-av *, .fx-av-mueve { animation: none !important; transition: none !important; } }
-        @media print { .fx-av, .fx-av-tab { display: none !important; } }
+        @media print { .fx-av, .fx-av-tab, .fx-av-juego { display: none !important; } }
     </style>
     <script id="fx-avatar-js">
     (function () {
@@ -4014,7 +4048,7 @@
             return s;
         };
         const capa = (nombre, contenido, extra = '') => `<g class="c c-${nombre}" ${extra}>${contenido}</g>`;
-        const BASE = [
+        const BASE = window.fxAvatarBase = [
             '.....HHHHHH.....',
             '...HHHHHHHHHH...',
             '..HHHHhhHHHHHH..',
@@ -4036,6 +4070,22 @@
             'TTTTTTTTTTTTTTTT',
             'TTTTTTTTTTTTTTTT',
         ];
+        // Logos del stack en píxeles (iconos sencillos, sin marcas)
+        const LOGOS_PX = [
+            ['tux', ['..KKK..', '.KKKKK.', '.KWKWK.', '.KWGWK.', 'KKWWWKK', 'KKWWWKK', '.GG.GG.']],
+            ['docker', ['...LL...', '.LLLLLL.', 'bbbbbbbb', 'bbbWbbbb', '.bbbbbb.', '..bbbb..']],
+            ['term', ['lllllll', 'lKKKKKl', 'lKVKKKl', 'lKKVKKl', 'lKVKVVl', 'lllllll']],
+            ['web', ['.bbbbb.', 'bObObOb', 'bbbbbbb', 'bObObOb', '.bbbbb.']],
+            ['win', ['bbb.bbb', 'bbb.bbb', 'bbb.bbb', '.......', 'bbb.bbb', 'bbb.bbb', 'bbb.bbb']],
+            ['router', ['..l.l..', '..l.l..', 'lllllll', 'lVlVlbl', 'lllllll']],
+            ['nube', ['..LLL..', '.LLLLL.', 'LLLLLLL', 'LLLLLLL', '..GGGGG']],
+            ['bd', ['.bbbbb.', 'bcccccb', 'bbbbbbb', 'bbbbbbb', 'bcccccb', 'bbbbbbb', '.bbbbb.']],
+            ['git', ['g.....', 'g...g.', 'g..g..', 'ggg...', 'g.....', 'g.....']],
+            ['escudo', ['VVVVVVV', 'VVVOVVV', 'VVOOOVV', 'VVVOVVV', '.VVVVV.', '..VVV..', '...V...']],
+            ['disco', ['lllllll', 'lLLLLLl', 'lLlllLl', 'lLLLLVl', 'lllllll']],
+            ['vm', ['..PPPPP', '.PPPPPP', 'PPPPPPP', 'PPPPPP.', 'PPPPP..']],
+        ];
+        window.fxAvatarPixeles = { C };
         const confeti = () => {
             const cols = ['b', 'V', 'G', 'r', 'P', 'Y', 'c']; let s = '';
             for (let i = 0; i < 22; i++) {
@@ -4093,6 +4143,9 @@
             ${capa('aviso', px(['LLLLLLL', 'LbLbLbL', 'LLLLLLL', '.L.....', 'L......'], 15, -3))}
             ${capa('impresora', px(['.OOOO.', 'llllll', 'lLLLLl', 'llllll', '.OOOO.'], 16, 11))}
             ${capa('cohete', px(['..O..', '.OOO.', '.ObO.', '.OOO.', 'r.O.r', '.GgG.'], 16, 6))}
+            ${capa('navidad', px(['.........OO.', '.......QQ...', '.....QQQQ...', '...QQQQQQQ..', '.QQQQQQQQQQ.', 'OOOOOOOOOOOO'], 2, -5))}
+            ${capa('calabaza', px(['..V...', '.gggg.', 'gKggKg', 'gggggg', 'gKKKKg', '.gggg.'], 12, 13))}
+            ${LOGOS_PX.map(([k, filas]) => capa('logo-' + k, px(filas, 15, -6))).join('')}
             <g class="c c-confeti"></g>`;
         const cabeza = `<svg viewBox="1 -1 14 14" aria-hidden="true">${px(BASE.slice(0, 14))}${px(['WW'], 4, 8)}${px(['WW'], 10, 8)}${px(['E'], 5, 8)}${px(['E'], 10, 8)}${px(['HHH'], 4, 7)}${px(['HHH'], 9, 7)}${px(['D..D', '.DD.'], 6, 12)}</svg>`;
 
@@ -4106,6 +4159,7 @@
             <div class="fx-av-barra">
                 <button type="button" class="b-logros"></button>
                 <button type="button" class="b-mudo"></button>
+                <button type="button" class="b-sonido"></button>
                 <button type="button" class="b-min">–</button>
             </div>
             <div class="fx-av-logros" role="dialog"></div>
@@ -4115,7 +4169,34 @@
         document.body.append(av, tab);
         const btn = av.querySelector('.fx-av-btn'), boc = av.querySelector('.fx-av-bocadillo'), sr = av.querySelector('.fx-av-sr');
         const bLog = av.querySelector('.b-logros'), bMudo = av.querySelector('.b-mudo'), bMin = av.querySelector('.b-min'), panel = av.querySelector('.fx-av-logros');
-        const pupI = av.querySelector('.pu-i'), pupD = av.querySelector('.pu-d');
+        const pupI = av.querySelector('.pu-i'), pupD = av.querySelector('.pu-d'), bSon = av.querySelector('.b-sonido');
+        // Estilos de los logos (una regla por logo)
+        const css = document.getElementById('fx-avatar-css');
+        if (css) css.textContent += LOGOS_PX.map(([k]) => `.fx-av[data-logo="${k}"] .c-logo-${k}{display:inline;transform-box:fill-box;transform-origin:50% 100%;animation:fxav-pop .3s steps(3),fxav-flota 1s steps(2) .3s infinite}`).join('');
+
+        /* ---------- Sonidos 8-bit (apagados por defecto) ---------- */
+        let sonido = leer('cv-avatar-sonido') === '1', actx = null;
+        const tono = (f, d = 0.06, tipo = 'square', vol = 0.035, f2) => {
+            if (!sonido) return;
+            try {
+                actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+                if (actx.state === 'suspended') actx.resume();
+                const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+                o.type = tipo; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+                g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+                o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + d + 0.02);
+            } catch (e) {}
+        };
+        const melodia = (notas, paso = 0.09) => notas.forEach((f, i) => setTimeout(() => tono(f, paso * 0.9), i * paso * 1000));
+        const SONIDOS = {
+            blip: () => tono(520 + Math.random() * 260, 0.035, 'square', 0.018), salto: () => tono(300, 0.15, 'square', 0.03, 700),
+            confeti: () => melodia([523, 659, 784, 1047], 0.08), trofeo: () => melodia([659, 784, 988, 1319], 0.1), humo: () => tono(140, 0.3, 'sawtooth', 0.03, 90),
+            mareo: () => tono(600, 0.5, 'triangle', 0.035, 200), saludo: () => melodia([784, 988], 0.1), zzz: () => tono(220, 0.4, 'triangle', 0.025, 180),
+            exclama: () => tono(880, 0.08), check: () => melodia([880, 1175], 0.07), baile: () => melodia([523, 659, 523, 784, 659, 523, 784, 1047], 0.15),
+            matrix: () => melodia([220, 196, 165, 110], 0.2), cohete: () => tono(200, 0.5, 'square', 0.025, 1200), corazon: () => melodia([660, 880], 0.08),
+            paso: () => tono(170, 0.03, 'square', 0.015), bien: () => tono(990, 0.06, 'square', 0.03, 1400), mal: () => tono(160, 0.18, 'sawtooth', 0.035, 80),
+        };
+        const sonar = (n) => { if (sonido && SONIDOS[n]) SONIDOS[n](); };
 
         /* ---------- Estado: expresión y acciones con su temporizador ---------- */
         const timers = {};
@@ -4123,6 +4204,7 @@
             clearTimeout(timers[nombre]);
             av.classList.remove('a-' + nombre); void av.offsetWidth; av.classList.add('a-' + nombre);
             if (nombre === 'confeti') av.querySelector('.c-confeti').innerHTML = confeti();
+            sonar(nombre);
             if (ms) timers[nombre] = setTimeout(() => av.classList.remove('a-' + nombre), ms);
         };
         const quitar = (nombre) => { clearTimeout(timers[nombre]); av.classList.remove('a-' + nombre); };
@@ -4152,7 +4234,7 @@
             const final = () => { boc.innerHTML = m.texto; av.classList.remove('habla'); tFin = setTimeout(() => cerrarBocadillo(), Math.min(6000, 1600 + limpio.length * 35)); };
             if (reduce) { final(); return; }
             let i = 0; boc.textContent = '';
-            tEsc = setInterval(() => { i += 2; boc.textContent = limpio.slice(0, i); if (i >= limpio.length) { clearInterval(tEsc); final(); } }, 30);
+            tEsc = setInterval(() => { i += 2; if (i % 6 === 0) sonar('blip'); boc.textContent = limpio.slice(0, i); if (i >= limpio.length) { clearInterval(tEsc); final(); } }, 30);
         };
         const cerrarBocadillo = (sinCola) => {
             clearInterval(tEsc); clearTimeout(tFin); boc.classList.remove('on'); av.classList.remove('habla'); hablando = null;
@@ -4187,6 +4269,7 @@
             ['arquitecto', 'Arquitecto', 'Architect', 'Ver la arquitectura de GlucoNet', 'Open the GlucoNet architecture'],
             ['atajos', 'Usuario avanzado', 'Power user', 'Abrir la paleta con Ctrl+K', 'Open the palette with Ctrl+K'],
             ['pesado', 'Insistente', 'Persistent', 'Pulsar al avatar 10 veces', 'Click the avatar 10 times'],
+            ['jugador', 'Defensor', 'Defender', 'Jugar a Firewall defender', 'Play Firewall defender'],
         ];
         let hechos = []; try { hechos = JSON.parse(leer('cv-logros') || '[]'); } catch (e) {}
         const pintarLogros = () => {
@@ -4195,8 +4278,10 @@
             panel.setAttribute('aria-label', T('Logros', 'Achievements'));
             panel.innerHTML = `<h3>${T('Logros', 'Achievements')} ${hechos.length}/${LOGROS.length}<button type="button" aria-label="${T('Cerrar', 'Close')}">✕</button></h3>
                 <div class="fx-av-barrita"><i style="width:${Math.round(hechos.length / LOGROS.length * 100)}%"></i></div>
-                <ul>${LOGROS.map(([id, es, en, des, den]) => `<li class="${hechos.includes(id) ? 'si' : ''}"><span>${T(es, en)}<small>${T(des, den)}</small></span></li>`).join('')}</ul>`;
+                <ul>${LOGROS.map(([id, es, en, des, den]) => `<li class="${hechos.includes(id) ? 'si' : ''}"><span>${T(es, en)}<small>${T(des, den)}</small></span></li>`).join('')}</ul>
+                <button type="button" class="jugar">▶ ${T('Jugar a Firewall defender', 'Play Firewall defender')}</button>`;
             panel.querySelector('h3 button').addEventListener('click', () => { panel.classList.remove('on'); bLog.focus(); });
+            panel.querySelector('.jugar').addEventListener('click', () => { panel.classList.remove('on'); abrirJuego(); });
             if (hechos.length === LOGROS.length) av.classList.add('s-corona');
         };
         const logro = (id) => {
@@ -4221,37 +4306,60 @@
             bMudo.setAttribute('aria-label', mudo ? T('Dejar que el avatar hable', 'Let the avatar talk') : T('Silenciar al avatar', 'Mute the avatar'));
             bMudo.title = bMudo.getAttribute('aria-label');
             bMin.setAttribute('aria-label', T('Esconder el avatar', 'Hide the avatar')); bMin.title = bMin.getAttribute('aria-label');
+            bSon.textContent = sonido ? '🔊' : '🔈';
+            bSon.setAttribute('aria-label', sonido ? T('Quitar los sonidos 8-bit', 'Turn 8-bit sounds off') : T('Activar sonidos 8-bit', 'Turn 8-bit sounds on')); bSon.title = bSon.getAttribute('aria-label');
+            bSon.setAttribute('aria-pressed', sonido ? 'true' : 'false');
             tab.setAttribute('aria-label', T('Volver a sacar el avatar', 'Bring the avatar back')); tab.title = tab.getAttribute('aria-label');
-            btn.setAttribute('aria-label', T('Tomás en píxeles: púlsame para un dato curioso. Arrástrame para cambiarme de esquina.', 'Pixel Tomás: click me for a fun fact. Drag me to switch corners.'));
+            btn.setAttribute('aria-label', T('Tomás en píxeles: púlsame para un dato curioso, mantén pulsado para jugar o arrástrame a la otra esquina.', 'Pixel Tomás: click me for a fun fact, hold to play a game or drag me to the other corner.'));
+            btn.title = T('Púlsame · mantén pulsado para jugar · arrástrame', 'Click me · hold to play · drag me');
         };
         bMudo.addEventListener('click', () => {
             mudo = !mudo; guardar('cv-avatar-mudo', mudo ? '1' : '0'); pintarBotones();
             if (mudo) { cerrarBocadillo(true); cola.length = 0; quitar('aviso'); cara('lengua', 1500); } else { cara('feliz'); decir(T('¡Vuelvo a hablar! 💬', 'I can talk again! 💬'), 3); }
         });
+        const alternarSonido = () => { sonido = !sonido; guardar('cv-avatar-sonido', sonido ? '1' : '0'); pintarBotones(); if (sonido) { sonar('check'); cara('feliz', 1500); } };
+        bSon.addEventListener('click', alternarSonido);
         const minimizar = (si) => {
             av.classList.toggle('min', si); tab.classList.toggle('on', si); guardar('cv-avatar-min', si ? '1' : '0');
             if (si) { cerrarBocadillo(true); panel.classList.remove('on'); }
         };
         bMin.addEventListener('click', () => { minimizar(true); tab.focus(); });
-        tab.addEventListener('click', () => { minimizar(false); accion('saludo', 1800); cara('feliz'); decir(T('¡He vuelto! 👋', "I'm back! 👋"), 3); btn.focus(); });
+        const sacarAvatar = () => { minimizar(false); accion('saludo', 1800); cara('feliz'); decir(T('¡He vuelto! 👋', "I'm back! 👋"), 3); };
+        tab.addEventListener('click', () => { sacarAvatar(); btn.focus(); });
 
         /* ---------- Arrastrar para cambiar de esquina ---------- */
         const ponerLado = (der) => { av.classList.toggle('derecha', der); tab.classList.toggle('derecha', der); };
         ponerLado(leer('cv-avatar-lado') === 'der');
         let arr = null;
-        btn.addEventListener('pointerdown', (e) => { arr = { x: e.clientX, y: e.clientY, mov: false, id: e.pointerId }; });
+        let tLargo = 0, largo = false;
+        btn.addEventListener('pointerdown', (e) => {
+            arr = { x: e.clientX, y: e.clientY, mov: false, id: e.pointerId }; largo = false; clearTimeout(tLargo);
+            tLargo = setTimeout(() => { if (arr && !arr.mov) { largo = true; arr = null; abrirJuego(); } }, 700);
+        });
+        btn.addEventListener('contextmenu', (e) => e.preventDefault());
         addEventListener('pointermove', (e) => {
             if (!arr || e.pointerId !== arr.id) return;
             const dx = e.clientX - arr.x, dy = e.clientY - arr.y;
-            if (!arr.mov && Math.hypot(dx, dy) > 10) { arr.mov = true; try { btn.setPointerCapture(e.pointerId); } catch (er) {} av.classList.add('arrastrando'); cara('sorpresa', 0); cerrarBocadillo(true); }
+            if (!arr.mov && Math.hypot(dx, dy) > 10) { arr.mov = true; clearTimeout(tLargo); try { btn.setPointerCapture(e.pointerId); } catch (er) {} av.classList.add('arrastrando'); cara('sorpresa', 0); cerrarBocadillo(true); }
             if (arr.mov) av.style.transform = `translate(${dx}px, ${Math.min(0, dy)}px)`;
         });
+        let tPasos = 0;
         const soltar = (e) => {
+            clearTimeout(tLargo);
             if (!arr) return; const fue = arr.mov; arr = null;
             if (!fue) return;
-            av.classList.remove('arrastrando'); av.style.transform = '';
+            // FLIP: se queda donde lo sueltas y va andando hasta su esquina
+            const r0 = av.getBoundingClientRect();
+            av.classList.remove('arrastrando'); av.style.transition = 'none'; av.style.transform = '';
             const der = e.clientX > innerWidth / 2; ponerLado(der); guardar('cv-avatar-lado', der ? 'der' : 'izq');
-            cara('feliz'); accion('salto', 1000); decir(der ? T('Me quedo en esta esquina 👉', 'I will stay in this corner 👉') : T('👈 Mejor aquí', '👈 Better here'), 2);
+            const r1 = av.getBoundingClientRect(), dx = r0.left - r1.left, dy = r0.top - r1.top;
+            av.style.transform = `translate(${dx}px, ${dy}px)`; void av.offsetWidth;
+            const ms = reduce ? 0 : Math.min(1800, 250 + Math.hypot(dx, dy) * 1.3);
+            av.classList.toggle('mira-izq', dx > 0); av.classList.add('anda');
+            clearInterval(tPasos); tPasos = setInterval(() => sonar('paso'), 220);
+            av.style.transition = ms ? `transform ${ms}ms steps(${Math.max(3, Math.round(ms / 110))})` : 'none';
+            av.style.transform = '';
+            setTimeout(() => { clearInterval(tPasos); av.classList.remove('anda', 'mira-izq'); av.style.transition = ''; cara('feliz'); accion('salto', 1000); }, ms + 40);
             btn.dataset.arrastrado = '1'; setTimeout(() => delete btn.dataset.arrastrado, 50);
         };
         addEventListener('pointerup', soltar); addEventListener('pointercancel', soltar);
@@ -4275,6 +4383,7 @@
         let nCh = Math.floor(Math.random() * CHISTES.length), clics = [], totalClics = 0;
         btn.addEventListener('click', () => {
             if (btn.dataset.arrastrado) return;
+            if (largo) { largo = false; return; }
             totalClics++; if (totalClics >= 10) logro('pesado');
             const ahora = Date.now(); clics = clics.filter((t) => ahora - t < 2500); clics.push(ahora);
             if (clics.length >= 5) {
@@ -4373,9 +4482,17 @@
             else if (c === 'exit') { cara('duda'); decir(T('¿Ya te vas? Aún te queda mi contacto 👇', 'Leaving already? My contact info is just below 👇'), 2); }
             else if (/^(sudo )?rm /.test(c)) { cara('sorpresa'); accion('sudor', 2500); decir(T('¡¿rm?! Menos mal que es de mentira 😰', 'rm?! Good thing it\'s fake 😰'), 2); }
             else if (c.startsWith('ping')) { accion('wifi', 2500); decir(T('Pong 🏓 Sigo disponible', 'Pong 🏓 Still available'), 1); }
-            else if (c === 'help' || c === 'whoami') { cara('feliz'); }
+            else if (c === 'help' || c === 'whoami') { cara('feliz'); if (c === 'help') setTimeout(() => lineaTerm(`  <span class="k">avatar</span>          ${T('órdenes para mi avatar en píxeles (avatar help)', 'commands for my pixel avatar (avatar help)')}\n  <span class="k">play</span>            ${T('minijuego: Firewall defender', 'mini-game: Firewall defender')}`), 0); }
         };
-        if (term) term.addEventListener('keydown', (e) => { if (e.key === 'Enter') comando(term.value); }, true);
+        if (term) term.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const v = term.value.trim().replace(/\s+/g, ' ').toLowerCase();
+            if (/^(avatar|play|jugar|firewall)( |$)/.test(v)) {
+                e.preventDefault(); e.stopImmediatePropagation(); term.value = '';
+                lineaTerm(`<span class="p">tomas@asir:~$</span> ${v.replace(/[<>&"]/g, '')}`); comandoAvatar(v); return;
+            }
+            comando(term.value);
+        }, true);
         document.addEventListener('click', (e) => { const chip = e.target.closest && e.target.closest('.fx-chip[data-cmd]'); if (chip) comando(chip.dataset.cmd); }, true);
 
         // Matrix (Konami o sudo matrix) y salvapantallas: aparecen como elementos nuevos en el body
@@ -4464,6 +4581,168 @@
             else { accion('pregunta', 1500); cara('duda', 1500); }
         };
 
+        /* ---------- Terminal: salida y órdenes del avatar ---------- */
+        const termOut = document.getElementById('fx-term-out');
+        const lineaTerm = (html) => { if (!termOut) return; const d = document.createElement('div'); d.className = 'ln'; d.innerHTML = html; termOut.appendChild(d); termOut.scrollTop = termOut.scrollHeight; };
+        const bailar = () => { if (av.classList.contains('min')) minimizar(false); accion('baile', 4200); accion('fiesta', 4200); cara('risa', 4200); };
+        const comandoAvatar = (v) => {
+            logro('terminal');
+            const [cmd, sub = 'help'] = v.split(' ');
+            if (cmd !== 'avatar') { lineaTerm(`<span class="m">${T('Arrancando Firewall defender…', 'Starting Firewall defender…')}</span>`); setTimeout(abrirJuego, 350); return; }
+            const ok = (es, en) => lineaTerm(`<span class="p">✔</span> ${T(es, en)}`);
+            const ORD = {
+                help: () => lineaTerm([
+                    `<span class="k">avatar dance</span>    ${T('bailar', 'dance')}`, `<span class="k">avatar wave</span>     ${T('saludar', 'wave')}`,
+                    `<span class="k">avatar jump</span>     ${T('saltar', 'jump')}`, `<span class="k">avatar sleep</span>    ${T('echarse una siesta', 'take a nap')}`,
+                    `<span class="k">avatar hide</span>     ${T('esconderlo', 'hide it')}`, `<span class="k">avatar show</span>     ${T('volver a sacarlo', 'bring it back')}`,
+                    `<span class="k">avatar sound</span>    ${T('sonidos 8-bit sí/no', '8-bit sounds on/off')}`, `<span class="k">play</span>            ${T('jugar a Firewall defender', 'play Firewall defender')}`].join('\n')),
+                dance: () => { bailar(); ok('Bailando 🕺', 'Dancing 🕺'); },
+                wave: () => { if (av.classList.contains('min')) minimizar(false); accion('saludo', 2200); cara('feliz'); ok('¡Hola! 👋', 'Hi! 👋'); },
+                jump: () => { accion('salto', 1000); ok('¡Hop!', 'Hop!'); },
+                sleep: () => { dormir(); ok('Zzz… (mueve el ratón para despertarlo)', 'Zzz… (move the mouse to wake it up)'); },
+                hide: () => { minimizar(true); ok('Avatar escondido', 'Avatar hidden'); },
+                show: () => { sacarAvatar(); ok('Avatar visible', 'Avatar visible'); },
+                sound: () => { alternarSonido(); ok(sonido ? 'Sonidos 8-bit activados 🔊' : 'Sonidos 8-bit apagados 🔈', sonido ? '8-bit sounds on 🔊' : '8-bit sounds off 🔈'); },
+            };
+            const alias = { baila: 'dance', bailar: 'dance', saluda: 'wave', hola: 'wave', salta: 'jump', dormir: 'sleep', duerme: 'sleep', esconder: 'hide', ocultar: 'hide', mostrar: 'show', sonido: 'sound', sonidos: 'sound', ayuda: 'help' };
+            const f = ORD[alias[sub] || sub];
+            if (f) f(); else lineaTerm(`<span class="e">avatar: ${T('orden desconocida', 'unknown command')} «${sub.replace(/[<>&"]/g, '')}».</span> <span class="m">${T('Prueba', 'Try')} <b>avatar help</b></span>`);
+        };
+
+        /* ---------- Minijuego: Firewall defender ---------- */
+        let juego = null;
+        const abrirJuego = () => {
+            if (juego) return;
+            logro('jugador'); cerrarBocadillo(true); panel.classList.remove('on');
+            const ov = document.createElement('div');
+            ov.className = 'fx-av-juego'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Firewall defender');
+            ov.innerHTML = `<div class="fx-av-jcaja">
+                <div class="fx-av-jcab"><b>FIREWALL DEFENDER</b><span class="pts">0 pts</span><span class="vid">♥♥♥</span><span class="tmp">25s</span><button type="button" class="cerrar" aria-label="${T('Cerrar', 'Close')}">✕</button></div>
+                <canvas></canvas>
+                <p class="fx-av-jtxt">${T('Pulsa los paquetes <b class="r">rojos</b> antes de que lleguen al servidor y deja pasar los <b class="v">verdes</b> (443, 8883 y 51820: tráfico legítimo).', 'Tap the <b class="r">red</b> packets before they reach the server and let the <b class="v">green</b> ones through (443, 8883 and 51820: legitimate traffic).')}</p>
+                <div class="fx-av-jbtns"><button type="button" class="empezar">▶ ${T('Empezar', 'Start')}</button><span class="rec"></span></div></div>`;
+            document.body.appendChild(ov);
+            const cv = ov.querySelector('canvas'), g = cv.getContext('2d'), W = 360, H = 260, dpr = Math.min(2, window.devicePixelRatio || 1);
+            cv.width = W * dpr; cv.height = H * dpr; g.scale(dpr, dpr);
+            const ePts = ov.querySelector('.pts'), eVid = ov.querySelector('.vid'), eTmp = ov.querySelector('.tmp'), eTxt = ov.querySelector('.fx-av-jtxt'), bEmp = ov.querySelector('.empezar'), eRec = ov.querySelector('.rec');
+            const record = () => +(leer('cv-juego-record') || 0);
+            eRec.textContent = record() ? T(`Récord: ${record()} pts`, `Best: ${record()} pts`) : '';
+            const MALOS = ['23', '445', '3389', 'SYN', 'scan', 'DDoS', 'brute'], BUENOS = ['443', '8883', '51820'];
+            const CARRILES = [38, 82, 126, 170, 214], MURO = 300;
+            let pq = [], part = [], pts = 0, vidas = 3, t = 0, prox = 0, tick = 0, jugando = false, flash = 0;
+            const pintar = () => {
+                g.fillStyle = '#020617'; g.fillRect(0, 0, W, H);
+                g.fillStyle = 'rgba(56,189,248,.07)'; for (let x = 0; x < W; x += 12) g.fillRect(x, 0, 1, H); for (let y = 0; y < H; y += 12) g.fillRect(0, y, W, 1);
+                g.font = "600 9px 'Fira Code', monospace"; g.fillStyle = '#475569'; g.fillText('INTERNET', 6, 14);
+                CARRILES.forEach((y) => { g.fillStyle = 'rgba(148,163,184,.12)'; g.fillRect(0, y, MURO, 1); });
+                // Cortafuegos (ladrillos) y servidor
+                for (let y = 0; y < H; y += 10) for (let x = MURO; x < MURO + 14; x += 7) { g.fillStyle = ((y / 10 + x / 7) % 2) ? '#C2410C' : '#EA580C'; g.fillRect(x + ((y / 10) % 2 ? 3 : 0), y, 6, 9); }
+                g.fillStyle = '#1E293B'; g.fillRect(322, 70, 32, 120); g.fillStyle = '#334155'; for (let i = 0; i < 5; i++) g.fillRect(325, 76 + i * 22, 26, 16);
+                for (let i = 0; i < 5; i++) { g.fillStyle = (tick + i) % 4 ? '#10B981' : '#064E3B'; g.fillRect(345, 81 + i * 22, 3, 3); }
+                g.fillStyle = '#475569'; g.fillText('VPS', 326, 205);
+                pq.forEach((p) => {
+                    g.fillStyle = p.malo ? '#DC2626' : '#059669'; g.fillRect(p.x, p.y - 9, p.w, 18);
+                    g.fillStyle = p.malo ? '#F87171' : '#34D399'; g.fillRect(p.x, p.y - 9, p.w, 3);
+                    g.fillStyle = '#fff'; g.fillText(p.e, p.x + 4, p.y + 4);
+                });
+                part.forEach((q) => { g.fillStyle = q.c; g.fillRect(q.x, q.y, 3, 3); });
+                if (flash > 0) { g.fillStyle = `rgba(220,38,38,${flash / 10})`; g.fillRect(0, 0, W, H); }
+            };
+            const marcador = () => { ePts.textContent = pts + ' pts'; eVid.textContent = '♥'.repeat(vidas) + '♡'.repeat(3 - vidas); eTmp.textContent = Math.max(0, Math.ceil(25 - t)) + 's'; };
+            const explotar = (p, c) => { for (let i = 0; i < 12; i++) part.push({ x: p.x + p.w / 2, y: p.y, vx: (Math.random() - 0.5) * 140, vy: (Math.random() - 0.5) * 140, v: 0.5, c }); };
+            let iv = 0;
+            const paso = () => {
+                const dt = 0.02; t += dt; tick++;
+                if (t >= prox) {
+                    const malo = Math.random() < 0.62, e = (malo ? MALOS : BUENOS)[Math.floor(Math.random() * (malo ? MALOS : BUENOS).length)];
+                    g.font = "600 9px 'Fira Code', monospace";
+                    pq.push({ x: -40, y: CARRILES[Math.floor(Math.random() * CARRILES.length)], v: 55 + t * 4 + Math.random() * 30, malo, e, w: Math.ceil(g.measureText(e).width) + 8 });
+                    prox = t + Math.max(0.32, 0.95 - t * 0.026);
+                }
+                pq.forEach((p) => { p.x += p.v * dt; });
+                pq = pq.filter((p) => {
+                    if (p.x + p.w < MURO) return true;
+                    if (p.malo) { vidas--; flash = 6; sonar('mal'); cara('sorpresa', 900); explotar(p, '#F87171'); } else { pts += 2; sonar('paso'); }
+                    return false;
+                });
+                part.forEach((q) => { q.x += q.vx * dt; q.y += q.vy * dt; q.v -= dt; }); part = part.filter((q) => q.v > 0);
+                if (flash > 0) flash--;
+                marcador(); pintar();
+                if (vidas <= 0 || t >= 25) fin();
+            };
+            const fin = () => {
+                clearInterval(iv); jugando = false;
+                const nuevo = pts > record(); if (nuevo) guardar('cv-juego-record', String(pts));
+                eTxt.innerHTML = vidas <= 0 ? T(`💥 ¡Han tirado el servidor! Has hecho <b class="v">${pts}</b> puntos.`, `💥 The server is down! You scored <b class="v">${pts}</b> points.`)
+                    : T(`✔ Servidor a salvo. <b class="v">${pts}</b> puntos${nuevo ? ' · ¡nuevo récord! 🏆' : '.'}`, `✔ Server safe. <b class="v">${pts}</b> points${nuevo ? ' · new record! 🏆' : '.'}`);
+                eRec.textContent = T(`Récord: ${record()} pts`, `Best: ${record()} pts`);
+                bEmp.textContent = '↻ ' + T('Otra vez', 'Play again'); bEmp.focus();
+                if (nuevo && pts > 0) { accion('confeti', 1500); accion('trofeo', 3000); cara('risa', 3000); } else cara(vidas <= 0 ? 'duda' : 'feliz', 2500);
+            };
+            const empezar = () => {
+                pq = []; part = []; pts = 0; vidas = 3; t = 0; prox = 0.3; jugando = true; flash = 0;
+                eTxt.innerHTML = T('¡Que vienen! Pulsa los <b class="r">rojos</b>.', 'Here they come! Tap the <b class="r">red</b> ones.');
+                clearInterval(iv); iv = setInterval(() => { if (!document.hidden) paso(); }, 20); sonar('salto');
+            };
+            cv.addEventListener('pointerdown', (e) => {
+                if (!jugando) return;
+                const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
+                const p = pq.find((q) => x >= q.x - 6 && x <= q.x + q.w + 6 && y >= q.y - 15 && y <= q.y + 15);
+                if (!p) return;
+                pq = pq.filter((q) => q !== p);
+                if (p.malo) { pts += 10; sonar('bien'); explotar(p, '#FBBF24'); } else { pts = Math.max(0, pts - 5); flash = 4; sonar('mal'); explotar(p, '#34D399'); }
+                marcador();
+            });
+            const cerrar = () => { clearInterval(iv); ov.remove(); juego = null; document.removeEventListener('keydown', teclas, true); if (anterior && anterior.focus) anterior.focus(); };
+            const teclas = (e) => { if (e.key === 'Escape') { e.stopPropagation(); cerrar(); } };
+            const anterior = document.activeElement;
+            document.addEventListener('keydown', teclas, true);
+            ov.querySelector('.cerrar').addEventListener('click', cerrar);
+            ov.addEventListener('click', (e) => { if (e.target === ov) cerrar(); });
+            bEmp.addEventListener('click', empezar);
+            marcador(); pintar(); bEmp.focus();
+            juego = { cerrar };
+        };
+
+        /* ---------- Paleta Ctrl+K ---------- */
+        setTimeout(() => {
+            const prev = window.fxAccionesExtra;
+            window.fxAccionesExtra = () => [...(prev ? prev() : []),
+                { ic: 'fa-solid fa-gamepad', g: '', t: T('Jugar a Firewall defender', 'Play Firewall defender'), f: abrirJuego },
+                { ic: 'fa-solid fa-music', g: '', t: T('Hacer bailar al avatar', 'Make the avatar dance'), f: bailar },
+                av.classList.contains('min') ? { ic: 'fa-solid fa-eye', g: '', t: T('Mostrar el avatar', 'Show the avatar'), f: sacarAvatar } : { ic: 'fa-solid fa-eye-slash', g: '', t: T('Esconder el avatar', 'Hide the avatar'), f: () => minimizar(true) },
+                { ic: 'fa-solid fa-volume-high', g: '', t: sonido ? T('Quitar los sonidos 8-bit del avatar', 'Turn the avatar\'s 8-bit sounds off') : T('Activar sonidos 8-bit del avatar', 'Turn the avatar\'s 8-bit sounds on'), f: alternarSonido },
+            ];
+        }, 0);
+
+        /* ---------- Logos del stack al pasar el ratón por una tecnología ---------- */
+        const LOGOS_RE = [
+            [/linux|ubuntu|debian|kali|raspberry/i, 'tux'], [/docker|compose|contenedor|container/i, 'docker'], [/bash|powershell|ssh|systemd|shell/i, 'term'],
+            [/nginx|apache|lamp|lemp|php|html|css|javascript|dns|dhcp|bind|mqtt|icecast/i, 'web'], [/windows|active directory|gpo|iis/i, 'win'],
+            [/cisco|vlan|ospf|ipv|nat |nat\/|subnet|tcp|packet tracer/i, 'router'], [/aws|cloud/i, 'nube'], [/sql|maria|postgres/i, 'bd'], [/\bgit/i, 'git'],
+            [/firewall|ufw|iptables|vpn|wireguard|pki|openssl|tls|https|wireshark|riesgo|risk|segur|secur|acl/i, 'escudo'], [/raid|lvm|nfs|storage|volum|almacen/i, 'disco'], [/virtual|vagrant/i, 'vm'],
+        ];
+        let tLogo = 0, ultTag = null;
+        if (!tactil) document.addEventListener('mouseover', (e) => {
+            const tg = e.target.closest && e.target.closest('.tag'); if (!tg || tg === ultTag || !listo) return; ultTag = tg;
+            const x = LOGOS_RE.find(([re]) => re.test(tg.textContent)); if (!x) return;
+            av.dataset.logo = x[1]; clearTimeout(tLogo); tLogo = setTimeout(() => { delete av.dataset.logo; ultTag = null; }, 2200);
+            cara('feliz', 1200);
+        });
+
+        /* ---------- Ropa según la fecha (?fecha=MM-DD para probar) ---------- */
+        const hoy = (() => { const q = new URLSearchParams(location.search).get('fecha'); if (q && /^\d{2}-\d{2}$/.test(q)) { const [m, d] = q.split('-').map(Number); return m * 100 + d; } const f = new Date(); return (f.getMonth() + 1) * 100 + f.getDate(); })();
+        const temporada = hoy >= 1231 || hoy <= 102 ? 'nuevo' : hoy >= 1201 || hoy <= 106 ? 'navidad' : hoy >= 1025 && hoy <= 1101 ? 'halloween' : hoy === 214 ? 'sanvalentin' : hoy >= 621 && hoy <= 915 ? 'verano' : '';
+        if (temporada) av.classList.add('t-' + temporada);
+
+        /* ---------- Agitar el móvil: se marea ---------- */
+        let ultAgita = 0;
+        addEventListener('devicemotion', (e) => {
+            const a = e.acceleration; if (!a || !listo) return;
+            const m = Math.abs(a.x || 0) + Math.abs(a.y || 0) + Math.abs(a.z || 0);
+            if (m > 30 && Date.now() - ultAgita > 6000) { ultAgita = Date.now(); despertar(); accion('mareo', 2600); accion('estrellas', 2600); cara('sorpresa', 800); }
+        });
+
         /* ---------- Arranque: espera a que acabe la animación de inicio y al aviso de cookies ---------- */
         let listo = false;
         pintarLogros(); pintarBotones();
@@ -4478,10 +4757,13 @@
                 : h < 13 ? T('¡Buenos días! Soy Tomás 👋', 'Good morning! I\'m Tomás 👋')
                 : h < 21 ? T('¡Buenas tardes! Soy Tomás 👋', 'Good afternoon! I\'m Tomás 👋')
                 : T('¡Buenas noches! Soy Tomás 👋', 'Good evening! I\'m Tomás 👋');
+            const FIESTA = { nuevo: T('¡Feliz año nuevo! 🎉 Soy Tomás 👋', 'Happy New Year! 🎉 I\'m Tomás 👋'), navidad: T('¡Felices fiestas! 🎄 Soy Tomás 👋', 'Happy holidays! 🎄 I\'m Tomás 👋'),
+                halloween: T('¡Buuu! 🎃 Soy Tomás 👋', 'Boo! 🎃 I\'m Tomás 👋'), sanvalentin: T('Feliz San Valentín 💘 Soy Tomás 👋', 'Happy Valentine\'s Day 💘 I\'m Tomás 👋') };
             setTimeout(() => {
-                accion('saludo', 2200); cara('feliz', 2600); if (h < 7 || h >= 23) accion('gorro', 6000);
+                accion('saludo', 2200); cara('feliz', 2600); if ((h < 7 || h >= 23) && temporada !== 'navidad' && temporada !== 'nuevo') accion('gorro', 6000);
+                if (temporada === 'nuevo') accion('confeti', 1500); if (temporada === 'sanvalentin') accion('corazon', 3000);
                 let ya = false; try { ya = sessionStorage.getItem('cv-avatar-saludo') === '1'; sessionStorage.setItem('cv-avatar-saludo', '1'); } catch (e) {}
-                if (!ya) decir(saludo, 3);
+                if (!ya) decir(FIESTA[temporada] || saludo, 3);
             }, 800);
         };
         const esperar = (n = 0) => {

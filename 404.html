@@ -24,11 +24,25 @@
         .volver { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.4rem; padding: .75rem 1.3rem; border-radius: 10px; background: var(--azul); color: #0B1220; font: 700 .95rem system-ui, 'Segoe UI', sans-serif; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
         .volver:hover, .volver:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(56,189,248,.35); outline: none; }
         .pista { margin-top: .9rem; color: var(--gris); font-size: .78rem; }
-        @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } .volver { transition: none; } }
+        /* Avatar en píxeles perdido con un mapa */
+        .perdido { position: relative; height: 205px; margin: 0 0 .4rem; overflow: hidden; }
+        .perdido .camina { position: absolute; left: 50%; bottom: 0; width: 120px; margin-left: -60px; animation: pasea 9s steps(45) infinite; }
+        .perdido .gira { animation: gira 9s steps(1) infinite; }
+        .perdido .bota { animation: bota .3s steps(1) infinite; }
+        .perdido svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; overflow: visible; }
+        .perdido .duda { animation: duda 1s steps(2) infinite; }
+        .perdido .bocata { position: absolute; left: 50%; top: 0; transform: translateX(-50%); padding: .35rem .6rem; border: 3px solid var(--azul); background: var(--card); font-size: .74rem; white-space: nowrap; box-shadow: 3px 3px 0 rgba(0,0,0,.4); }
+        @keyframes pasea { 0%, 100% { transform: translateX(-120px); } 50% { transform: translateX(120px); } }
+        @keyframes gira { 0%, 49.9% { transform: scaleX(-1); } 50%, 100% { transform: scaleX(1); } }
+        @keyframes bota { 50% { transform: translateY(-3px); } }
+        @keyframes duda { 50% { transform: translateY(-2px); } }
+        @media (max-width: 420px) { @keyframes pasea { 0%, 100% { transform: translateX(-70px); } 50% { transform: translateX(70px); } } }
+        @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } .volver { transition: none; } .perdido * { animation: none !important; } }
     </style>
 </head>
 <body>
 <main>
+    <div class="perdido" aria-hidden="true"><div class="bocata" id="bocata">404: me he perdido en la red 🗺️</div><div class="camina"><div class="gira"><div class="bota"><svg id="avatar" viewBox="-2 -9 22 30"></svg></div></div></div></div>
     <p class="codigo" aria-hidden="true">404</p>
     <h1 id="titulo">Paquete perdido en la red</h1>
     <div class="term" role="img" aria-labelledby="titulo">
@@ -62,6 +76,15 @@
         '<span class="r">HTTP 404</span> ' + T('· el recurso ' + ruta + ' no existe', '· resource ' + ruta + ' not found'),
         '<span class="g"># ' + T('El CV sí está online. Pulsa el botón para volver.', 'The CV is online. Press the button to go back.') + '</span>'
     ];
+    // Avatar en píxeles (el mismo de la web) con un mapa en las manos
+    var BASE = [".....HHHHHH.....","...HHHHHHHHHH...","..HHHHhhHHHHHH..","..HHHHHHHhhHHH..","..HHHHHHHHHHHH..","..HHSSHHHSHHHH..","..HSSSSSSSSSHH..","..HSSSSSSSSSSH..","..sSSSSSSSSSSs..","..sSSSSSSSSSSs..","...SSSSnSSSSS...","...SSSSnnSSSS...","...SSSSSSSSSS...","....SSSSSSSS....",".....sSSSSs.....","......nnnn......","...TTtSSSStTT...",".TTTTTttttTTTTT.","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT"];
+    var C = { H: '#2B1D16', h: '#4A3328', S: '#F2C9AE', s: '#E3AE90', n: '#D9A486', T: '#14171E', t: '#2A303C', W: '#F8FAFC', E: '#1B120D', M: '#B86F62', D: '#6B2B25', L: '#E2E8F0', l: '#94A3B8', b: '#38BDF8', r: '#F43F5E', Y: '#FDE047' };
+    var px = function (filas, ox, oy) { var s = ''; filas.forEach(function (f, y) { for (var x = 0; x < f.length; x++) { var c = C[f[x]]; if (c) s += '<rect x="' + (ox + x) + '" y="' + (oy + y) + '" width="1.02" height="1.02" fill="' + c + '"/>'; } }); return s; };
+    document.getElementById('avatar').innerHTML = px(BASE, 0, 0)
+        + px(['HHH'], 4, 6) + px(['HHH'], 9, 7) + px(['WW'], 4, 8) + px(['WW'], 10, 8) + px(['E'], 4, 8) + px(['E'], 11, 8) + px(['..M', 'MM.'], 6, 12)
+        + px(['SLLLLLLLLLLS', '.LbLLLrLLLL.', '.LLbLrLLLLL.', '.LLLbLLLLbL.', '.LLLLLLLLLL.'], 2, 14)
+        + '<g class="duda">' + px(['.YYY.', 'Y...Y', '...Y.', '..Y..', '.....', '..Y..'], 14, -8) + '</g>';
+    if (en) document.getElementById('bocata').textContent = '404: I got lost on the network 🗺️';
     var out = document.getElementById('out');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var cursor = '<span class="cursor"></span>';
