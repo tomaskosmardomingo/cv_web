@@ -3087,7 +3087,7 @@
         .fx-esfera canvas { display: block; width: 100%; height: 380px; cursor: grab; touch-action: pan-y; }
         .fx-esfera canvas.drag { cursor: grabbing; }
         .fx-esfera-hint { text-align: center; font-size: .75rem; color: var(--text-muted); margin-top: .3rem; }
-        @media (max-width: 600px) { .fx-esfera canvas { height: 290px; } }
+        @media (max-width: 600px) { .fx-esfera canvas { height: 340px; } }
 
         /* 3. Terminal dentro de un monitor CRT */
         .fx-monitor { perspective: 1400px; }
@@ -3169,11 +3169,14 @@
                 proy.forEach((q) => {
                     const p = palabras[q.i], f = (q.z + 1) / 2;
                     const esSel = q.i === sel && selT > 0;
-                    x.globalAlpha = esSel ? 1 : 0.22 + f * 0.78;
-                    x.font = `${f > 0.55 || esSel ? 700 : 500} ${(9.5 + f * 6) * (esSel ? 1.25 : 1)}px "Fira Code", monospace`;
+                    // En pantallas estrechas letra algo más pequeña y las de atrás más tenues, para que no se amontonen
+                    const estrecho = W < 480;
+                    x.globalAlpha = esSel ? 1 : (estrecho ? 0.1 + f * 0.9 * f : 0.22 + f * 0.78);
+                    x.font = `${f > 0.55 || esSel ? 700 : 500} ${(estrecho ? 8.5 + f * 5 : 9.5 + f * 6) * (esSel ? 1.25 : 1)}px "Fira Code", monospace`;
                     x.fillStyle = esSel ? '#10B981' : (f > 0.6 ? col.pri : col.txt);
-                    x.fillText(p.t, q.X, q.Y);
-                    q.w = x.measureText(p.t).width;
+                    const txt = estrecho ? p.t.split(' / ')[0] : p.t;
+                    x.fillText(txt, q.X, q.Y);
+                    q.w = x.measureText(txt).width;
                 });
                 x.globalAlpha = 1;
             };
@@ -3264,6 +3267,334 @@
             ], { duration: 1150, easing: 'ease-in-out', fill: 'forwards' });
             vuelo.onfinish = () => h.remove();
         }, true);
+    })();
+    </script>
+    <!-- movil.html: versión móvil más cómoda (barra de pestañas abajo, menú con todas las secciones y acciones,
+         portada compacta, filtros deslizables, categorías del stack plegables y cabecera que se esconde al bajar). En PC no cambia nada. -->
+    <style id="fx-movil-css">
+        .fx-tabbar, .fx-msheet { display: none; }
+        @media (max-width: 760px) {
+            /* Nada se sale por los lados (si no, el móvil aleja la página); clip no rompe la cabecera sticky */
+            html, body { overflow-x: clip; }
+            /* Hueco para la barra de abajo y para que los saltos no queden debajo de la cabecera */
+            body { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+            section, header.hero, .devops-footer { scroll-margin-top: 74px; }
+            .fab-container { display: none !important; }
+            .fx-toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+            .fx-cookies { bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+            body::before, body::after { display: none; }
+
+            /* Cabecera que se esconde al bajar y vuelve al subir */
+            nav#main-nav { transition: transform .3s ease, padding .3s ease, box-shadow .3s ease; }
+            nav#main-nav.fx-nav-oculta { transform: translateY(-110%); box-shadow: none; }
+
+            /* Barra de pestañas */
+            .fx-tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 950;
+                height: 62px; padding: 0 4px; border-radius: 20px; background: rgba(255, 255, 255, .97); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(2, 20, 40, .22);
+                transition: transform .3s ease, opacity .3s ease; }
+            body.dark-theme .fx-tabbar { background: rgba(13, 20, 36, .97); border-color: rgba(56, 189, 248, .18); box-shadow: 0 10px 30px rgba(0, 0, 0, .55); }
+            body.fx-tecleando .fx-tabbar, body.fx-sheet-on .fx-tabbar { transform: translateY(130%); opacity: 0; pointer-events: none; }
+            .fx-tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: 0; color: var(--text-muted);
+                font: 600 .64rem 'Inter', sans-serif; letter-spacing: -.1px; cursor: pointer; -webkit-tap-highlight-color: transparent; min-width: 0; }
+            .fx-tab i { font-size: 1.05rem; width: 46px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 14px; transition: background .25s ease, color .25s ease, transform .2s ease; }
+            .fx-tab:active i { transform: scale(.9); }
+            .fx-tab.on { color: var(--primary); }
+            .fx-tab.on i { background: var(--primary-light); color: var(--primary); }
+            .fx-tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+            /* Menú inferior (Más) */
+            .fx-msheet { display: block; position: fixed; inset: 0; z-index: 2900; pointer-events: none; }
+            .fx-msheet-fondo { position: absolute; inset: 0; background: rgba(2, 6, 16, .55); opacity: 0; transition: opacity .3s ease; }
+            .fx-msheet-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; overflow-y: auto; overscroll-behavior: contain; padding: .5rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+                background: var(--bg-base); border-radius: 22px 22px 0 0; border-top: 1px solid var(--border); box-shadow: 0 -10px 40px rgba(0, 0, 0, .35);
+                transform: translateY(105%); transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+            body.dark-theme .fx-msheet-panel { background: #0B1222; border-top-color: rgba(56, 189, 248, .2); }
+            .fx-msheet.on { pointer-events: auto; }
+            .fx-msheet.on .fx-msheet-fondo { opacity: 1; }
+            .fx-msheet.on .fx-msheet-panel { transform: translateY(0); }
+            .fx-msheet-asa { width: 42px; height: 5px; border-radius: 3px; background: var(--border); margin: .2rem auto .7rem; }
+            body.dark-theme .fx-msheet-asa { background: #334155; }
+            .fx-msheet-cab { display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+            .fx-msheet-cab b { font: 700 1.05rem 'Plus Jakarta Sans', sans-serif; color: var(--text-main); }
+            .fx-msheet-x { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); display: flex; align-items: center; justify-content: center; }
+            .fx-msheet-tit { font: 700 .7rem 'Inter', sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin: 1rem 0 .5rem; }
+            .fx-msheet-secs { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; }
+            .fx-msheet-secs a { display: flex; align-items: center; gap: .55rem; padding: .7rem .7rem; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main);
+                text-decoration: none; font: 600 .8rem 'Inter', sans-serif; line-height: 1.2; min-width: 0; -webkit-tap-highlight-color: transparent; }
+            .fx-msheet-secs a i { color: var(--primary); width: 1.1rem; text-align: center; flex: none; }
+            .fx-msheet-secs a.on { border-color: var(--primary); background: var(--primary-light); }
+            .fx-msheet-acc { display: grid; grid-template-columns: repeat(3, 1fr); gap: .45rem; }
+            .fx-msheet-acc button { display: flex; flex-direction: column; align-items: center; gap: .35rem; padding: .75rem .3rem; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border);
+                color: var(--text-main); font: 600 .7rem 'Inter', sans-serif; line-height: 1.2; text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+            .fx-msheet-acc button i { font-size: 1.1rem; color: var(--primary); }
+            .fx-msheet-acc button.main { background: linear-gradient(135deg, var(--primary), var(--accent)); border-color: transparent; color: #04121F; }
+            .fx-msheet-acc button.main i { color: #04121F; }
+
+            /* Categorías del stack plegables */
+            .fx-acord .skills-category { margin-bottom: .55rem; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-base); overflow: hidden; }
+            .fx-acord .skills-category > h3 { display: flex; align-items: center; gap: .5rem; margin: 0; padding: .85rem 1rem; cursor: pointer; font-size: .8rem; -webkit-tap-highlight-color: transparent; }
+            .fx-acord .skills-category > h3 .fx-acord-n { margin-left: auto; font: 700 .7rem 'Fira Code', monospace; color: var(--primary); background: var(--primary-light); padding: .1rem .45rem; border-radius: 8px; }
+            .fx-acord .skills-category > h3 .fx-acord-ch { color: var(--text-muted); transition: transform .25s ease; font-size: .75rem; }
+            .fx-acord .skills-category:not(.fx-cerrada) > h3 .fx-acord-ch { transform: rotate(180deg); }
+            .fx-acord .skills-category > .tags-grid { padding: 0 1rem 1rem; }
+            .fx-acord:not(.fx-acord-todo) .skills-category.fx-cerrada > :not(h3) { display: none !important; }
+        }
+
+        @media (max-width: 600px) {
+            /* Portada más compacta */
+            .hero { padding: 1.6rem 1.1rem 1.4rem; }
+            .hero .status-badge { font-size: .74rem; padding: .35rem .8rem; margin-bottom: 1rem; line-height: 1.35; }
+            .hero h1 { font-size: 2.15rem; margin-bottom: .6rem; }
+            .hero .role { font-size: 1rem; margin-bottom: 1rem; min-height: 2.8em; align-items: flex-start; }
+            .summary { font-size: .93rem; line-height: 1.65; margin-bottom: 1.3rem; }
+            .fx-hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: .9rem; }
+            .fx-hero-actions .cta-btn, .fx-hero-actions .fx-btn2 { width: 100%; justify-content: center; padding: .8rem .5rem; font-size: .88rem; margin: 0; }
+            .hero .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; }
+            .hero .contact-tag { width: auto; min-width: 0; padding: .62rem .5rem; font-size: .8rem; border-radius: 12px; justify-content: center; text-align: center; line-height: 1.25; }
+            .hero .contact-tag[href^="mailto"] { grid-column: 1 / -1; order: -1; }
+
+            /* Cifras en una sola fila */
+            .fx-stats { grid-template-columns: repeat(4, 1fr); gap: .4rem; margin: -.4rem 0 1.4rem; }
+            .fx-stat { padding: .7rem .2rem .6rem; border-radius: 14px; }
+            .fx-stat i { width: 1.9rem; height: 1.9rem; font-size: .85rem; border-radius: 9px; margin-bottom: .3rem; }
+            .fx-num { font-size: 1.35rem !important; }
+            .fx-lbl { font-size: .6rem; line-height: 1.2; display: block; }
+
+            /* Filtros en una fila que se desliza */
+            .filters { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; margin: 0 -1rem 1.4rem; padding: .15rem 1rem .35rem; gap: .45rem; scrollbar-width: none; scroll-snap-type: x proximity; }
+            .filters::-webkit-scrollbar { display: none; }
+            .filter-btn { flex: none; white-space: nowrap; padding: .55rem 1rem; font-size: .8rem; border-radius: 999px; scroll-snap-align: start; }
+            .filter-btn.active { transform: none; }
+
+            /* Secciones */
+            section { padding: 1.35rem 1.05rem; margin-bottom: 1.1rem; }
+            .section-title { font-size: 1.15rem; margin-bottom: 1.2rem; padding-bottom: .8rem; gap: .6rem; }
+            .section-title i { padding: .5rem; font-size: .95rem; }
+            .timeline-item { margin-bottom: 2rem; }
+            .item-title { font-size: 1.05rem; }
+            .item-desc { margin-top: .6rem; font-size: .9rem; }
+            .project-card { padding: 2.2rem 1.05rem 1.2rem; margin-bottom: 1rem; }
+            .project-header { gap: .7rem; margin-bottom: .7rem; }
+            .item-desc-3d { font-size: .9rem; }
+            .tag { font-size: .78rem; padding: .42rem .75rem; }
+
+            /* Sello CCST: que no pise el título */
+            .fx-holo { padding-top: 2.2rem !important; }
+
+            /* Pie */
+            .devops-footer { margin-bottom: 1rem; }
+        }
+
+        /* En pantallas táctiles no hay "hover": fuera saltos raros al tocar */
+        @media (hover: none) {
+            .timeline-item:hover, .project-card:hover, .cert-card:hover, .tag:hover, .contact-tag:hover, .cta-btn:hover, .fx-btn2:hover { transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) { .fx-tabbar, .fx-msheet-panel, .fx-msheet-fondo, nav#main-nav { transition: none !important; } }
+        @media print { .fx-tabbar, .fx-msheet { display: none !important; } body { padding-bottom: 0 !important; } }
+    </style>
+    <script id="fx-movil-js">
+    (function () {
+        const mq = window.matchMedia('(max-width: 760px)');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const bi = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
+        const esEN = () => document.body.classList.contains('lang-en');
+        const iniciar = () => {
+            const tit = (ic) => { const i = document.querySelector('.section-title i.' + ic); return i ? i.closest('section') : null; };
+            const S = {
+                hero: document.getElementById('hero-header'), exp: tit('fa-briefcase'), form: tit('fa-graduation-cap'), git: document.querySelector('.fx-git-sec'),
+                esfera: document.querySelector('.fx-esfera-sec'), proy: tit('fa-network-wired'), stack: tit('fa-microchip'), fw: document.querySelector('.fx-fw-sec'),
+                cert: tit('fa-award'), idi: tit('fa-language'), cont: document.getElementById('contacto'), term: document.querySelector('.fx-terminal-section'),
+                pie: document.querySelector('.devops-footer'),
+            };
+            const nav = document.getElementById('main-nav');
+            // Alto real de la cabecera aunque ahora esté escondida (al subir vuelve a salir)
+            const altoNav = () => (nav ? nav.offsetHeight : 64) + 8;
+            const ir = (el) => {
+                if (!el) return;
+                // Quito el desplazamiento de la animación de entrada (las secciones aún ocultas están 40px más abajo)
+                let ty = 0;
+                try { const t = getComputedStyle(el).transform; if (t && t !== 'none') ty = new DOMMatrix(t).m42; } catch (e) { /* sin DOMMatrix */ }
+                const y = el.getBoundingClientRect().top + window.scrollY - ty;
+                // Al bajar la cabecera se esconde (basta un margen pequeño); al subir vuelve a salir y hay que dejarle hueco
+                const margen = y > window.scrollY ? 14 : altoNav() + 6;
+                window.scrollTo({ top: Math.max(0, y - margen), behavior: reduce ? 'auto' : 'smooth' });
+            };
+
+            /* 1. En móvil la esfera 3D va justo después del Stack Técnico (en PC se queda donde estaba) */
+            const sitioEsfera = S.esfera ? S.esfera.previousElementSibling : null;
+            const colocarEsfera = () => {
+                if (!S.esfera || !S.stack) return;
+                if (mq.matches) { if (S.stack.nextElementSibling !== S.esfera) S.stack.after(S.esfera); }
+                else if (sitioEsfera && sitioEsfera.nextElementSibling !== S.esfera) sitioEsfera.after(S.esfera);
+                window.dispatchEvent(new Event('resize'));
+            };
+
+            /* 2. Teléfono pulsable en el móvil */
+            if (window.matchMedia('(pointer: coarse)').matches) {
+                document.querySelectorAll('#hero-header span.contact-tag').forEach((s) => {
+                    if (!s.querySelector('.fa-phone')) return;
+                    const a = document.createElement('a'); a.className = s.className; a.href = 'tel:+34' + s.textContent.replace(/\D/g, '').slice(-9); a.innerHTML = s.innerHTML; s.replaceWith(a);
+                });
+            }
+
+            /* 3. Barra de pestañas */
+            const TABS = [
+                { k: 'exp', ic: 'fa-briefcase', t: bi('Experiencia', 'Experience'), ir: () => S.exp, secs: [S.exp, S.form, S.git] },
+                { k: 'proy', ic: 'fa-diagram-project', t: bi('Proyectos', 'Projects'), ir: () => S.proy, secs: [S.proy] },
+                { k: 'stack', ic: 'fa-layer-group', t: 'Stack', ir: () => S.stack, secs: [S.stack, S.esfera, S.fw, S.cert, S.idi] },
+                { k: 'cont', ic: 'fa-paper-plane', t: bi('Contacto', 'Contact'), ir: () => S.cont, secs: [S.cont, S.term, S.pie] },
+                { k: 'mas', ic: 'fa-bars', t: bi('Más', 'More') },
+            ];
+            // div y no nav: la web tiene estilos para todos los <nav> (sticky arriba)
+            const bar = document.createElement('div');
+            bar.className = 'fx-tabbar'; bar.setAttribute('role', 'navigation'); bar.setAttribute('aria-label', 'Secciones');
+            bar.innerHTML = TABS.map((t) => `<button type="button" class="fx-tab" data-k="${t.k}"><i class="fa-solid ${t.ic}" aria-hidden="true"></i><span>${t.t}</span></button>`).join('');
+            document.body.appendChild(bar);
+            const botones = {};
+            bar.querySelectorAll('.fx-tab').forEach((b) => { botones[b.dataset.k] = b; });
+            bar.addEventListener('click', (e) => {
+                const b = e.target.closest('.fx-tab'); if (!b) return;
+                const t = TABS.find((x) => x.k === b.dataset.k);
+                if (t.k === 'mas') { abrirMenu(); return; }
+                ir(t.ir());
+            });
+
+            /* Qué pestaña se ilumina según la parte del CV que estás viendo */
+            const pares = [];
+            TABS.forEach((t) => (t.secs || []).forEach((s) => { if (s) pares.push([s, t.k]); }));
+            let activa = '';
+            const espiar = () => {
+                const linea = window.innerHeight * 0.38;
+                let mejor = null, top = -Infinity;
+                pares.forEach(([s, k]) => { if (!s.offsetParent && s !== S.pie) return; const y = s.getBoundingClientRect().top; if (y <= linea && y > top) { top = y; mejor = k; } });
+                if (S.hero && S.hero.getBoundingClientRect().bottom > linea) mejor = null;
+                if (mejor !== activa) { activa = mejor; Object.entries(botones).forEach(([k, b]) => { b.classList.toggle('on', k === activa); if (k === activa) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); }); }
+            };
+
+            /* Cabecera que se esconde al bajar */
+            let ultY = window.scrollY, pend = false;
+            const alScroll = () => {
+                pend = false;
+                const y = window.scrollY, d = y - ultY;
+                if (mq.matches && nav) {
+                    const buscando = document.querySelector('#search-box.mobile-open');
+                    if (y < 140 || d < -6 || buscando) nav.classList.remove('fx-nav-oculta');
+                    else if (d > 6) nav.classList.add('fx-nav-oculta');
+                } else if (nav) nav.classList.remove('fx-nav-oculta');
+                if (Math.abs(d) > 6) ultY = y;
+                if (mq.matches) espiar();
+            };
+            window.addEventListener('scroll', () => { if (!pend) { pend = true; requestAnimationFrame(alScroll); } }, { passive: true });
+
+            /* Se esconde la barra mientras escribes (teclado del móvil) */
+            document.addEventListener('focusin', (e) => { if (e.target.matches('input, textarea, [contenteditable]')) document.body.classList.add('fx-tecleando'); });
+            document.addEventListener('focusout', () => document.body.classList.remove('fx-tecleando'));
+
+            /* 4. Menú «Más»: todas las secciones + acciones rápidas */
+            const sheet = document.createElement('div');
+            sheet.className = 'fx-msheet'; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-label', 'Menú');
+            sheet.innerHTML = `<div class="fx-msheet-fondo"></div><div class="fx-msheet-panel" tabindex="-1"><div class="fx-msheet-asa"></div>
+                <div class="fx-msheet-cab"><b>${bi('Ir a…', 'Go to…')}</b><button type="button" class="fx-msheet-x" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="fx-msheet-secs"></div>
+                <div class="fx-msheet-tit">${bi('Acciones rápidas', 'Quick actions')}</div>
+                <div class="fx-msheet-acc"></div></div>`;
+            document.body.appendChild(sheet);
+            const panel = sheet.querySelector('.fx-msheet-panel');
+            const clic = (sel) => () => { const el = typeof sel === 'string' ? document.querySelector(sel) : sel; if (el) el.click(); };
+            const ACC = [
+                { ic: 'fa-file-arrow-down', t: () => bi('Descargar CV', 'Download CV'), f: clic('#hero-cta'), main: true },
+                { ic: 'fa-qrcode', t: () => bi('Compartir / QR', 'Share / QR'), f: clic('.fx-hero-actions .fx-btn2') },
+                { ic: 'fa-address-card', t: () => bi('Guardar contacto', 'Save contact'), f: clic(document.getElementById('fx-vcard') ? '#fx-vcard' : '#download-vcard') },
+                { ic: 'fa-file-lines', t: () => bi('CV en texto (ATS)', 'Plain-text CV (ATS)'), f: clic('#download-ats') },
+                { ic: 'fa-language', t: () => (esEN() ? 'Español' : 'English'), f: clic('#lang-toggle'), quedar: true },
+                { ic: 'fa-circle-half-stroke', t: () => (document.body.classList.contains('dark-theme') ? bi('Modo claro', 'Light mode') : bi('Modo oscuro', 'Dark mode')), f: clic('#theme-toggle'), quedar: true },
+            ];
+            const pintarMenu = () => {
+                const lista = [[S.hero, 'fa-solid fa-house', bi('Inicio', 'Home')]];
+                document.querySelectorAll('#cv-content section').forEach((s) => {
+                    const t = s.querySelector('.section-title'); if (!t || !s.offsetParent) return;
+                    const ic = (t.querySelector('i') || {}).className || 'fa-solid fa-circle';
+                    const es = t.querySelector('.es'), en = t.querySelector('.en');
+                    lista.push([s, ic.replace(/\s*icon-flip/, ''), es && en ? bi(es.textContent.trim(), en.textContent.trim()) : t.textContent.trim()]);
+                });
+                // Orden real en pantalla (en móvil todo va en una columna)
+                lista.sort((a, b) => a[0].getBoundingClientRect().top - b[0].getBoundingClientRect().top);
+                const secs = sheet.querySelector('.fx-msheet-secs');
+                secs.innerHTML = '';
+                lista.forEach(([s, ic, txt]) => {
+                    const a = document.createElement('a'); a.href = '#'; a.innerHTML = `<i class="${ic}" aria-hidden="true"></i><span>${txt}</span>`;
+                    const k = (pares.find((p) => p[0] === s) || [])[1];
+                    if (k && k === activa) a.classList.add('on');
+                    a.addEventListener('click', (e) => { e.preventDefault(); cerrarMenu(); setTimeout(() => ir(s), 60); });
+                    secs.appendChild(a);
+                });
+                const acc = sheet.querySelector('.fx-msheet-acc');
+                acc.innerHTML = '';
+                ACC.forEach((x) => {
+                    const b = document.createElement('button'); b.type = 'button'; if (x.main) b.className = 'main';
+                    b.innerHTML = `<i class="fa-solid ${x.ic}" aria-hidden="true"></i><span>${x.t()}</span>`;
+                    b.addEventListener('click', () => { if (x.quedar) { x.f(); setTimeout(pintarMenu, 80); } else { cerrarMenu(); setTimeout(x.f, 250); } });
+                    acc.appendChild(b);
+                });
+            };
+            let abierto = false, volverA = null;
+            const abrirMenu = () => {
+                pintarMenu(); abierto = true; volverA = document.activeElement;
+                sheet.classList.add('on'); document.body.classList.add('fx-sheet-on'); document.documentElement.style.overflow = 'hidden';
+                setTimeout(() => panel.focus({ preventScroll: true }), 50);
+            };
+            const cerrarMenu = () => {
+                if (!abierto) return; abierto = false;
+                sheet.classList.remove('on'); document.body.classList.remove('fx-sheet-on'); document.documentElement.style.overflow = '';
+                panel.style.transform = '';
+                if (volverA && volverA.focus) volverA.focus({ preventScroll: true });
+            };
+            sheet.querySelector('.fx-msheet-fondo').addEventListener('click', cerrarMenu);
+            sheet.querySelector('.fx-msheet-x').addEventListener('click', cerrarMenu);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && abierto) cerrarMenu(); });
+            // Deslizar hacia abajo para cerrarlo
+            let y0 = null, dy = 0;
+            panel.addEventListener('touchstart', (e) => { y0 = panel.scrollTop <= 0 ? e.touches[0].clientY : null; dy = 0; }, { passive: true });
+            panel.addEventListener('touchmove', (e) => { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); panel.style.transition = 'none'; panel.style.transform = `translateY(${dy}px)`; }, { passive: true });
+            panel.addEventListener('touchend', () => { if (y0 === null) return; panel.style.transition = ''; if (dy > 90) cerrarMenu(); else panel.style.transform = ''; y0 = null; });
+
+            /* 5. Stack Técnico: categorías plegables en móvil */
+            const cats = S.stack ? [...S.stack.querySelectorAll('.skills-category')].filter((c) => c.querySelector(':scope > h3')) : [];
+            const abrirCat = (c) => { c.classList.remove('fx-cerrada'); const h = c.querySelector(':scope > h3'); if (h) h.setAttribute('aria-expanded', 'true'); };
+            cats.forEach((c, i) => {
+                const h = c.querySelector(':scope > h3');
+                const n = c.querySelectorAll('.tag').length;
+                h.insertAdjacentHTML('beforeend', `${n ? `<span class="fx-acord-n">${n}</span>` : ''}<i class="fa-solid fa-chevron-down fx-acord-ch" aria-hidden="true"></i>`);
+                h.setAttribute('role', 'button'); h.setAttribute('tabindex', '0');
+                if (i > 0) c.classList.add('fx-cerrada');
+                h.setAttribute('aria-expanded', i > 0 ? 'false' : 'true');
+                const alternar = () => { if (!S.stack.classList.contains('fx-acord')) return; const cerrar = !c.classList.contains('fx-cerrada'); c.classList.toggle('fx-cerrada', cerrar); h.setAttribute('aria-expanded', String(!cerrar)); };
+                h.addEventListener('click', alternar);
+                h.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternar(); } });
+            });
+            // Si se busca o se filtra, se ven todas; y si algo salta a una tecnología plegada (esfera, paleta…), se abre su categoría
+            const buscar = document.getElementById('searchInput');
+            const verTodo = () => { if (!S.stack) return; const f = document.querySelector('.filter-btn.active'); S.stack.classList.toggle('fx-acord-todo', !!(buscar && buscar.value.trim()) || !!(f && f.dataset.filter !== 'all')); };
+            if (buscar) buscar.addEventListener('input', verTodo);
+            document.querySelectorAll('.filter-btn').forEach((b) => b.addEventListener('click', () => setTimeout(verTodo, 0)));
+            const sivOriginal = Element.prototype.scrollIntoView;
+            Element.prototype.scrollIntoView = function (...a) {
+                const c = this.closest && this.closest('.fx-acord .skills-category.fx-cerrada');
+                if (c) abrirCat(c);
+                return sivOriginal.apply(this, a);
+            };
+
+            /* Aplica o quita el modo móvil según el ancho */
+            const modo = () => {
+                if (S.stack) S.stack.classList.toggle('fx-acord', mq.matches && cats.length > 1);
+                colocarEsfera();
+                if (!mq.matches) { cerrarMenu(); if (nav) nav.classList.remove('fx-nav-oculta'); }
+                espiar();
+            };
+            if (mq.addEventListener) mq.addEventListener('change', modo); else mq.addListener(modo);
+            modo();
+        };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(iniciar, 0)); else setTimeout(iniciar, 0);
     })();
     </script>
     <!-- FX3D FIN -->
