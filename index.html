@@ -2966,6 +2966,9 @@
         /* 4. Cortafuegos en vivo */
         .fx-fw canvas { display: block; width: 100%; height: 170px; border-radius: 12px; background: var(--bg-base); border: 1px solid var(--border); }
         .fx-fw p { margin: .55rem 0 0; font-size: .76rem; color: var(--text-muted); line-height: 1.45; }
+        .fx-fw-modal { margin: 1rem 0 .4rem; }
+        .fx-fw-tit { display: flex; align-items: center; gap: .45rem; font: 700 .9rem 'Plus Jakarta Sans', sans-serif; color: var(--text-main); margin-bottom: .5rem; }
+        .fx-fw-tit i { color: var(--primary); }
         .fx-fw code { font: 600 .74rem 'Fira Code', monospace; color: var(--primary); }
 
         /* 6. Trayectoria en perspectiva */
@@ -3122,16 +3125,18 @@
             alVerse(topoSvg, (on) => { try { on ? topoSvg.unpauseAnimations() : topoSvg.pauseAnimations(); } catch (e) { /* sin SMIL */ } });
         }
 
-        /* ---------- 4. Cortafuegos en vivo (reglas previstas para GlucoNet) ---------- */
-        const secStack = hStack ? hStack.closest('section') : null;
-        if (secStack) {
-            const sec = document.createElement('section');
-            sec.className = 'fx-fw-sec';
-            sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-shield-halved"></i> ${bi('Cortafuegos en vivo', 'Live firewall')}</h2>
+        /* ---------- 4. Cortafuegos (reglas previstas para GlucoNet): va dentro de la ventana «arquitectura prevista», no como sección suelta ---------- */
+        const archBox = document.querySelector('#fx-arch-svg') ? document.querySelector('#fx-arch-svg').closest('.fx-arch') : null;
+        const archModal = archBox ? archBox.closest('.fx-modal') : null;
+        if (archBox) {
+            const sec = document.createElement('div');
+            sec.className = 'fx-fw-sec fx-fw-modal';
+            sec.innerHTML = `<div class="fx-fw-tit"><i class="fa-solid fa-shield-halved"></i> ${bi('Cortafuegos del VPS (simulación)', 'VPS firewall (simulation)')}</div>
                 <div class="fx-fw"><canvas aria-label="Animación de un cortafuegos que deja pasar 443, 8883 y 51820/udp y bloquea el resto" role="img"></canvas>
-                <p>${bi('Simulación con las reglas que he diseñado para mi TFC GlucoNet (en diseño, pueden cambiar): solo <code>443</code>, <code>8883</code> y <code>51820/udp</code> entran; el resto se descarta.',
-                    'Simulation of the rules I designed for my GlucoNet capstone (in design, subject to change): only <code>443</code>, <code>8883</code> and <code>51820/udp</code> get in; everything else is dropped.')}</p></div>`;
-            secStack.after(sec);
+                <p>${bi('Reglas previstas: solo entran <code>443</code> (web), <code>8883</code> (MQTT) y <code>51820/udp</code> (VPN); el resto se descarta.',
+                    'Planned rules: only <code>443</code> (web), <code>8883</code> (MQTT) and <code>51820/udp</code> (VPN) get in; everything else is dropped.')}</p></div>`;
+            const leyenda = archBox.querySelector('.fx-arch-legend');
+            if (leyenda) leyenda.after(sec); else archBox.appendChild(sec);
             const cv = sec.querySelector('canvas'), x = cv.getContext('2d');
             const OK = ['443/tcp', '8883/tcp', '51820/udp'], NO = ['22/tcp', '23/tcp', '3306/tcp', '3389/tcp', '445/tcp', '21/tcp', '5432/tcp'];
             let W = 0, H = 170, dpr = 1, col = {}, pk = [], marcas = [], ok = 0, no = 0, ult = 0, sig = 0, visible = false, raf = 0;
@@ -3191,7 +3196,12 @@
                 ok = 3; no = 4; [[0.2, 60, '443/tcp', 0], [0.35, 110, '22/tcp', 0], [0.8, 85, '8883/tcp', 1]].forEach(([f, y, p, e]) => pk.push({ x: W * f, y, p, bueno: true, est: e, v: 0, a: 1 }));
                 dibujar(0);
             } else {
-                alVerse(cv, (on) => { visible = on; ult = 0; if (on && !raf) raf = requestAnimationFrame(bucle); });
+                // Solo se anima con la ventana abierta y el lienzo a la vista (la ventana cerrada sigue "ocupando" sitio para el IntersectionObserver)
+                let enPantalla = false;
+                const abierta = () => !archModal || archModal.classList.contains('open');
+                const actualizar = () => { visible = enPantalla && abierta(); ult = 0; if (visible) { medir(); if (!raf) raf = requestAnimationFrame(bucle); } };
+                alVerse(cv, (on) => { enPantalla = on; actualizar(); });
+                if (archModal) new MutationObserver(actualizar).observe(archModal, { attributes: true, attributeFilter: ['class'] });
             }
         }
 
@@ -3273,7 +3283,11 @@
         // Entradas para la paleta de comandos
         window.fxAccionesExtra = () => [
             { ic: 'fa-solid fa-display', t: T('Salvapantallas', 'Screensaver'), g: 's', f: () => window.fxScreensaver() },
-            { ic: 'fa-solid fa-shield-halved', t: T('Ver el cortafuegos en vivo', 'Watch the live firewall'), g: '', f: () => { const s = document.querySelector('.fx-fw-sec'); if (s) s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); } },
+            { ic: 'fa-solid fa-shield-halved', t: T('Ver el cortafuegos de GlucoNet', 'Watch the GlucoNet firewall'), g: '', f: () => {
+                // Abre la arquitectura de GlucoNet y baja hasta la simulación del cortafuegos
+                const b = document.querySelector('.fx-arch-btn'); if (!b) return; b.click();
+                setTimeout(() => { const s = document.querySelector('.fx-fw-modal'); if (s) s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }, 450);
+            } },
             { ic: 'fa-solid fa-id-card', t: T('Girar mi tarjeta de visita', 'Flip my business card'), g: '', f: () => { const c = document.querySelector('.fx-bcard'); if (c) { c.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); setTimeout(() => c.click(), 700); } } },
         ];
 
@@ -3649,7 +3663,7 @@
             const tit = (ic) => { const i = document.querySelector('.section-title i.' + ic); return i ? i.closest('section') : null; };
             const S = {
                 hero: document.getElementById('hero-header'), exp: tit('fa-briefcase'), form: tit('fa-graduation-cap'), git: document.querySelector('.fx-git-sec'),
-                esfera: document.querySelector('.fx-esfera-sec'), proy: tit('fa-network-wired'), stack: tit('fa-microchip'), fw: document.querySelector('.fx-fw-sec'),
+                esfera: document.querySelector('.fx-esfera-sec'), proy: tit('fa-network-wired'), stack: tit('fa-microchip'), fw: null, // el cortafuegos ya no es una sección: va dentro de la arquitectura de GlucoNet
                 cert: tit('fa-award'), idi: tit('fa-language'), cont: document.getElementById('contacto'), term: document.querySelector('.fx-terminal-section'),
                 pie: document.querySelector('.devops-footer'),
             };
