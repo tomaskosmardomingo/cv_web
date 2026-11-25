@@ -59,7 +59,15 @@
       },
       "email": "tomaskoskos@gmail.com",
       "telephone": "+34692876776",
-      "url": "https://github.com/tomaskosmardomingo",
+      "url": "https://www.koscloud.es/",
+      "sameAs": ["https://www.linkedin.com/in/tom%C3%A1s-kos", "https://github.com/tomaskosmardomingo", "https://www.credly.com/badges/42bab3c6-9e62-4cc6-bb53-45102ddb2e17"],
+      "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "name": "Cisco Certified Support Technician IT Support (CCST)",
+        "credentialCategory": "certification",
+        "recognizedBy": { "@type": "Organization", "name": "Cisco" },
+        "url": "https://www.credly.com/badges/42bab3c6-9e62-4cc6-bb53-45102ddb2e17"
+      },
       "knowsAbout": ["Linux", "Kali Linux", "Amazon AWS", "Cisco", "Windows Server", "Active Directory", "Docker", "SQL", "MySQL", "DNS", "DHCP", "Apache", "Nginx", "IIS", "Firewall", "iptables", "PKI", "OpenSSL", "Bash", "PowerShell", "Git", "HTML/CSS/JS"]
     }
     </script>
@@ -1723,7 +1731,7 @@
         // El QR lleva directamente al CV en PDF publicado junto a la web
         const PDF = WEB + '/CV_Tomas_Kos.pdf';
         // Enlaces opcionales: mientras estén vacíos no se muestra nada
-        const CREDLY = '';    // insignia verificable de Cisco CCST (https://www.credly.com/badges/...)
+        const CREDLY = 'https://www.credly.com/badges/42bab3c6-9e62-4cc6-bb53-45102ddb2e17';    // insignia verificable de Cisco CCST (https://www.credly.com/badges/...)
         const ESTADO = '';    // página de estado de mis servicios (p. ej. Uptime Kuma)
         const CALENDLY = '';  // enlace para reservar entrevista; si está vacío, el botón abre un email
         // Dirección que se comparte: la de la propia página si está publicada; si se abre desde el disco, la web pública
@@ -1983,6 +1991,244 @@
             document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right').forEach((el) => el.classList.add('active'));
             document.querySelectorAll('.lang-progress[data-width]').forEach((b) => { b.style.width = b.dataset.width; });
         });
+    })();
+    </script>
+    <!-- info.html: sección «Cómo está montada esta web» (con las cabeceras de seguridad leídas en vivo), hoja de ruta de GlucoNet,
+         «Vista rápida» (modo ligero sin efectos) y mejoras de accesibilidad (saltar al contenido, rel=noopener). -->
+    <style id="fx-info-css">
+        /* Contraste suficiente (WCAG AA, 4.5:1): azul algo más oscuro en modo claro y texto oscuro en el filtro activo del modo oscuro */
+        body:not(.dark-theme) { --primary: #0270AD; }
+        body:not(.dark-theme) .filter-btn.active { background: #0270AD; border-color: #0270AD; }
+        body.dark-theme .filter-btn.active { color: #04121F; }
+        body:not(.dark-theme) .fx-saltar { color: #fff; }
+        body:not(.dark-theme) .fx-uptime b { color: #047857; }
+
+        /* Botón «Verificar credencial»: sin heredar el estilo de etiqueta de .cert-info span */
+        .cert-info .fx-verify span { background: none; padding: 0; margin: 0; border-radius: 0; color: inherit; font: inherit; display: inline; }
+        /* Sello CISCO · CCST: hueco arriba para que no pise el título */
+        .cert-card.fx-holo { padding-top: 2.2rem; }
+
+        /* Saltar al contenido (solo se ve al llegar con el tabulador) */
+        .fx-saltar { position: fixed; left: 12px; top: -60px; z-index: 5000; padding: .65rem 1rem; border-radius: 10px; background: var(--primary); color: #04121F; font: 700 .9rem 'Inter', sans-serif; text-decoration: none; transition: top .2s ease; }
+        .fx-saltar:focus { top: 12px; }
+
+        /* Hoja de ruta de GlucoNet */
+        .fx-ruta { position: relative; z-index: 1; margin-top: .9rem; padding: .8rem .9rem; border: 1px dashed var(--border); border-radius: 12px; background: var(--bg-card); }
+        .fx-ruta-t { font: 700 .72rem 'Inter', sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: .55rem; display: flex; align-items: center; gap: .4rem; }
+        .fx-ruta ol { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: .3rem; counter-reset: paso; }
+        .fx-ruta li { position: relative; text-align: center; font-size: .72rem; line-height: 1.25; color: var(--text-muted); padding-top: 1.55rem; }
+        .fx-ruta li::before { counter-increment: paso; content: counter(paso); position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1.3rem; height: 1.3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font: 700 .66rem 'Fira Code', monospace; border: 1.5px solid var(--border); background: var(--bg-base); color: var(--text-muted); z-index: 1; }
+        .fx-ruta li:not(:last-child)::after { content: ''; position: absolute; top: .62rem; left: calc(50% + .75rem); right: calc(-50% + .6rem); height: 2px; background: var(--border); }
+        .fx-ruta li.ahora { color: var(--text-main); font-weight: 600; }
+        .fx-ruta li.ahora::before { border-color: var(--primary); background: var(--primary); color: #04121F; box-shadow: 0 0 0 4px var(--primary-light); }
+        .fx-ruta li small { display: block; font: 600 .6rem 'Fira Code', monospace; color: var(--primary); margin-top: .15rem; }
+        .fx-ruta-nota { font-size: .72rem; color: var(--text-muted); margin-top: .55rem; font-style: italic; }
+        @media (max-width: 600px) {
+            .fx-ruta ol { grid-template-columns: 1fr; gap: .45rem; }
+            .fx-ruta li { text-align: left; padding: .05rem 0 0 1.9rem; min-height: 1.3rem; }
+            .fx-ruta li::before { left: 0; transform: none; }
+            .fx-ruta li:not(:last-child)::after { top: 1.35rem; bottom: -.45rem; left: .6rem; right: auto; width: 2px; height: auto; }
+            .fx-ruta li small { display: inline; margin: 0 0 0 .35rem; }
+        }
+
+        /* Cómo está montada esta web */
+        .fx-web-flujo { display: grid; grid-template-columns: repeat(5, 1fr); gap: .6rem; margin-bottom: 1.4rem; }
+        .fx-web-paso { position: relative; background: var(--bg-base); border: 1px solid var(--border); border-radius: 14px; padding: .9rem .7rem; text-align: center; }
+        .fx-web-paso:not(:last-child)::after { content: '\f054'; font: 900 .7rem 'Font Awesome 6 Free'; position: absolute; right: -.55rem; top: 50%; transform: translateY(-50%); color: var(--primary); z-index: 1; }
+        .fx-web-paso i { font-size: 1.25rem; color: var(--primary); background: var(--primary-light); width: 2.4rem; height: 2.4rem; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: .45rem; }
+        .fx-web-paso b { display: block; font: 700 .85rem 'Plus Jakarta Sans', sans-serif; color: var(--text-main); }
+        .fx-web-paso > span { display: block; font-size: .72rem; color: var(--text-muted); line-height: 1.35; margin-top: .2rem; }
+        .fx-web-paso code { font: 500 .66rem 'Fira Code', monospace; color: var(--primary); }
+        .fx-web-sub { font: 700 .95rem 'Plus Jakarta Sans', sans-serif; color: var(--text-main); margin: .2rem 0 .7rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+        .fx-web-sub small { font: 500 .7rem 'Fira Code', monospace; color: var(--text-muted); }
+        .fx-cab { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1.2rem; }
+        .fx-cab-i { display: flex; gap: .6rem; align-items: flex-start; background: var(--bg-base); border: 1px solid var(--border); border-radius: 12px; padding: .7rem .8rem; }
+        .fx-cab-i > i { margin-top: .15rem; color: var(--text-muted); }
+        .fx-cab-i.ok > i { color: var(--success); }
+        .fx-cab-i code { font: 600 .74rem 'Fira Code', monospace; color: var(--text-main); word-break: break-all; }
+        .fx-cab-i p { font-size: .76rem; color: var(--text-muted); line-height: 1.4; margin-top: .15rem; }
+        .fx-cab-i .val { display: block; font: 500 .66rem 'Fira Code', monospace; color: var(--primary); margin-top: .2rem; word-break: break-all; }
+        .fx-web-extra { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .fx-web-extra > a, .fx-web-extra > span { display: inline-flex; align-items: center; gap: .4rem; font: 600 .78rem 'Inter', sans-serif; padding: .45rem .8rem; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); text-decoration: none; }
+        .fx-web-extra a:hover { border-color: var(--primary); color: var(--primary); }
+        .fx-web-extra i { color: var(--primary); }
+        @media (max-width: 900px) { .fx-web-flujo { grid-template-columns: 1fr 1fr; } .fx-web-paso:not(:last-child)::after { display: none; } .fx-web-paso:last-child { grid-column: 1 / -1; } }
+        @media (max-width: 600px) { .fx-cab { grid-template-columns: 1fr; } .fx-web-flujo { gap: .45rem; } .fx-web-paso { padding: .75rem .5rem; } }
+
+        /* Vista rápida */
+        .fx-rapida-btn { display: inline-flex; align-items: center; gap: .45rem; background: none; border: 0; padding: .2rem 0; margin: -.6rem 0 1.4rem; color: #BFE7FF; font: 600 .85rem 'Inter', sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(191, 231, 255, .45); }
+        .fx-rapida-btn:hover { color: #fff; }
+        @media (max-width: 600px) { .fx-rapida-btn { margin: -.2rem 0 1rem; font-size: .8rem; } }
+        body.fx-rapida .fx-git-sec, body.fx-rapida .fx-esfera-sec, body.fx-rapida .fx-fw-sec, body.fx-rapida .fx-terminal-section, body.fx-rapida .fx-web-sec,
+        body.fx-rapida .fx-rack-wrap, body.fx-rapida .fx-topo, body.fx-rapida .fx-cube-scene, body.fx-rapida .fx-cube-hint, body.fx-rapida .fx-mon, body.fx-rapida .fx-tail,
+        body.fx-rapida .fx-uptime, body.fx-rapida .fx-bcard, body.fx-rapida .fx-globe, body.fx-rapida .fx-glow, body.fx-rapida .bg-effects-wrapper, body.fx-rapida .fx-matrix,
+        body.fx-rapida .fx-hop-tag, body.fx-rapida .blueprint-grid, body.fx-rapida .hero::before { display: none !important; }
+        body.fx-rapida *, body.fx-rapida *::before, body.fx-rapida *::after { animation: none !important; transition: none !important; }
+        body.fx-rapida .reveal-up, body.fx-rapida .reveal-left, body.fx-rapida .reveal-right, body.fx-rapida .tag, body.fx-rapida .fx-stat { opacity: 1 !important; transform: none !important; }
+        body.fx-rapida .fx-acord .skills-category.fx-cerrada > :not(h3) { display: flex !important; }
+        body.fx-rapida .fx-acord .skills-category > h3 .fx-acord-ch { display: none; }
+        .fx-rapida-aviso { display: none; }
+        body.fx-rapida .fx-rapida-aviso { display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap; text-align: center; font-size: .8rem; color: var(--text-muted); margin: 0 0 1.2rem; }
+        .fx-rapida-aviso button { background: none; border: 1px solid var(--border); border-radius: 999px; padding: .3rem .8rem; color: var(--primary); font: 600 .78rem 'Inter', sans-serif; cursor: pointer; }
+
+        @media print { .fx-saltar, .fx-web-sec, .fx-rapida-btn, .fx-rapida-aviso, .fx-ruta-nota { display: none !important; } .fx-ruta { break-inside: avoid; } }
+    </style>
+    <script id="fx-info-js">
+    (function () {
+        const bi = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
+        const esEN = () => document.body.classList.contains('lang-en');
+        const main = document.getElementById('cv-content');
+
+        /* ---------- 1. Accesibilidad ---------- */
+        if (main) {
+            if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+            const saltar = document.createElement('a');
+            saltar.className = 'fx-saltar'; saltar.href = '#cv-content';
+            saltar.innerHTML = bi('Saltar al contenido', 'Skip to content');
+            document.body.prepend(saltar);
+        }
+        // Enlaces que abren otra pestaña: sin acceso a esta página (rel=noopener) y avisando a los lectores de pantalla
+        const marcarExternos = () => document.querySelectorAll('a[target="_blank"]').forEach((a) => {
+            const rel = (a.getAttribute('rel') || '').split(/\s+/);
+            if (!rel.includes('noopener')) a.setAttribute('rel', rel.concat('noopener').join(' ').trim());
+            if (!a.querySelector('.fx-sr')) a.insertAdjacentHTML('beforeend', `<span class="fx-sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">${bi(' (se abre en otra pestaña)', ' (opens in a new tab)')}</span>`);
+        });
+        // Botones del menú flotante: solo tenían un icono, les pongo nombre en el idioma actual
+        const nombrarFab = () => document.querySelectorAll('.fab-child').forEach((a) => {
+            const t = a.getAttribute(esEN() ? 'data-tooltip-en' : 'data-tooltip-es');
+            if (t) a.setAttribute('aria-label', t);
+        });
+        nombrarFab();
+        new MutationObserver(nombrarFab).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        // Iconos decorativos fuera del lector de pantalla
+        const iconos = () => document.querySelectorAll('i.fa-solid, i.fa-brands, i.fa-regular').forEach((i) => { if (!i.hasAttribute('aria-hidden') && !i.hasAttribute('aria-label')) i.setAttribute('aria-hidden', 'true'); });
+
+        /* ---------- 2. Hoja de ruta de GlucoNet (honesta: solo está empezado el diseño) ---------- */
+        const tarjeta = [...document.querySelectorAll('.project-card')].find((c) => /GlucoNet/.test(c.textContent));
+        if (tarjeta && !tarjeta.querySelector('.fx-ruta')) {
+            const pasos = [
+                ['Diseño de la arquitectura', 'Architecture design', true],
+                ['Montaje en Docker', 'Docker setup'],
+                ['Seguridad: TLS, VPN y cortafuegos', 'Security: TLS, VPN and firewall'],
+                ['Pruebas y documentación', 'Testing and docs'],
+                ['Presentación del TFC', 'Capstone defence'],
+            ];
+            const ruta = document.createElement('div');
+            ruta.className = 'fx-ruta';
+            ruta.innerHTML = `<div class="fx-ruta-t"><i class="fa-solid fa-route"></i> ${bi('Hoja de ruta', 'Roadmap')}</div>
+                <ol>${pasos.map(([es, en, ahora]) => `<li class="${ahora ? 'ahora' : ''}"${ahora ? ' aria-current="step"' : ''}>${bi(es, en)}<small>${ahora ? bi('en curso', 'in progress') : bi('pendiente', 'pending')}</small></li>`).join('')}</ol>
+                <div class="fx-ruta-nota">${bi('Iré marcando cada fase cuando esté hecha de verdad.', 'I will tick off each phase once it is actually done.')}</div>`;
+            const aviso = [...tarjeta.querySelectorAll('p')].find((p) => /fase de diseño|design phase/.test(p.textContent));
+            if (aviso) aviso.after(ruta);
+            else { const tags = tarjeta.querySelector('.tags-grid-3d'); if (tags) tags.before(ruta); else tarjeta.appendChild(ruta); }
+        }
+
+        /* ---------- 3. Cómo está montada esta web ---------- */
+        const CABECERAS = [
+            ['strict-transport-security', 'Obliga a usar siempre HTTPS (HSTS), aunque escribas http://', 'Forces HTTPS every time (HSTS), even if you type http://'],
+            ['content-security-policy', 'Solo deja cargar scripts, estilos y fuentes de orígenes permitidos (frena XSS)', 'Only allows scripts, styles and fonts from approved origins (stops XSS)'],
+            ['x-frame-options', 'Nadie puede meter esta web dentro de un iframe (clickjacking)', 'Nobody can frame this site (clickjacking)'],
+            ['x-content-type-options', 'El navegador no adivina tipos de archivo (MIME sniffing)', 'The browser does not guess file types (MIME sniffing)'],
+            ['referrer-policy', 'A otras webs solo les llega el dominio, no la URL completa', 'Other sites only get the domain, not the full URL'],
+            ['permissions-policy', 'Cámara, micrófono, ubicación y pagos desactivados', 'Camera, microphone, location and payments disabled'],
+            ['cross-origin-opener-policy', 'Aísla la pestaña de ventanas de otros orígenes', 'Isolates the tab from other-origin windows'],
+        ];
+        const terminal = document.querySelector('.fx-terminal-section');
+        const ancla = terminal || document.getElementById('contacto');
+        if (ancla && !document.querySelector('.fx-web-sec')) {
+            const sec = document.createElement('section');
+            sec.className = 'fx-web-sec';
+            sec.innerHTML = `<h2 class="section-title"><i class="fa-solid fa-server"></i> ${bi('Cómo está montada esta web', 'How this site is built')}</h2>
+                <p style="color:var(--text-muted);font-size:.92rem;margin:-.6rem 0 1.2rem">${bi('Esta web también es un pequeño despliegue real: así llega desde mi código hasta tu pantalla.', 'This site is a small real deployment too: this is how it gets from my code to your screen.')}</p>
+                <div class="fx-web-flujo">
+                    <div class="fx-web-paso"><i class="fa-brands fa-github"></i><b>GitHub</b><span>${bi('Código en un repositorio con historial de cambios', 'Code in a repository with full history')}</span><code>git push</code></div>
+                    <div class="fx-web-paso"><i class="fa-solid fa-rocket"></i><b>Vercel</b><span>${bi('Cada push se despliega solo en su CDN', 'Every push deploys itself to its CDN')}</span><code>vercel.json</code></div>
+                    <div class="fx-web-paso"><i class="fa-solid fa-sitemap"></i><b>DNS</b><span>${bi('Dominio propio en DonDominio apuntando a Vercel', 'Own domain at DonDominio pointing to Vercel')}</span><code>www → CNAME</code></div>
+                    <div class="fx-web-paso"><i class="fa-solid fa-lock"></i><b>HTTPS</b><span>${bi('Certificado de Let\'s Encrypt que se renueva solo', 'Let\'s Encrypt certificate, auto-renewed')}</span><code>TLS</code></div>
+                    <div class="fx-web-paso"><i class="fa-solid fa-laptop"></i><b>${bi('Tu navegador', 'Your browser')}</b><span>${bi('Con las cabeceras de seguridad de abajo', 'With the security headers below')}</span><code>200 OK</code></div>
+                </div>
+                <div class="fx-web-sub"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> ${bi('Cabeceras de seguridad', 'Security headers')} <small class="fx-web-estado">${bi('comprobando en vivo…', 'checking live…')}</small></div>
+                <div class="fx-cab">${CABECERAS.map(([h, es, en]) => `<div class="fx-cab-i" data-h="${h}"><i class="fa-solid fa-circle-check"></i><div><code>${h}</code><p>${bi(es, en)}</p><span class="val"></span></div></div>`).join('')}</div>
+                <div class="fx-web-extra">
+                    <a href="/.well-known/security.txt" target="_blank" rel="noopener"><i class="fa-solid fa-user-shield"></i> security.txt</a>
+                    <a href="/robots.txt" target="_blank" rel="noopener"><i class="fa-solid fa-robot"></i> robots.txt</a>
+                    <a href="/sitemap.xml" target="_blank" rel="noopener"><i class="fa-solid fa-map"></i> sitemap.xml</a>
+                    <span><i class="fa-solid fa-cookie-bite"></i> ${bi('Analítica solo si aceptas las cookies', 'Analytics only if you accept cookies')}</span>
+                </div>`;
+            ancla.after(sec);
+            // Leo las cabeceras reales que devuelve el servidor ahora mismo (misma web, lo permite la CSP)
+            const estado = sec.querySelector('.fx-web-estado');
+            const comprobar = async () => {
+                if (!/^https?:$/.test(location.protocol)) { estado.innerHTML = bi('(abre la web publicada para verlas en vivo)', '(open the live site to see them)'); return; }
+                const t0 = performance.now();
+                try {
+                    const r = await fetch(location.pathname, { method: 'HEAD', cache: 'no-store' });
+                    const ms = Math.round(performance.now() - t0);
+                    let ok = 0;
+                    sec.querySelectorAll('.fx-cab-i').forEach((d) => {
+                        const v = r.headers.get(d.dataset.h);
+                        d.classList.toggle('ok', !!v);
+                        d.querySelector('i').className = 'fa-solid ' + (v ? 'fa-circle-check' : 'fa-circle-xmark');
+                        d.querySelector('i').setAttribute('aria-hidden', 'true');
+                        d.querySelector('.val').textContent = v ? (v.length > 90 ? v.slice(0, 90) + '…' : v) : (esEN() ? 'not sent' : 'no la envía');
+                        if (v) ok++;
+                    });
+                    const srv = r.headers.get('server');
+                    estado.innerHTML = `${ok}/${CABECERAS.length} ${bi('activas', 'active')} · HTTP ${r.status} · ${ms} ms${srv ? ' · ' + srv : ''}`;
+                } catch (e) { estado.innerHTML = bi('(no se han podido leer ahora)', '(could not read them now)'); }
+            };
+            let hecho = false;
+            const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting) && !hecho) { hecho = true; comprobar(); io.disconnect(); } }, { rootMargin: '200px' });
+            io.observe(sec);
+        }
+
+        /* ---------- 4. Vista rápida: sin efectos ni secciones de demostración, todo visible de golpe ---------- */
+        const CLAVE = 'cv-rapida';
+        const hero = document.getElementById('hero-header');
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'fx-rapida-btn';
+        const aviso = document.createElement('div');
+        aviso.className = 'fx-rapida-aviso';
+        aviso.innerHTML = `<i class="fa-solid fa-bolt" aria-hidden="true"></i> ${bi('Estás en la vista rápida: sin animaciones ni demos.', 'You are in quick view: no animations or demos.')} <button type="button">${bi('Ver la web completa', 'See the full site')}</button>`;
+        const pintarBtn = () => {
+            const on = document.body.classList.contains('fx-rapida');
+            btn.innerHTML = on ? `<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> ${bi('Volver a la vista completa', 'Back to the full view')}`
+                : `<i class="fa-solid fa-bolt" aria-hidden="true"></i> ${bi('¿Con prisa? Vista rápida sin animaciones', 'In a hurry? Quick view without animations')}`;
+            btn.setAttribute('aria-pressed', String(on));
+        };
+        const ponerRapida = (on, guardar = true) => {
+            document.body.classList.toggle('fx-rapida', on);
+            if (on) document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right').forEach((e) => e.classList.add('active'));
+            if (on) document.querySelectorAll('.tag').forEach((t) => t.classList.add('tag-in'));
+            if (guardar) { try { localStorage.setItem(CLAVE, on ? '1' : '0'); } catch (e) { /* modo privado */ } }
+            pintarBtn();
+            window.dispatchEvent(new Event('scroll'));
+        };
+        window.fxVistaRapida = (on) => ponerRapida(on === undefined ? !document.body.classList.contains('fx-rapida') : on);
+        btn.addEventListener('click', () => { ponerRapida(!document.body.classList.contains('fx-rapida')); });
+        aviso.querySelector('button').addEventListener('click', () => ponerRapida(false));
+        if (hero) {
+            const fila = hero.querySelector('.fx-hero-actions') || hero.querySelector('.cta-btn');
+            if (fila) fila.after(btn); else hero.querySelector('.hero-content').appendChild(btn);
+            hero.after(aviso);
+        }
+        let guardado = null;
+        try { guardado = localStorage.getItem(CLAVE); } catch (e) { /* modo privado */ }
+        const ahorro = navigator.connection && navigator.connection.saveData;
+        ponerRapida(guardado === '1' || (guardado === null && !!ahorro), false);
+
+        /* En la paleta Ctrl+K y en el menú del móvil */
+        setTimeout(() => {
+            const prev = window.fxAccionesExtra;
+            window.fxAccionesExtra = () => [...(prev ? prev() : []), {
+                ic: 'fa-solid fa-bolt', g: '',
+                t: document.body.classList.contains('fx-rapida') ? (esEN() ? 'Back to the full view' : 'Volver a la vista completa') : (esEN() ? 'Quick view (no animations)' : 'Vista rápida (sin animaciones)'),
+                f: () => window.fxVistaRapida(),
+            }];
+            marcarExternos(); iconos();
+        }, 0);
+        window.addEventListener('load', () => { marcarExternos(); iconos(); });
     })();
     </script>
     <!-- Animaciones visuales (24/11/2026): tema en círculo, certificado holográfico, títulos que se descifran,
@@ -2246,7 +2492,7 @@
             const nodos = N.map(([id, t, x, y, g]) => { const w = ancho(t); return `<g class="nd ${g}" data-id="${id}" tabindex="0" role="button" aria-label="${t}"><rect x="${x - w / 2}" y="${y - 12}" width="${w}" height="24" rx="12"/><circle cx="${x - w / 2 + 10}" cy="${y}" r="3.5"/><text x="${x - w / 2 + 18}" y="${y + 4}">${t}</text></g>`; }).join('');
             const topo = document.createElement('div');
             topo.className = 'fx-topo';
-            topo.innerHTML = `<svg viewBox="-4 6 348 232" role="img" aria-label="Topología de mis habilidades">${aristas}${nodos}</svg><div class="fx-topo-hint">${bi('Pasa el ratón (o toca) un nodo para ver con qué lo uso', 'Hover (or tap) a node to see what I use it with')}</div>`;
+            topo.innerHTML = `<svg viewBox="-4 6 348 232" role="group" aria-label="Topología de mis habilidades">${aristas}${nodos}</svg><div class="fx-topo-hint">${bi('Pasa el ratón (o toca) un nodo para ver con qué lo uso', 'Hover (or tap) a node to see what I use it with')}</div>`;
             stack.before(topo);
             const svg = topo.querySelector('svg');
             const tags = [...document.querySelectorAll('aside .skills-category .tag')];
@@ -2428,9 +2674,9 @@
 
         /* tail -f */
         .fx-tail { margin-top: .8rem; text-align: left; border-radius: 10px; background: #0B1220; border: 1px solid #1E3A5F; overflow: hidden; }
-        .fx-tail .t { padding: .4rem .8rem; font: 600 .72rem 'Fira Code', monospace; color: #64748B; border-bottom: 1px solid #1E3A5F; }
+        .fx-tail .t { padding: .4rem .8rem; font: 600 .72rem 'Fira Code', monospace; color: #8B9AB0; border-bottom: 1px solid #1E3A5F; }
         .fx-tail pre { margin: 0; padding: .5rem .8rem; height: 8.6em; overflow: hidden; font: 500 .74rem/1.45 'Fira Code', monospace; color: #CBD5E1; white-space: pre-wrap; word-break: break-word; }
-        .fx-tail .i { color: #38BDF8; } .fx-tail .w { color: #FBBF24; } .fx-tail .o { color: #10B981; } .fx-tail .m { color: #64748B; }
+        .fx-tail .i { color: #38BDF8; } .fx-tail .w { color: #FBBF24; } .fx-tail .o { color: #10B981; } .fx-tail .m { color: #8B9AB0; }
 
         @media (prefers-reduced-motion: reduce) {
             .fx-git .ln0, .fx-git .ln1 { transition: none; stroke-dashoffset: 0; } .fx-git-row { transition: none; } .fx-git .head { animation: none; }
@@ -3307,11 +3553,11 @@
             .fx-msheet-fondo { position: absolute; inset: 0; background: rgba(2, 6, 16, .55); opacity: 0; transition: opacity .3s ease; }
             .fx-msheet-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; overflow-y: auto; overscroll-behavior: contain; padding: .5rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
                 background: var(--bg-base); border-radius: 22px 22px 0 0; border-top: 1px solid var(--border); box-shadow: 0 -10px 40px rgba(0, 0, 0, .35);
-                transform: translateY(105%); transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+                transform: translateY(105%); visibility: hidden; transition: transform .35s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .35s; }
             body.dark-theme .fx-msheet-panel { background: #0B1222; border-top-color: rgba(56, 189, 248, .2); }
             .fx-msheet.on { pointer-events: auto; }
             .fx-msheet.on .fx-msheet-fondo { opacity: 1; }
-            .fx-msheet.on .fx-msheet-panel { transform: translateY(0); }
+            .fx-msheet.on .fx-msheet-panel { transform: translateY(0); visibility: visible; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
             .fx-msheet-asa { width: 42px; height: 5px; border-radius: 3px; background: var(--border); margin: .2rem auto .7rem; }
             body.dark-theme .fx-msheet-asa { background: #334155; }
             .fx-msheet-cab { display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
@@ -3329,6 +3575,7 @@
             .fx-msheet-acc button i { font-size: 1.1rem; color: var(--primary); }
             .fx-msheet-acc button.main { background: linear-gradient(135deg, var(--primary), var(--accent)); border-color: transparent; color: #04121F; }
             .fx-msheet-acc button.main i { color: #04121F; }
+            .fx-msheet-acc button.ancho { grid-column: 1 / -1; flex-direction: row; justify-content: center; }
 
             /* Categorías del stack plegables */
             .fx-acord .skills-category { margin-bottom: .55rem; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-base); overflow: hidden; }
@@ -3508,6 +3755,7 @@
                 { ic: 'fa-file-lines', t: () => bi('CV en texto (ATS)', 'Plain-text CV (ATS)'), f: clic('#download-ats') },
                 { ic: 'fa-language', t: () => (esEN() ? 'Español' : 'English'), f: clic('#lang-toggle'), quedar: true },
                 { ic: 'fa-circle-half-stroke', t: () => (document.body.classList.contains('dark-theme') ? bi('Modo claro', 'Light mode') : bi('Modo oscuro', 'Dark mode')), f: clic('#theme-toggle'), quedar: true },
+                { ic: 'fa-bolt', ancho: true, t: () => (document.body.classList.contains('fx-rapida') ? bi('Volver a la vista completa', 'Back to the full view') : bi('Vista rápida (sin animaciones)', 'Quick view (no animations)')), f: () => { if (window.fxVistaRapida) window.fxVistaRapida(); }, quedar: true },
             ];
             const pintarMenu = () => {
                 const lista = [[S.hero, 'fa-solid fa-house', bi('Inicio', 'Home')]];
@@ -3531,7 +3779,7 @@
                 const acc = sheet.querySelector('.fx-msheet-acc');
                 acc.innerHTML = '';
                 ACC.forEach((x) => {
-                    const b = document.createElement('button'); b.type = 'button'; if (x.main) b.className = 'main';
+                    const b = document.createElement('button'); b.type = 'button'; if (x.main) b.className = 'main'; if (x.ancho) b.className = 'ancho';
                     b.innerHTML = `<i class="fa-solid ${x.ic}" aria-hidden="true"></i><span>${x.t()}</span>`;
                     b.addEventListener('click', () => { if (x.quedar) { x.f(); setTimeout(pintarMenu, 80); } else { cerrarMenu(); setTimeout(x.f, 250); } });
                     acc.appendChild(b);
