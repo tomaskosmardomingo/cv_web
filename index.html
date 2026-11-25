@@ -3877,6 +3877,8 @@
         .fx-av.derecha { left: auto; right: calc(14px - 6 * var(--u)); bottom: 104px; }
         .fx-av.oculto, .fx-av.min { opacity: 0; visibility: hidden; transform: translateY(40px); transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s; }
         .fx-av.arrastrando { transition: none; }
+        .fx-av.arrastrando, .fx-av.anda { will-change: transform; }
+        .fx-av:is(.a-bandera-en, .a-bandera-es, .a-exclama, .a-pregunta, .a-corazon, .a-check, .a-wifi, .a-musica, .a-zzz, .a-sol, .a-luna, .habla, .arrastrando, .anda, [data-logo]) .c-aviso { display: none !important; }
         .fx-av-mueve { position: absolute; inset: 0; animation: fxav-respira 1.6s steps(1) infinite; }
         .fx-av svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; shape-rendering: crispEdges; }
         .fx-av svg * { transform-box: view-box; }
@@ -4200,7 +4202,10 @@
 
         /* ---------- Estado: expresión y acciones con su temporizador ---------- */
         const timers = {};
+        // Iconos que salen en el mismo sitio (arriba a la derecha de la cabeza): se turnan, nunca dos a la vez
+        const ARRIBA = ['bandera-en', 'bandera-es', 'exclama', 'pregunta', 'corazon', 'check', 'wifi', 'musica', 'zzz', 'sol', 'luna'];
         const accion = (nombre, ms = 3000) => {
+            if (ARRIBA.includes(nombre)) { ARRIBA.forEach((n) => { if (n !== nombre) quitar(n); }); delete av.dataset.logo; }
             clearTimeout(timers[nombre]);
             av.classList.remove('a-' + nombre); void av.offsetWidth; av.classList.add('a-' + nombre);
             if (nombre === 'confeti') av.querySelector('.c-confeti').innerHTML = confeti();
@@ -4341,12 +4346,23 @@
             if (!arr || e.pointerId !== arr.id) return;
             const dx = e.clientX - arr.x, dy = e.clientY - arr.y;
             if (!arr.mov && Math.hypot(dx, dy) > 10) { arr.mov = true; clearTimeout(tLargo); try { btn.setPointerCapture(e.pointerId); } catch (er) {} av.classList.add('arrastrando'); cara('sorpresa', 0); cerrarBocadillo(true); }
-            if (arr.mov) av.style.transform = `translate(${dx}px, ${Math.min(0, dy)}px)`;
+            if (arr.mov) { arr.dx = dx; arr.dy = dy; if (!arr.raf) arr.raf = requestAnimationFrame(moverArrastre); }
         });
+        let caja0 = null;
+        function moverArrastre() {
+            if (!arr) return; arr.raf = 0;
+            if (!caja0) caja0 = av.getBoundingClientRect();
+            const u = caja0.width / 30;
+            // La parte visible del muñeco va de 6u a 22u en horizontal y de 9u a 29u en vertical
+            const dx = Math.max(-(caja0.left + 6 * u) + 4, Math.min(innerWidth - (caja0.left + 22 * u) - 4, arr.dx));
+            const dy = Math.max(-(caja0.top + 9 * u) + 4, Math.min(innerHeight - (caja0.top + 29 * u) - 4, arr.dy));
+            av.style.transform = `translate(${dx}px, ${dy}px)`;
+            av.classList.toggle('mira-izq', arr.dx < -6);
+        }
         let tPasos = 0;
         const soltar = (e) => {
             clearTimeout(tLargo);
-            if (!arr) return; const fue = arr.mov; arr = null;
+            if (!arr) return; const fue = arr.mov; cancelAnimationFrame(arr.raf); arr = null; caja0 = null;
             if (!fue) return;
             // FLIP: se queda donde lo sueltas y va andando hasta su esquina
             const r0 = av.getBoundingClientRect();
@@ -4354,10 +4370,10 @@
             const der = e.clientX > innerWidth / 2; ponerLado(der); guardar('cv-avatar-lado', der ? 'der' : 'izq');
             const r1 = av.getBoundingClientRect(), dx = r0.left - r1.left, dy = r0.top - r1.top;
             av.style.transform = `translate(${dx}px, ${dy}px)`; void av.offsetWidth;
-            const ms = reduce ? 0 : Math.min(1800, 250 + Math.hypot(dx, dy) * 1.3);
-            av.classList.toggle('mira-izq', dx > 0); av.classList.add('anda');
+            const ms = reduce ? 0 : Math.min(1100, 200 + Math.hypot(dx, dy) * 0.9);
+            av.classList.remove('mira-izq'); av.classList.toggle('mira-izq', dx > 0); av.classList.add('anda');
             clearInterval(tPasos); tPasos = setInterval(() => sonar('paso'), 220);
-            av.style.transition = ms ? `transform ${ms}ms steps(${Math.max(3, Math.round(ms / 110))})` : 'none';
+            av.style.transition = ms ? `transform ${ms}ms linear` : 'none';
             av.style.transform = '';
             setTimeout(() => { clearInterval(tPasos); av.classList.remove('anda', 'mira-izq'); av.style.transition = ''; cara('feliz'); accion('salto', 1000); }, ms + 40);
             btn.dataset.arrastrado = '1'; setTimeout(() => delete btn.dataset.arrastrado, 50);
@@ -4726,7 +4742,7 @@
         if (!tactil) document.addEventListener('mouseover', (e) => {
             const tg = e.target.closest && e.target.closest('.tag'); if (!tg || tg === ultTag || !listo) return; ultTag = tg;
             const x = LOGOS_RE.find(([re]) => re.test(tg.textContent)); if (!x) return;
-            av.dataset.logo = x[1]; clearTimeout(tLogo); tLogo = setTimeout(() => { delete av.dataset.logo; ultTag = null; }, 2200);
+            ARRIBA.forEach(quitar); av.dataset.logo = x[1]; clearTimeout(tLogo); tLogo = setTimeout(() => { delete av.dataset.logo; ultTag = null; }, 2200);
             cara('feliz', 1200);
         });
 
