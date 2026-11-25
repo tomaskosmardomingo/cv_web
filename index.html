@@ -3890,6 +3890,9 @@
         .fx-av.derecha .fx-av-barra { left: auto; right: calc(22 * var(--u)); flex-direction: row-reverse; }
         .fx-av-barra button { height: 24px; min-width: 24px; padding: 0 6px; border: 2px solid rgba(56,189,248,.45); background: #0F172A; color: #E2E8F0; font: 600 .66rem 'Fira Code', monospace; white-space: nowrap; cursor: pointer; box-shadow: 2px 2px 0 rgba(2, 6, 23, .35); }
         body:not(.dark-theme) .fx-av-barra button { background: #fff; color: #0F172A; border-color: #0270AD; }
+        @keyframes fxav-nuevo { 0%, 100% { border-color: #FBBF24; color: #FBBF24; } 50% { border-color: transparent; } }
+        .fx-av-barra button.nuevo { animation: fxav-nuevo .5s steps(1) 6; }
+        .fx-av:has(.nuevo) .fx-av-barra { opacity: 1; visibility: visible; transition: opacity .2s; }
         .fx-av-barra button:hover, .fx-av-barra button:focus-visible { border-color: var(--primary, #38BDF8); color: var(--primary, #38BDF8); outline: none; }
         /* Panel de logros */
         .fx-av-logros { position: absolute; left: calc(21 * var(--u)); bottom: calc(5 * var(--u)); width: min(290px, calc(100vw - 23 * var(--u) - 12px)); max-height: min(420px, 60vh); overflow: auto; padding: .7rem .8rem; background: var(--bg-card, #0F172A); color: var(--text-main, #E2E8F0); border: 3px solid var(--primary, #38BDF8); box-shadow: 4px 4px 0 rgba(2, 6, 23, .45); font: .72rem/1.4 'Fira Code', monospace; pointer-events: auto; display: none; }
@@ -3933,7 +3936,7 @@
         .fx-av.a-zzz .c-zzz, .fx-av.a-exclama .c-exclama, .fx-av.a-pregunta .c-pregunta, .fx-av.a-corazon .c-corazon, .fx-av.a-trofeo .c-trofeo, .fx-av.s-corona .c-corona,
         .fx-av.a-fiesta .c-fiesta, .fx-av.a-gorro .c-gorro, .fx-av.a-lupa .c-lupa, .fx-av.a-bandera-en .c-bandera-en, .fx-av.a-bandera-es .c-bandera-es,
         .fx-av.a-mareo .c-estrellas, .fx-av.a-sudor .c-sudor, .fx-av.a-musica .c-musica, .fx-av.a-check .c-check, .fx-av.a-medalla .c-medalla, .fx-av.a-humo .c-humo,
-        .fx-av.a-codigo .c-codigo, .fx-av.a-wifi .c-wifi, .fx-av.a-impresora .c-impresora, .fx-av.a-cohete .c-cohete { display: inline; }
+        .fx-av.a-codigo .c-codigo, .fx-av.a-aviso .c-aviso, .fx-av.a-wifi .c-wifi, .fx-av.a-impresora .c-impresora, .fx-av.a-cohete .c-cohete { display: inline; }
         .fx-av.a-gorro.s-corona .c-corona, .fx-av.a-fiesta.s-corona .c-corona { display: none; }
 
         /* ---- Animaciones (todas a saltos, como un juego retro) ---- */
@@ -3966,7 +3969,7 @@
         .fx-av .c-zzz rect { animation: fxav-zzz 1.8s steps(5) infinite; }
         .fx-av .c-zzz g:nth-child(2) rect { animation-delay: .6s; } .fx-av .c-zzz g:nth-child(3) rect { animation-delay: 1.2s; }
         .fx-av .c-estrellas { transform-origin: 8px 1px; animation: fxav-orbita 1.2s steps(8) infinite; }
-        .fx-av .c-trofeo, .fx-av .c-corona, .fx-av .c-exclama, .fx-av .c-pregunta, .fx-av .c-check, .fx-av .c-medalla, .fx-av .c-bandera-en, .fx-av .c-bandera-es, .fx-av .c-sol, .fx-av .c-luna, .fx-av .c-wifi { transform-box: fill-box; transform-origin: 50% 100%; animation: fxav-pop .3s steps(3), fxav-flota 1s steps(2) .3s infinite; }
+        .fx-av .c-aviso, .fx-av .c-trofeo, .fx-av .c-corona, .fx-av .c-exclama, .fx-av .c-pregunta, .fx-av .c-check, .fx-av .c-medalla, .fx-av .c-bandera-en, .fx-av .c-bandera-es, .fx-av .c-sol, .fx-av .c-luna, .fx-av .c-wifi { transform-box: fill-box; transform-origin: 50% 100%; animation: fxav-pop .3s steps(3), fxav-flota 1s steps(2) .3s infinite; }
         .fx-av .c-corazon rect, .fx-av .c-musica rect, .fx-av .c-codigo rect { animation: fxav-sube 1.4s steps(6) infinite; }
         .fx-av .c-musica g:nth-child(2) rect, .fx-av .c-codigo g:nth-child(2) rect { animation-delay: .5s; }
         .fx-av .c-codigo g:nth-child(3) rect { animation-delay: .9s; }
@@ -4087,6 +4090,7 @@
             ${capa('medalla', px(['b...b', '.b.b.', '..G..', '.GGG.', 'GGgGG', '.GGG.'], 15, 9))}
             ${capa('humo', px(['ll', 'l.'], 0, 2) + px(['ll', '.l'], 14, 2))}
             ${capa('wifi', px(['.lllll.', 'l.....l', '..lll..', '.l...l.', '...l...'], 16, -5))}
+            ${capa('aviso', px(['LLLLLLL', 'LbLbLbL', 'LLLLLLL', '.L.....', 'L......'], 15, -3))}
             ${capa('impresora', px(['.OOOO.', 'llllll', 'lLLLLl', 'llllll', '.OOOO.'], 16, 11))}
             ${capa('cohete', px(['..O..', '.OOO.', '.ObO.', '.OOO.', 'r.O.r', '.GgG.'], 16, 6))}
             <g class="c c-confeti"></g>`;
@@ -4135,7 +4139,7 @@
         const cola = []; let hablando = null, tEsc = 0, tFin = 0;
         const decir = (texto, prio = 2) => {
             if (av.classList.contains('min') || av.classList.contains('oculto')) return;
-            if (mudo && prio < 3) return;
+            if (prio < 3 || mudo) return;
             if (hablando && prio > hablando.prio) { cerrarBocadillo(true); }
             else if (hablando) { if (prio >= 2 && cola.length < 3) cola.push({ texto, prio }); return; }
             mostrar({ texto, prio });
@@ -4145,7 +4149,7 @@
             const limpio = m.texto.replace(/<[^>]+>/g, '');
             sr.textContent = limpio;
             boc.classList.add('on'); av.classList.add('habla');
-            const final = () => { boc.innerHTML = m.texto; av.classList.remove('habla'); tFin = setTimeout(() => cerrarBocadillo(), 2600 + limpio.length * 40); };
+            const final = () => { boc.innerHTML = m.texto; av.classList.remove('habla'); tFin = setTimeout(() => cerrarBocadillo(), Math.min(6000, 1600 + limpio.length * 35)); };
             if (reduce) { final(); return; }
             let i = 0; boc.textContent = '';
             tEsc = setInterval(() => { i += 2; boc.textContent = limpio.slice(0, i); if (i >= limpio.length) { clearInterval(tEsc); final(); } }, 30);
@@ -4202,10 +4206,10 @@
             setTimeout(() => {
                 if (hechos.length === LOGROS.length) {
                     accion('confeti', 1500); accion('giro', 700); accion('trofeo', 4000); cara('risa', 3000);
-                    decir(T('🏆 ¡Todos los logros! Has visto mi CV al 100 %. Te has ganado una corona… y yo una entrevista, ¿no? 😉', '🏆 All achievements! You have seen 100% of my CV. You earned a crown… and I earned an interview, right? 😉'), 3);
+                    decir(T('🏆 ¡Todos los logros! Te has ganado una corona 👑', '🏆 All achievements! You earned a crown 👑'), 3);
                 } else {
                     accion('trofeo', 3000); accion('salto', 1000); cara('feliz', 2500);
-                    decir(`🏆 ${T('Logro', 'Achievement')}: <b>${T(l[1], l[2])}</b> (${hechos.length}/${LOGROS.length})`, 3);
+                    bLog.classList.remove('nuevo'); void bLog.offsetWidth; bLog.classList.add('nuevo'); bLog.title = `🏆 ${T(l[1], l[2])}`;
                 }
             }, 900);
         };
@@ -4222,7 +4226,7 @@
         };
         bMudo.addEventListener('click', () => {
             mudo = !mudo; guardar('cv-avatar-mudo', mudo ? '1' : '0'); pintarBotones();
-            if (mudo) { cerrarBocadillo(true); cola.length = 0; cara('lengua', 1500); } else { cara('feliz'); decir(T('¡Vuelvo a hablar! 💬', 'I can talk again! 💬'), 3); }
+            if (mudo) { cerrarBocadillo(true); cola.length = 0; quitar('aviso'); cara('lengua', 1500); } else { cara('feliz'); decir(T('¡Vuelvo a hablar! 💬', 'I can talk again! 💬'), 3); }
         });
         const minimizar = (si) => {
             av.classList.toggle('min', si); tab.classList.toggle('on', si); guardar('cv-avatar-min', si ? '1' : '0');
@@ -4277,6 +4281,7 @@
                 clics = []; cara('enfado', 2600); accion('humo', 2600); accion('tiembla', 1000);
                 decir(T('¡Eh! ¡Que me desconfiguras! 😤', 'Hey! You\'re messing up my config! 😤'), 3); return;
             }
+            if (pendiente) { const g = pendiente; pendiente = null; quitar('aviso'); cara('feliz', 2600); accion('salto', 1000); decir(T(g[2], g[3]), 3); return; }
             let c = CHISTES[nCh++ % CHISTES.length];
             if (tactil && /Ctrl|Konami/.test(c[1])) c = CHISTES[nCh++ % CHISTES.length];
             cara(Math.random() < 0.5 ? 'risa' : 'feliz', 2600); accion('salto', 1000);
@@ -4300,6 +4305,8 @@
         ];
         const ACCION_GUIA = { exp: () => accion('portatil', 2500), form: () => cara('feliz'), proy: () => { accion('pregunta', 2500); cara('duda'); }, stack: () => accion('codigo', 2500), cert: () => accion('medalla', 3000),
             idi: () => accion(EN() ? 'bandera-es' : 'bandera-en', 3000), term: () => accion('portatil', 2500), cont: () => { accion('corazon', 2500); cara('feliz'); }, web: () => accion('check', 2500), git: () => cara('feliz'), esfera: () => cara('sorpresa', 1500) };
+        let pendiente = null, tAviso = 0;
+        const sugerir = (g) => { pendiente = g; if (mudo) return; accion('aviso', 0); clearTimeout(tAviso); tAviso = setTimeout(() => { quitar('aviso'); }, 12000); };
         const vistas = new Set();
         const obsSec = new IntersectionObserver((ents) => ents.forEach((en) => {
             if (!en.isIntersecting) return;
@@ -4307,7 +4314,7 @@
             obsSec.unobserve(en.target); vistas.add(g[1]);
             if (vistas.size >= 8) logro('explorador');
             if (!listo) return;
-            ACCION_GUIA[g[1]](); decir(T(g[2], g[3]), 1);
+            ACCION_GUIA[g[1]](); sugerir(g);
         }), { rootMargin: '-30% 0px -45% 0px' });
         const observarSecciones = () => GUIA.forEach(([ico, id]) => {
             const i = document.querySelector(`h2.section-title i.${ico}`); if (!i) return;
@@ -4341,7 +4348,7 @@
             if (/\.pdf($|\?)/.test(href) || /download-pdf|download-ats|fx-pdf-link|dl-cv/.test(id) || a.hasAttribute('download') && /cv/i.test(a.getAttribute('download') || '')) {
                 if (Date.now() - ultimaDescarga < 3000) return; ultimaDescarga = Date.now();
                 logro('descarga'); accion('confeti', 1500); accion('salto', 1000); cara('risa', 2500);
-                decir(T('¡Gracias por descargar mi CV! 🎉', 'Thanks for downloading my CV! 🎉'), 2); return;
+                decir(T('¡Gracias por descargar mi CV! 🎉', 'Thanks for downloading my CV! 🎉'), 3); return;
             }
             if (/vcard|vcf/.test(id + href)) { accion('check', 2500); cara('feliz'); decir(T('Contacto guardado. ¡Ya me tienes en la agenda! 📇', 'Contact saved. I\'m in your address book now! 📇'), 2); return; }
             if (id === 'fx-copy-mail') { accion('check', 2500); cara('feliz'); decir(T('Email copiado. ¡Te espero en la bandeja de entrada! 📬', 'Email copied. See you in my inbox! 📬'), 2); return; }
@@ -4467,13 +4474,14 @@
             observarSecciones(); setTimeout(observarSecciones, 2500);
             listo = true; programarInactividad(); setTimeout(aleatorio, 15000);
             const h = new Date().getHours();
-            const saludo = h < 7 ? T('¿Mirando CVs a estas horas? 🌙 Soy Tomás, en píxeles.', 'Reading CVs at this hour? 🌙 I\'m Tomás, in pixels.')
-                : h < 13 ? T('¡Buenos días! Soy Tomás, en versión píxel 👋', 'Good morning! I\'m Tomás, pixel edition 👋')
-                : h < 21 ? T('¡Buenas tardes! Soy Tomás, en versión píxel 👋', 'Good afternoon! I\'m Tomás, pixel edition 👋')
-                : T('¡Buenas noches! Soy Tomás, en versión píxel 👋', 'Good evening! I\'m Tomás, pixel edition 👋');
+            const saludo = h < 7 ? T('¿A estas horas? 🌙 Soy Tomás 👋', 'Reading CVs at this hour? 🌙 I\'m Tomás, in pixels.')
+                : h < 13 ? T('¡Buenos días! Soy Tomás 👋', 'Good morning! I\'m Tomás 👋')
+                : h < 21 ? T('¡Buenas tardes! Soy Tomás 👋', 'Good afternoon! I\'m Tomás 👋')
+                : T('¡Buenas noches! Soy Tomás 👋', 'Good evening! I\'m Tomás 👋');
             setTimeout(() => {
                 accion('saludo', 2200); cara('feliz', 2600); if (h < 7 || h >= 23) accion('gorro', 6000);
-                decir(saludo + (hechos.length ? '' : T(' Púlsame si quieres un dato curioso.', ' Click me for a fun fact.')), 2);
+                let ya = false; try { ya = sessionStorage.getItem('cv-avatar-saludo') === '1'; sessionStorage.setItem('cv-avatar-saludo', '1'); } catch (e) {}
+                if (!ya) decir(saludo, 3);
             }, 800);
         };
         const esperar = (n = 0) => {
