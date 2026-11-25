@@ -1649,9 +1649,15 @@
         .fx-verify { display: inline-flex; align-items: center; gap: .35rem; margin-top: .45rem; font: 600 .8rem 'Inter', sans-serif; color: var(--primary); text-decoration: none; border: 1px solid var(--primary); border-radius: 999px; padding: .15rem .6rem; }
         .fx-verify:hover { background: var(--primary); color: #fff; }
         .fx-status-link { color: inherit; text-decoration: none; border: 0; border-bottom: 1px dashed currentColor; background: none; font: inherit; padding: 0; cursor: pointer; }
-        .fx-cookies { position: fixed; left: 16px; bottom: 16px; z-index: 3000; max-width: 380px; padding: 1rem 1.1rem; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); box-shadow: 0 12px 34px rgba(0,0,0,.28); color: var(--text-main); font: .88rem/1.45 'Inter', sans-serif; opacity: 0; visibility: hidden; transform: translateY(16px); transition: opacity .3s, transform .3s, visibility 0s linear .3s; }
+        .fx-cookies { position: fixed; left: 16px; bottom: 16px; z-index: 3000; max-width: 380px; padding: 1rem 1.1rem; border-radius: 14px; background: linear-gradient(var(--bg-card), var(--bg-card)) var(--bg-base); border: 1px solid var(--border); box-shadow: 0 12px 34px rgba(0,0,0,.28); color: var(--text-main); font: .88rem/1.45 'Inter', sans-serif; opacity: 0; visibility: hidden; transform: translateY(16px); transition: opacity .3s, transform .3s, visibility 0s linear .3s; }
         .fx-cookies.on { opacity: 1; visibility: visible; transform: none; transition: opacity .3s, transform .3s; }
         .fx-cookies p { margin: 0 0 .75rem; }
+        .fx-cdet { margin: 0 0 .85rem; font-size: .82rem; }
+        .fx-cdet summary { cursor: pointer; width: fit-content; color: var(--primary); font-weight: 600; }
+        .fx-cdet summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+        .fx-cdet ul { margin: .5rem 0 0; padding-left: 1.1rem; }
+        .fx-cookies:has(.fx-cdet[open]) { max-height: calc(100dvh - 130px); overflow-y: auto; overscroll-behavior: contain; }
+        .fx-cdet li { margin: .3rem 0; }
         .fx-cookies div { display: flex; gap: .5rem; justify-content: flex-end; }
         .fx-cookies .fx-cbtn { padding: .55rem 1rem; justify-content: center; }
         @media (max-width: 600px) { .fx-cookies { left: 12px; right: 12px; bottom: 12px; max-width: none; } }
@@ -1967,6 +1973,15 @@
             const caja = document.createElement('div');
             caja.className = 'fx-cookies'; caja.setAttribute('role', 'region'); caja.setAttribute('aria-label', 'Cookies');
             caja.innerHTML = `<p>${bi('Uso cookies de analítica de Google solo para saber cuántas personas ven mi CV. ¿Las aceptas?', 'I use Google analytics cookies only to know how many people view my CV. Do you accept them?')}</p>
+                <details class="fx-cdet"><summary>${bi('¿Qué estoy aceptando?', 'What am I accepting?')}</summary><ul>
+                    <li>${bi('<b>Qué:</b> cookies de Google Analytics (<code>_ga</code> y <code>_ga_…</code>), que duran hasta 2 años.', '<b>What:</b> Google Analytics cookies (<code>_ga</code> and <code>_ga_…</code>), which last up to 2 years.')}</li>
+                    <li>${bi('<b>Para qué:</b> contar visitas y ver qué secciones se leen, con qué tipo de dispositivo, desde qué país o ciudad aproximada y de dónde llegas (LinkedIn, Google…).', '<b>What for:</b> counting visits and seeing which sections are read, on what kind of device, from which country or approximate city and where you came from (LinkedIn, Google…).')}</li>
+                    <li>${bi('<b>Quién:</b> solo yo veo las estadísticas; las procesa Google, que puede tratar los datos fuera de la UE.', '<b>Who:</b> only I see the statistics; they are processed by Google, which may handle the data outside the EU.')}</li>
+                    <li>${bi('<b>Lo que no:</b> nada de publicidad ni perfiles para anuncios, y no sé tu nombre ni tu correo.', '<b>What not:</b> no advertising or ad profiles, and I do not know your name or email.')}</li>
+                    <li>${bi('<b>Si rechazas:</b> la web funciona exactamente igual y no se guarda ninguna cookie de Google.', '<b>If you reject:</b> the site works exactly the same and no Google cookie is stored.')}</li>
+                    <li>${bi('El idioma, los logros y los ajustes del avatar se guardan solo en tu navegador: no son cookies de seguimiento.', 'Language, achievements and avatar settings are stored only in your browser: they are not tracking cookies.')}</li>
+                    <li>${bi('Puedes cambiar de opinión cuando quieras en «Cookies», al pie de la página.', 'You can change your mind at any time under “Cookies” at the bottom of the page.')}</li>
+                </ul></details>
                 <div><button type="button" class="fx-cbtn" data-c="no">${bi('Rechazar', 'Reject')}</button><button type="button" class="fx-cbtn main" data-c="si">${bi('Aceptar', 'Accept')}</button></div>`;
             document.body.appendChild(caja);
             const mostrar = () => caja.classList.add('on');
@@ -1975,6 +1990,10 @@
                 const si = b.dataset.c === 'si';
                 guardar('cv-cookies', si ? 'si' : 'no');
                 if (typeof window.gtag === 'function') window.gtag('consent', 'update', { analytics_storage: si ? 'granted' : 'denied' });
+                // Si rechaza (o cambia de opinión), borro las cookies de Google que hubiera
+                if (!si) document.cookie.split(';').map((c) => c.split('=')[0].trim()).filter((n) => /^_ga/.test(n)).forEach((n) => {
+                    ['', '; domain=' + location.hostname, '; domain=.' + location.hostname.replace(/^www\./, '')].forEach((d) => { document.cookie = n + '=; Max-Age=0; path=/' + d; });
+                });
                 caja.classList.remove('on');
             });
             if (!leer('cv-cookies')) setTimeout(mostrar, 2500);
